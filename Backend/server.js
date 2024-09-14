@@ -2,6 +2,7 @@ const express = require("express");
 // const { poolPromise } = require("./config/db.js");
 const db = require('./models');
 const syncDatabase = require('./config/dbconfig'); // Import syncDatabase
+const routes = require('./routes');
 
 
 const app = express();
@@ -55,3 +56,12 @@ const startServer = async () => {
 };
 
 startServer();
+app.use('/api', routes);
+
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || 'Internal Server Error!'
+
+  res.status(statusCode).json({ message })
+})
+
