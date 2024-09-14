@@ -18,10 +18,10 @@ const LoginForm = () => {
         password: ''
     }
 
-    const login = async (formikActions) => {
+    const login = async (values, formikActions) => {
         try{
             const res = await user_api.post('/login-user', {
-                email, password
+                ..values
             });
             formikActions.resetForm();
         } catch(error) {
