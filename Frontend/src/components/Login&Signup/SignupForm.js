@@ -22,10 +22,10 @@ const SignupForm = () => {
         confirm: ''
     }
 
-    const signUp = async (formikActions) => {
+    const signUp = async (values, formikActions) => {
         try {
             const res = await user_api.post('/create-user', {
-                username, email, password
+                ...values
             });
             formikActions.resetForm();
         } catch(error){
