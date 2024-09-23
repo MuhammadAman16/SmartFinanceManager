@@ -4,11 +4,11 @@ const jwt = require('jsonwebtoken');
 const { errorHandler } = require('../utils/errorHandler');
 
 exports.signup = async (req, res, next) => {
-    const { name, email, password, username } = req.body;
+    const { fullName, email, password } = req.body;
 
     // Validation
-    if (!name || !email || !password) {
-        // return res.status(400).json({ error: 'All fields are required: name, email, password' });
+    if (!fullName || !email || !password) {
+        // return res.status(400).json({ error: 'All fields are required: fullName, email, password' });
         next(errorHandler(400, 'All fields are required!'))
     }
 
@@ -26,8 +26,7 @@ exports.signup = async (req, res, next) => {
 
         // Create the user
         const newUser = await User.create({
-            username,
-            name,
+            fullName,
             email,
             password: hashedPassword,
         });
@@ -36,7 +35,7 @@ exports.signup = async (req, res, next) => {
             message: 'User created successfully',
             user: {
                 id: newUser.id,
-                name: newUser.name,
+                fullName: newUser.fullName,
                 email: newUser.email,
             },
         });
@@ -69,7 +68,7 @@ exports.login = async (req, res, next) => {
         }
 
         // Generate JWT token
-        const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.id, email: user.email,fullName:user.fullName }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         return res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
