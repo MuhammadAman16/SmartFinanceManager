@@ -28,15 +28,23 @@ exports.getBudgetById = async (req, res, next) => {
 };
 
 exports.createBudget = async (req, res, next) => {
-  const { name, period, amount, currency, account, startDate, endDate } =
-    req.body;
+  const {
+    name,
+    userId,
+    period,
+    amount,
+    currency,
+    account,
+    startDate,
+    endDate,
+  } = req.body;
 
   // Validation
-  if (!name || !period || !amount || !currency || !account) {
+  if (!name || !period || !amount || !currency || !account || !userId) {
     return next(
       errorHandler(
         400,
-        "All fields are required: name, period, amount, currency, account"
+        "All fields are required: name, userId, period, amount, currency, account"
       )
     );
   }
@@ -44,6 +52,7 @@ exports.createBudget = async (req, res, next) => {
   try {
     const newBudget = await Budget.create({
       name,
+      userId,
       period,
       amount,
       currency,
@@ -96,7 +105,9 @@ exports.deleteBudget = async (req, res, next) => {
     }
 
     await budget.destroy();
-    return res.status(204).send(); // No content
+    return res
+      .status(204)
+      .json({ message: "Deleted Successfully", data: budget }); // No content
   } catch (error) {
     console.log("Error deleting budget:", error);
     next(error);
