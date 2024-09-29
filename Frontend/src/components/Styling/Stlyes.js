@@ -178,6 +178,33 @@ const styles = StyleSheet.create({
     },
     buttons: {
         flexDirection: 'row'
+    },
+    drawerSecionStyle: {
+        marginHorizontal: 5,
+        borderBottomWidth: 1,
+        borderColor: '#e4e4e4'
+    },
+    AvatarViewStyle: {
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        backgroundColor: 'rgb(50,205,50)',
+        padding: 50,
+        flexDirection: 'row',
+        marginTop: 0
+    },
+    userFullNameAvatar: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 20
+    },
+    AppNameAvatar: {
+        fontSize: 10
+    },
+    drawerScrollViewStyling: {
+        marginTop: -40
+    },
+    StatsViewStyling: {
+        marginLeft: 20
     }
 })
 
