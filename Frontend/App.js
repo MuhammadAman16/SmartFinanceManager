@@ -1,23 +1,40 @@
-import React from 'react'
-import Welcome from './src/Pages/Welcome';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useContext } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Home from './src/Pages/Home';
+import { AuthContext, AuthProvider } from './app/context/AuthContext';
+import Welcome from './src/Screens/Welcome';
+import Home from './src/Screens/Home';
+import { Text, StatusBar, SafeAreaView } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
+    const { user, loading } = useContext(AuthContext);
+
+    if (loading) {
+        return <Text>Loading....</Text>
+    }
+
     return (
-        <Stack.Navigator
-            initialRouteName='Wellcome'
-            screenOptions={{
-                headerShown: false
-            }}
-        >
-            <Stack.Screen name={'Wellcome'} component={Welcome} />
-            <Stack.Screen name={'Home'} component={Home} />
-        </Stack.Navigator>
+        <SafeAreaView style={{ flex: 1, marginTop: -40 }}>
+            <StatusBar barStyle='dark-content' translucent={true} />
+            <Stack.Navigator
+                screenOptions={{
+                    headerShown: false,
+                    statusBarTranslucent: true,
+                }}
+            >
+                {
+                    user ?
+                        (<Stack.Screen name={'Home'} component={Home} />) :
+                        (<Stack.Screen name={'Wellcome'} component={Welcome} />)
+                }
+            </Stack.Navigator>
+        </SafeAreaView>
     );
 }
 
-export default App
+export default () => (
+    <AuthProvider>
+        <App />
+    </AuthProvider>
+);

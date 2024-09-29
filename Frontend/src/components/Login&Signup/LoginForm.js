@@ -1,5 +1,5 @@
 import { Dimensions, KeyboardAvoidingView, Platform, Alert } from 'react-native'
-import React from 'react'
+import React, { useContext } from 'react'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import styles from '../Styling/Stlyes'
@@ -7,6 +7,7 @@ import FormInput from './FormInput'
 import FormSubmitButton from './FormSubmitButton'
 import user_api from '../../../app/api/user_api'
 import { useNavigation } from '@react-navigation/native'
+import { AuthContext } from '@/app/context/AuthContext'
 
 const validationSchema = Yup.object({
     email: Yup.string().email('Invalid Email').required('Email is Required'),
@@ -14,20 +15,20 @@ const validationSchema = Yup.object({
 })
 
 const LoginForm = () => {
-    const navigation = useNavigation();
+    const {login} = useContext(AuthContext);
     const userInfo = {
         email: '',
         password: ''
     }
 
-    const login = async (values, formikActions) => {
+    const loginsubmit = async (values, formikActions) => {
         try{
             const res = await user_api.post('/api/auth/login', {
                 ...values
             });
             formikActions.resetForm();
             Alert.alert(res.data.message);
-            navigation.navigate('Home');
+            login(res.data.token) 
         } catch(error) {
             if (error.response){
                 Alert.alert(`Error: ${error.response.data.error}`)
@@ -44,7 +45,7 @@ const LoginForm = () => {
     return <>
         <KeyboardAvoidingView enabled behavior={Platform.OS === 'ios' ? 'padding' : null} style={[styles.scrollView, { width: Dimensions.get('window').width }]}>
             <Formik initialValues={userInfo} validationSchema={validationSchema}
-                onSubmit={login}
+                onSubmit={loginsubmit}
                 >
                 {({values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting}) => {
                     const {email, password} = values;
