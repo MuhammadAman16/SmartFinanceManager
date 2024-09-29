@@ -1,0 +1,821 @@
+﻿Text,Label
+What’s my email address again?,get_user_email
+Can you remind me of my mail?,get_user_email
+Please tell me my email address.,get_user_email
+I’ve forgotten my email. Can you help?,get_user_email
+What mail do I use to sign in?,get_user_email
+Can you check what my email is?,get_user_email
+I can’t recall my mail.,get_user_email
+"Help me find my email address, please.",get_user_email
+What is the email tied to my account?,get_user_email
+Could you tell me what my mail is?,get_user_email
+I need help locating my email.,get_user_email
+Can you fetch my mail details?,get_user_email
+I forgot my email address.,get_user_email
+Is there a way to see my email?,get_user_email
+How do I retrieve my email address?,get_user_email
+Can you provide my mail?,get_user_email
+I need my email for recovery.,get_user_email
+What email am I registered with?,get_user_email
+Could you remind me what my mail is?,get_user_email
+Can you help me access my email address?,get_user_email
+I need to remember my email address.,get_user_email
+What email do I have associated with this account?,get_user_email
+I’m unsure of my email address.,get_user_email
+How can I see my mail?,get_user_email
+Can you tell me my account email?,get_user_email
+What's the email I signed up with?,get_user_email
+I need to find out my email.,get_user_email
+Can you help me retrieve my mail?,get_user_email
+What’s the email I used?,get_user_email
+Could you look up my email address?,get_user_email
+Please remind me my email.,get_user_email
+How do I find my mail address?,get_user_email
+Can you provide me with my registered email?,get_user_email
+I'm struggling to remember my email.,get_user_email
+Can you assist me in finding my mail?,get_user_email
+What's the email I need to log in?,get_user_email
+I can’t find my mail address.,get_user_email
+Could you help me figure out my email?,get_user_email
+Please tell me what my email address is.,get_user_email
+How can I check my mail address?,get_user_email
+I need to know what my email is.,get_user_email
+What's the email linked to my account?,get_user_email
+I can't recall which mail I used.,get_user_email
+Can you help me remember my email address?,get_user_email
+What's the mail for my account?,get_user_email
+How do I access my email?,get_user_email
+I need to find out my mail.,get_user_email
+Please give me my email details.,get_user_email
+Can you verify my mail for me?,get_user_email
+What email do I have on file?,get_user_email
+Could you tell me my email login?,get_user_email
+What is the email I registered with?,get_user_email
+I need my mail for verification.,get_user_email
+Can you help me get my email address?,get_user_email
+Please let me know my mail address.,get_user_email
+I need to remember the mail I used.,get_user_email
+Can you assist me in finding my email address?,get_user_email
+What’s the email I need to use?,get_user_email
+Please check my mail details.,get_user_email
+I can't remember my email login.,get_user_email
+Can you tell me the email associated with my account?,get_user_email
+How can I confirm my email address?,get_user_email
+What email did I use for registration?,get_user_email
+Help me recall my mail address.,get_user_email
+What mail is linked to my profile?,get_user_email
+Can you find my email for me?,get_user_email
+I need to see my mail address.,get_user_email
+Please provide my email login.,get_user_email
+Can you let me know my email?,get_user_email
+What’s my registered mail address?,get_user_email
+I need to retrieve my email.,get_user_email
+Could you help me access my mail?,get_user_email
+Can you tell me what email I used?,get_user_email
+What’s my mail for this account?,get_user_email
+Help me find my registered mail.,get_user_email
+Please tell me how to find my email.,get_user_email
+What is the mail I need to remember?,get_user_email
+Can you help me get my email address back?,get_user_email
+I forgot the mail for my account.,get_user_email
+What's the email I have on record?,get_user_email
+Can you remind me what email I signed up with?,get_user_email
+What’s my mail for logging in?,get_user_email
+I can't recall the mail linked to my account.,get_user_email
+Please help me confirm my email address.,get_user_email
+What's my email details?,get_user_email
+Can you assist me with my email retrieval?,get_user_email
+I need to find my mail for login.,get_user_email
+What email do I have registered?,get_user_email
+Could you let me know my mail?,get_user_email
+How can I confirm the email associated with my account?,get_user_email
+What’s my mail for this account?,get_user_email
+Can you check my registered email?,get_user_email
+Please let me know how to access my mail.,get_user_email
+I’m having trouble remembering my email address.,get_user_email
+What’s my mail associated with my account?,get_user_email
+I need to see the email I used.,get_user_email
+Can you tell me the mail I signed up with?,get_user_email
+I need to recover my mail login.,get_user_email
+What is my mail for verification purposes?,get_user_email
+Can you help me check my email address?,get_user_email
+What is my email address?,get_user_email
+Can you tell me my email?,get_user_email
+I need to know my email address.,get_user_email
+Please provide me with my email address.,get_user_email
+"Show my email details, please.",get_user_email
+How can I find my email?,get_user_email
+Is there a way to retrieve my email address?,get_user_email
+I forgot my email. Can you help me?,get_user_email
+I need to access my email account but I don't remember the address.,get_user_email
+I'm trying to log in but I'm having trouble finding my email.,get_user_email
+Could you assist me in recovering my email address?,get_user_email
+What's my email?,get_user_email
+Can I get my email address?,get_user_email
+Could you tell me what my email is?,get_user_email
+I need to know the email associated with my account.,get_user_email
+Can you look up my email for me?,get_user_email
+I'm trying to recover my email. What is it?,get_user_email
+Could you provide me with my email login details?,get_user_email
+I need to reset my password but I can't remember my email.,get_user_email
+Is there a way to check the email linked to this account?,get_user_email
+Can you list my recent spending?,get_expenses
+Show me my recent purchases.,get_expenses
+Provide a breakdown of my last month's expenses.,get_expenses
+What were my expenses over the last month?,get_expenses
+Please display my financial outgoings.,get_expenses
+Give me an overview of my costs.,get_expenses
+Could I get a report of my recent expenditures?,get_expenses
+What are my latest expenses?,get_expenses
+I'd like to see a summary of my spending.,get_expenses
+Show me the details of my spending.,get_expenses
+Can I get a summary of my last month's spending?,get_expenses
+Provide a list of my expenses.,get_expenses
+How much have I spent recently?,get_expenses
+Can you summarize my expenses from last month?,get_expenses
+I'd like to view my spending for the past month.,get_expenses
+Give me a breakdown of my financial activities.,get_expenses
+What were my costs last month?,get_expenses
+I'd like an overview of my recent spending habits.,get_expenses
+Can you show me my total spending for last month?,get_expenses
+Please list my expenditure details.,get_expenses
+Provide me with an overview of my recent costs.,get_expenses
+Can you summarize my expenditures?,get_expenses
+Show me the money I've spent.,get_expenses
+How much did I spend last week?,get_expenses
+I'd like to see my recent expense history.,get_expenses
+Could you give me a breakdown of my outgoings?,get_expenses
+Can I see a summary of my spending habits?,get_expenses
+Give me the details of my last month's costs.,get_expenses
+What are my latest financial transactions?,get_expenses
+Can you provide a financial overview?,get_expenses
+How much did I spend recently?,get_expenses
+Show me the costs I’ve incurred in the past month.,get_expenses
+I'd like to know my recent expenses.,get_expenses
+What have I spent my money on this month?,get_expenses
+Please show me a breakdown of my expenditures.,get_expenses
+Can I get an overview of my spending?,get_expenses
+List my transactions from the past month.,get_expenses
+Give me a financial breakdown of my expenses.,get_expenses
+How much did I spend on my purchases last month?,get_expenses
+Provide me a summary of my spending details.,get_expenses
+Please list all my expenses for the past week.,get_expenses
+Can you give me an update on my spending habits?,get_expenses
+What are my spending totals for last week?,get_expenses
+I'd like to see my recent outgoings.,get_expenses
+How much have I spent over the last month?,get_expenses
+Show me my total expenses for this month.,get_expenses
+Provide an overview of my expenditures.,get_expenses
+Can you help me review my spending?,get_expenses
+What were my purchases last week?,get_expenses
+Give me the total amount I spent last month.,get_expenses
+What are the details of my financial activities?,get_expenses
+Can you summarize my spending patterns?,get_expenses
+Show me the total cost of my recent expenses.,get_expenses
+What have my recent financial transactions been?,get_expenses
+Please give me a summary of my last month's spending.,get_expenses
+What were my recent expenditures?,get_expenses
+Give me a list of the costs from last month.,get_expenses
+Can I see my recent transactions?,get_expenses
+Show me a summary of my costs for the past month.,get_expenses
+Please list my purchases from last week.,get_expenses
+What are my total costs from last month?,get_expenses
+How much did I spend overall this month?,get_expenses
+Provide me with the details of my financial spending.,get_expenses
+I'd like to know the details of my recent purchases.,get_expenses
+Can you display my spending summary?,get_expenses
+What are the total expenses for last month?,get_expenses
+Could I get a list of my expenses?,get_expenses
+Please show me how much I’ve spent recently.,get_expenses
+I'd like a summary of my total spending.,get_expenses
+What were my costs for last week?,get_expenses
+Show me a report on my financial transactions.,get_expenses
+Can I get a breakdown of my spending habits?,get_expenses
+Provide me with an expense overview.,get_expenses
+Please give me a report of my last month's costs.,get_expenses
+How much did I spend last month?,get_expenses
+Show me the spending I did this week.,get_expenses
+Can you tell me my total expenses for the last month?,get_expenses
+List all my recent transactions.,get_expenses
+What did I spend on this month?,get_expenses
+Could I get a summary of my financial details?,get_expenses
+Show me how much I spent in the past week.,get_expenses
+What are the total expenses I’ve incurred this month?,get_expenses
+Give me a report of my expenses.,get_expenses
+Please summarize my spending details for the month.,get_expenses
+How much have I spent in the last seven days?,get_expenses
+What is the total cost of my outgoings?,get_expenses
+Show me the total amount of money spent last month.,get_expenses
+Please list the details of my latest purchases.,get_expenses
+Can you provide a report of my last month's spending?,get_expenses
+Give me a list of the total expenses for the month.,get_expenses
+How much did I spend in the last 30 days?,get_expenses
+Show me an overview of my expenditures.,get_expenses
+Provide me with a detailed breakdown of my expenses.,get_expenses
+What are my spending totals for this week?,get_expenses
+Please list my financial outgoings for last month.,get_expenses
+Could you summarize my expense report?,get_expenses
+Show me the money I spent over the last month.,get_expenses
+Can I see the breakdown of my recent transactions?,get_expenses
+Give me a list of my financial activity this month.,get_expenses
+What have I spent in total over the last month?,get_expenses
+"List my recent expenses, please.",get_expenses
+Can I see my expenses for last month?,get_expenses
+Please provide my expense details.,get_expenses
+What were my total expenses last week?,get_expenses
+How much did I spend last month?,get_expenses
+I want to review my spending habits.,get_expenses
+Help me track my finances.,get_expenses
+Could you give me a financial overview?,get_expenses
+I need to analyze my spending patterns.,get_expenses
+Can you show me how much I've spent in total?,get_expenses
+Show me my expenses.,get_expenses
+What are my recent expenditures?,get_expenses
+Can I see a breakdown of my spending?,get_expenses
+List my costs for the past month.,get_expenses
+Provide me with a summary of my expenses.,get_expenses
+What’s the process for updating my email address?,update_email
+Can you tell me how to change my email?,update_email
+How can I adjust my email on the account?,update_email
+What are the steps for modifying my email?,update_email
+I want to switch my email to a new one.,update_email
+Help me modify my contact email.,update_email
+Is it possible to update my email through the app?,update_email
+Are there any costs involved in changing my email?,update_email
+How much time does it take to modify my email address?,update_email
+Will changing my email impact my account preferences?,update_email
+Can I change my email without affecting my data?,update_email
+I'm struggling to update my email. Can you help me?,update_email
+I need assistance with changing my email address.,update_email
+How do I alter my email in the system?,update_email
+"I’ve forgotten my current email, how can I update it?",update_email
+What steps should I follow to modify my contact email?,update_email
+"I’m switching email providers, how do I update my account?",update_email
+My current email is invalid. How can I update it?,update_email
+Can I change my email address without affecting my account?,update_email
+Is there a charge for updating my email address?,update_email
+How do I replace my old email with a new one?,update_email
+"I need to revise my email, how do I do that?",update_email
+Could you walk me through how to update my email address?,update_email
+How can I change the email tied to my account?,update_email
+Will my settings change if I update my email?,update_email
+What’s the procedure for modifying my email address?,update_email
+How do I change my registered email address?,update_email
+"I’d like to update my email, can you show me how?",update_email
+Can I alter my email address without losing my settings?,update_email
+Does it take long to change my email on this platform?,update_email
+"I’m having trouble updating my email, can you guide me?",update_email
+Could you assist me in changing my email address?,update_email
+What do I need to do to switch my email?,update_email
+How can I change my email information?,update_email
+How can I modify my contact details to update my email?,update_email
+Can you explain the steps for changing my email?,update_email
+I want to change the email linked to my account.,update_email
+What’s the fastest way to update my email?,update_email
+How do I change my contact email in the settings?,update_email
+Is updating my email easy? How do I go about it?,update_email
+Can you guide me through updating my email address?,update_email
+What’s required to update my email address on the app?,update_email
+How do I switch to a different email address?,update_email
+Can I change my email without resetting my account?,update_email
+"I need to update my email, what are the steps?",update_email
+Can you remind me how to update my email information?,update_email
+Is there an option to update my email in the account settings?,update_email
+Can I change my email without losing access to my account?,update_email
+I need to change my email address; can you assist?,update_email
+Will changing my email affect my notifications?,update_email
+Is there a guide for updating my email?,update_email
+How can I revise the email address on my profile?,update_email
+I’d like to modify the email connected to my account.,update_email
+What do I need to do to replace my email?,update_email
+How can I switch my email without altering my settings?,update_email
+Is it possible to change my email and keep my account details?,update_email
+"I’m unsure how to change my email, can you explain?",update_email
+How can I alter the email associated with my account?,update_email
+Can you give me instructions on how to update my email?,update_email
+Will updating my email cause any issues with my account?,update_email
+Can I easily switch my email to a new address?,update_email
+How do I replace my current email in the app?,update_email
+Are there instructions on how to change my email address?,update_email
+What is the process for changing my account email?,update_email
+How do I modify the email registered with my account?,update_email
+Can I update my email without resetting my preferences?,update_email
+How can I switch to a new email address for my account?,update_email
+Will changing my email impact my account data?,update_email
+What’s the quickest way to update my email?,update_email
+Can you help me alter my account email?,update_email
+How do I replace the email in my account settings?,update_email
+Is there a way to update my email without losing my history?,update_email
+What steps do I take to change my email address?,update_email
+Can I update my email without disrupting my account setup?,update_email
+How do I update my email address in the profile section?,update_email
+Will my account data stay the same if I change my email?,update_email
+How can I revise the email address for my account?,update_email
+I need to change my email; what should I do?,update_email
+What’s the method for changing my email address on the app?,update_email
+Can you assist with updating my contact email?,update_email
+How do I change my email without modifying my settings?,update_email
+Is there a fee to update my email on this platform?,update_email
+How long will it take to change my email in the system?,update_email
+Can you explain the process for modifying my email address?,update_email
+I’m switching email addresses; how do I update it in my account?,update_email
+What are the steps to change my registered email?,update_email
+How can I update my email in the app without affecting my data?,update_email
+Can you assist me with changing my email to a new one?,update_email
+Will I lose any data if I update my email address?,update_email
+How do I edit the email linked to my account?,update_email
+What are the procedures to update my contact email?,update_email
+Can I switch my email without resetting my account settings?,update_email
+How do I go about changing the email address I’m using?,update_email
+I need to change my email address; can you show me how?,update_email
+Is there a fee involved in updating my email information?,update_email
+How do I revise my email without affecting my account settings?,update_email
+What’s the process for switching my account email?,update_email
+Can I modify my email without losing access to my account?,update_email
+How can I change my email address without changing other settings?,update_email
+What do I need to do to update my email address in the app?,update_email
+What are the steps to update my email?,update_email
+Can you remind me how to change my email?,update_email
+How can I modify my email address?,update_email
+I want to change my email to a different one.,update_email
+Help me update my email address.,update_email
+Can I update my email within the app?,update_email
+Is there a fee associated with changing my email?,update_email
+How long does it take to update my email?,update_email
+Will updating my email affect my account settings?,update_email
+Can I update my email without losing my data?,update_email
+I'm having trouble changing my email. Can you assist me?,update_email
+I need to update my contact information. How do I change my email?,update_email
+I've forgotten my old email. Can I update it?,update_email
+I'm moving to a new email provider. How do I update my account?,update_email
+My email address is no longer valid. How can I change it?,update_email
+Can I update my email within the app?,update_email
+Is there a fee associated with changing my email?,update_email
+How long does it take to update my email?,update_email
+Will updating my email affect my account settings?,update_email
+Can I update my email without losing my data?,update_email
+Show me my most recent purchases.,get_transactions
+Can you display my transaction history?,get_transactions
+What transactions have I made lately?,get_transactions
+List all my financial transactions from this week.,get_transactions
+Could you show me the details of my latest transactions?,get_transactions
+I'd like to check my recent spending.,get_transactions
+Help me monitor my spending activity.,get_transactions
+Could you summarize my recent transactions?,get_transactions
+I want to see where I’ve spent money recently.,get_transactions
+Can you provide a detailed breakdown of my transactions?,get_transactions
+Show me my expenditures for the past month.,get_transactions
+Can you give me an overview of my financial activity?,get_transactions
+I need to review my transaction history.,get_transactions
+Give me a summary of what I’ve recently purchased.,get_transactions
+Show me the financial activity for the last year.,get_transactions
+Can you list my last few transactions?,get_transactions
+Provide a report of my spending for this week.,get_transactions
+What’s my latest spending activity?,get_transactions
+Can you display my purchases from this month?,get_transactions
+Show me the details of my most recent transactions.,get_transactions
+I need to see my spending history.,get_transactions
+How much have I spent in the last month?,get_transactions
+Could you give me a list of my financial activities?,get_transactions
+I’d like to check what I’ve spent in the past week.,get_transactions
+Show me my transaction summary.,get_transactions
+What are my transactions for the last month?,get_transactions
+Provide a list of my recent financial activities.,get_transactions
+Can you display my expenses for this month?,get_transactions
+I'd like to see an overview of my financial transactions.,get_transactions
+What purchases have I made recently?,get_transactions
+Show me the history of my financial transactions.,get_transactions
+Could you help me track my recent purchases?,get_transactions
+I want to view my transaction details.,get_transactions
+How can I review what I’ve spent recently?,get_transactions
+Can you give me a report on my recent expenses?,get_transactions
+I'd like to analyze my spending patterns.,get_transactions
+Show me the last few purchases I made.,get_transactions
+Can you provide my purchase history?,get_transactions
+What were my transactions for this week?,get_transactions
+List all the expenses I’ve incurred recently.,get_transactions
+Can you show me my financial report?,get_transactions
+Help me track my financial activity for the past month.,get_transactions
+What are the details of my latest financial actions?,get_transactions
+Provide a summary of my recent spending.,get_transactions
+I need a detailed report of my transactions.,get_transactions
+Can you summarize my expenditures for the last year?,get_transactions
+What were my spending activities for this month?,get_transactions
+I'd like to see a list of my transactions.,get_transactions
+Show me a report on what I’ve purchased recently.,get_transactions
+Can you provide the details of my recent spending?,get_transactions
+What have I spent money on this week?,get_transactions
+Show me a summary of my financial activities.,get_transactions
+What are the most recent purchases I made?,get_transactions
+I'd like to check the transactions made in the past month.,get_transactions
+Can you list all my expenses for this week?,get_transactions
+Provide me with a detailed account of my spending.,get_transactions
+Can you help me track my spending for the past year?,get_transactions
+What are the transactions that occurred last week?,get_transactions
+Can you display my spending details?,get_transactions
+I'd like to review all my financial activities.,get_transactions
+What are the details of my spending for the past month?,get_transactions
+Can you summarize my financial transactions?,get_transactions
+How much have I spent in the last 30 days?,get_transactions
+Show me the purchases I’ve made recently.,get_transactions
+Can you show me my financial summary for this year?,get_transactions
+I need a list of all my recent expenditures.,get_transactions
+Can you display my financial activity?,get_transactions
+What transactions have been made in the past week?,get_transactions
+I'd like to check my transaction summary for this month.,get_transactions
+What are the details of my most recent purchases?,get_transactions
+Please list all my financial transactions from this week.,get_transactions
+How can I see my recent spending history?,get_transactions
+Can you show me an overview of my latest financial activities?,get_transactions
+Provide a report of my spending for this month.,get_transactions
+What purchases have I made over the last few weeks?,get_transactions
+I need to review my recent purchases.,get_transactions
+Can you help me analyze my spending for the past month?,get_transactions
+What are my latest financial actions?,get_transactions
+Show me a breakdown of my expenses for this year.,get_transactions
+Can you summarize my financial activities for this week?,get_transactions
+I'd like to see what I’ve spent recently.,get_transactions
+What were my purchases for the past few weeks?,get_transactions
+Provide a detailed account of my recent transactions.,get_transactions
+Can you list my most recent expenditures?,get_transactions
+What financial actions have I taken in the last month?,get_transactions
+Show me a report on my recent transactions.,get_transactions
+Can you display my spending for this month?,get_transactions
+How much did I spend in the past year?,get_transactions
+What are the details of my financial activities this week?,get_transactions
+Can you summarize my latest purchases?,get_transactions
+What transactions have I made in the past few days?,get_transactions
+Show me my financial transactions for this month.,get_transactions
+I need a summary of my most recent financial actions.,get_transactions
+What are the transactions I’ve made lately?,get_transactions
+Can you provide a detailed report of my purchases?,get_transactions
+List all the financial activities for the past week.,get_transactions
+I'd like to review my spending for this month.,get_transactions
+Show me an overview of my purchases.,get_transactions
+Can you display a summary of my financial actions?,get_transactions
+What are the details of my spending activity for the last few weeks?,get_transactions
+Show me my recent transactions.,get_transactions
+Can you provide my transaction history?,get_transactions
+What are my latest transactions?,get_transactions
+List all my transactions from this week.,get_transactions
+Can you show my transaction details?,get_transactions
+I'd like to review my financial activity.,get_transactions
+Help me track my spending.,get_transactions
+Could you provide a summary of my transactions?,get_transactions
+I want to see what I've spent money on recently.,get_transactions
+Can you give me a breakdown of my transactions?,get_transactions
+Show me my spending for the past month.,get_transactions
+Can you provide a detailed overview of my finances?,get_transactions
+I need to analyze my transaction history.,get_transactions
+Give me a summary of my recent purchases.,get_transactions
+Show me my financial activity for the past year.,get_transactions
+Show me my recent transactions.,get_transactions
+Can you provide my transaction history?,get_transactions
+What are my latest transactions?,get_transactions
+List all my transactions from this week.,get_transactions
+Can you show my transaction details?,get_transactions
+What is my login username?,get_user_name
+Can you tell me my username?,get_user_name
+I need to know my username for signing in.,get_user_name
+What’s my account username?,get_user_name
+Could you provide my login username?,get_user_name
+I can’t remember my username. Can you help?,get_user_name
+What’s the username I use to log in?,get_user_name
+Can you display my username?,get_user_name
+How do I find my username?,get_user_name
+What’s the username linked to my account?,get_user_name
+I forgot my username. Can you provide it?,get_user_name
+Tell me my username for login purposes.,get_user_name
+What’s my sign-in username?,get_user_name
+Could you remind me of the username I use?,get_user_name
+How do I check my username for logging in?,get_user_name
+Can you help me find my username?,get_user_name
+I need my username for accessing my account.,get_user_name
+What is the username associated with my profile?,get_user_name
+I don’t remember my username. Can you show me?,get_user_name
+Please provide me with my account username.,get_user_name
+What username do I use to sign in?,get_user_name
+I’ve forgotten my username. Can you look it up?,get_user_name
+What’s the username I’m registered with?,get_user_name
+Can you remind me of the name I use to log in?,get_user_name
+What do I need to enter as my username?,get_user_name
+I need my login username. Can you tell me?,get_user_name
+What’s the username assigned to my account?,get_user_name
+I forgot the username I use for login. Can you help?,get_user_name
+How do I retrieve my username?,get_user_name
+Can you give me my username for logging in?,get_user_name
+I don’t remember my account username.,get_user_name
+What’s the username for my account?,get_user_name
+I need my username for signing into my account.,get_user_name
+Could you remind me what my login name is?,get_user_name
+Can you help me recover my username?,get_user_name
+What’s the username I need for login?,get_user_name
+How can I check what my username is?,get_user_name
+Tell me the username I use for my account.,get_user_name
+What is the username linked to my login?,get_user_name
+Can you show me what my username is?,get_user_name
+I need help finding my account username.,get_user_name
+What username is associated with my login credentials?,get_user_name
+What do I use as my username for logging in?,get_user_name
+Please tell me what my username is.,get_user_name
+Can you help me find my login username?,get_user_name
+I forgot the name I use to log in. Can you help?,get_user_name
+What’s the correct username for accessing my account?,get_user_name
+How do I confirm my login username?,get_user_name
+What username should I use to access my account?,get_user_name
+Can you retrieve my username for me?,get_user_name
+I’m not sure what my username is. Can you tell me?,get_user_name
+Could you help me find my account username?,get_user_name
+What is the username I registered with?,get_user_name
+What login name is associated with my account?,get_user_name
+I need help with finding my login name.,get_user_name
+Can you display the username I use for logging in?,get_user_name
+I forgot my account name. Can you show me?,get_user_name
+Please tell me my username for signing in.,get_user_name
+What is the name I use to access my account?,get_user_name
+Can you recover my username for me?,get_user_name
+How can I check my username for logging in?,get_user_name
+I need my username to access my account.,get_user_name
+What’s the username I use to access my profile?,get_user_name
+I don’t remember what I use as my username.,get_user_name
+Could you tell me the username linked to my login?,get_user_name
+What’s my registered username?,get_user_name
+Can you tell me the account name I use for login?,get_user_name
+I need a reminder of what my username is.,get_user_name
+What’s the name I should use to log in?,get_user_name
+Can you tell me what I need to log in with as my username?,get_user_name
+I forgot what I use as my login name.,get_user_name
+Please show me my account username.,get_user_name
+Can you remind me of my account username?,get_user_name
+What’s the username associated with my login credentials?,get_user_name
+How do I find out what my login name is?,get_user_name
+Can you provide me with the name I use to log in?,get_user_name
+I don’t know what my username is. Can you help?,get_user_name
+What’s the username I need to enter for login?,get_user_name
+How do I get my login username?,get_user_name
+Can you tell me my account login name?,get_user_name
+I can’t recall my username. Can you remind me?,get_user_name
+What is my username for signing into my account?,get_user_name
+I forgot what my account username is.,get_user_name
+How can I look up my username for logging in?,get_user_name
+I need help finding out what my login name is.,get_user_name
+Could you retrieve my account username for me?,get_user_name
+What’s the username I need for signing in?,get_user_name
+Can you help me with my login username?,get_user_name
+I don’t remember my username. Can you look it up for me?,get_user_name
+How do I find the username for my account?,get_user_name
+Can you provide me with my registered username?,get_user_name
+What is the username tied to my login?,get_user_name
+Please remind me what my username is.,get_user_name
+How do I find out what my username is?,get_user_name
+What’s the correct username for my account login?,get_user_name
+Can you show me my registered username?,get_user_name
+I need a reminder of the name I use to log in.,get_user_name
+What do I need as my login username?,get_user_name
+I forgot the username tied to my account. Can you help?,get_user_name
+What’s my sign-in name for logging into my account?,get_user_name
+What is my username for logging in?,get_user_name
+Can you remind me of my username?,get_user_name
+I forgot my username.,get_user_name
+What do I use as my username?,get_user_name
+Please provide my username.,get_user_name
+Show me my current budget breakdown.,get_budget
+Can you provide my budget overview?,get_budget
+I’d like to view my budget status.,get_budget
+What’s my spending plan for this month?,get_budget
+Give me the details of my budget allocations.,get_budget
+I want to check my current budget.,get_budget
+Help me track my budgeting progress.,get_budget
+Could you give me a summary of my budget plan?,get_budget
+I’d like to see my budget for different categories.,get_budget
+Can you break down my budget for me?,get_budget
+"Display my budget details, please.",get_budget
+Can you send me an overview of my budget?,get_budget
+I need to check my budget info.,get_budget
+What’s my financial plan for this month?,get_budget
+Give me a detailed breakdown of my budget allocations.,get_budget
+Show me my spending compared to my budget for this month.,get_budget
+Could you provide a detailed analysis of my budget?,get_budget
+I want to review my spending and budget details.,get_budget
+Give me a summary of any recent changes to my budget.,get_budget
+Show me my financial goals and how they align with my budget.,get_budget
+What’s my allocated budget for this month?,get_budget
+Can you show me the status of my current budget?,get_budget
+I need an overview of how my budget is structured.,get_budget
+How much have I set aside for different spending categories?,get_budget
+Show me my budget breakdown for the past month.,get_budget
+Can you display my financial plan for this period?,get_budget
+I need a quick look at my current budget.,get_budget
+Give me a summary of my financial goals and budget.,get_budget
+How much have I budgeted for various expenses this month?,get_budget
+What’s my current spending plan?,get_budget
+Can you show me my budget for this quarter?,get_budget
+Provide me with a breakdown of my monthly budget.,get_budget
+I’d like to check how my budget is progressing.,get_budget
+Can you send a report of my current budget allocations?,get_budget
+I need to analyze how I’m tracking with my budget.,get_budget
+Give me the details of my financial plan.,get_budget
+Can you show me my budget for different expense categories?,get_budget
+What’s the status of my monthly budget?,get_budget
+"Display the current allocation of my budget, please.",get_budget
+How much have I allocated for my monthly expenses?,get_budget
+Can you help me review my budget?,get_budget
+Show me my financial planning for this month.,get_budget
+I’d like to analyze my budget versus my actual spending.,get_budget
+Provide me with a detailed look at my budget.,get_budget
+What’s my current budget status?,get_budget
+Could you summarize my financial plan for me?,get_budget
+Can I see the breakdown of my spending versus my budget?,get_budget
+Show me how much I’ve budgeted for this month.,get_budget
+Give me a report on my current budget situation.,get_budget
+What’s my spending limit for this month based on my budget?,get_budget
+Can you provide an overview of my planned budget?,get_budget
+Show me how much I’ve allocated for each spending category.,get_budget
+I need to check the current status of my budget.,get_budget
+How much money is left in my budget for this month?,get_budget
+What’s my financial planning summary?,get_budget
+Can you give me an update on my budget allocations?,get_budget
+I’d like to see how my spending compares to my budget.,get_budget
+Show me a report of my budget allocations for this month.,get_budget
+Can you display the breakdown of my financial plan?,get_budget
+I need to view my budget limits for this month.,get_budget
+How much have I set aside for different budget categories?,get_budget
+Give me a detailed overview of my budget allocations.,get_budget
+Can you show me the status of my monthly budget planning?,get_budget
+I’d like to review my financial plan for the month.,get_budget
+Show me how much I’ve budgeted and spent so far.,get_budget
+What’s the current breakdown of my monthly budget?,get_budget
+Provide a summary of my budget and spending patterns.,get_budget
+I want to check how I’m tracking against my budget.,get_budget
+Give me the details of my spending plan for this month.,get_budget
+Can you summarize my budget and financial goals?,get_budget
+I’d like a breakdown of my budget for different expenses.,get_budget
+What are my budget allocations for the month?,get_budget
+Could you show me my budget progress for the past month?,get_budget
+I need to review how my spending aligns with my budget.,get_budget
+Can you give me a quick update on my budget?,get_budget
+How much have I allocated for my monthly spending?,get_budget
+What’s my budget for the upcoming month?,get_budget
+Can you help me analyze my budget and financial planning?,get_budget
+Show me my budget versus my actual expenditures.,get_budget
+Give me a summary of my financial goals and budget allocations.,get_budget
+What’s my current financial plan for the month?,get_budget
+Can you provide an overview of my planned spending for the month?,get_budget
+How much have I allocated for my categories this month?,get_budget
+Show me a summary of my budget and spending habits.,get_budget
+I need to see how much I’ve budgeted for my monthly expenses.,get_budget
+Give me a breakdown of my monthly budget and allocations.,get_budget
+Can you summarize my financial planning and budget progress?,get_budget
+What are my current budget allocations for this period?,get_budget
+Can you provide a report of my spending versus my budget?,get_budget
+Show me my budget plan for the month.,get_budget
+How much have I set aside for different categories in my budget?,get_budget
+Can you display my budget summary for the past month?,get_budget
+I need an analysis of my financial goals and budget.,get_budget
+What’s the current status of my budget for the month?,get_budget
+Provide me with a summary of my budget adjustments.,get_budget
+Show me my budget and spending comparison for the last month.,get_budget
+How much money have I budgeted for different expenses this month?,get_budget
+Can you display the details of my financial plan for the month?,get_budget
+What’s my financial plan and budget overview for this month?,get_budget
+I’d like to see a summary of my budget allocations and progress.,get_budget
+Show me my budget details.,get_budget
+Can you send me my current budget?,get_budget
+I need to view my budget information.,get_budget
+What is my budget for this month?,get_budget
+"Give me an overview of my budget, please.",get_budget
+I'd like to review my budget.,get_budget
+Help me track my spending.,get_budget
+Could you provide a summary of my budget?,get_budget
+I want to see how much I've allocated for different categories.,get_budget
+Can you give me a breakdown of my budget?,get_budget
+Please show me my budget details.,get_budget
+Can you send me my current budget?,get_budget
+I need to view my budget information.,get_budget
+What is my budget for this month?,get_budget
+"Give me an overview of my budget, please.",get_budget
+Show me my spending for the past month compared to my budget.,get_budget
+Can you provide a detailed overview of my financial planning?,get_budget
+I need to analyze my budget and spending habits.,get_budget
+Give me a summary of my recent budget adjustments.,get_budget
+Show me my financial goals and budget allocations.,get_budget
+Show me my earnings details.,get_income
+Can you provide my salary information?,get_income
+What is my current salary?,get_income
+List my sources of earnings.,get_income
+Give me an overview of my salary.,get_income
+I'd like to review my earnings.,get_income
+Help me track my salary.,get_income
+Could you provide a summary of my earnings?,get_income
+I want to see how much I've made recently.,get_income
+Can you give me a breakdown of my earnings?,get_income
+Show me my salary for the past month.,get_income
+Can you provide a detailed report on my income?,get_income
+I need to analyze my earnings streams.,get_income
+Give me a summary of my latest earnings.,get_income
+Show me my income over the past year.,get_income
+Provide me with details about my salary.,get_income
+Give me a breakdown of where my income comes from.,get_income
+Show me my total earnings.,get_income
+Can you provide a financial summary of my salary?,get_income
+List my earnings for the past year.,get_income
+What is my monthly salary?,get_income
+Can you give me information about my salary breakdown?,get_income
+I'd like to know my earnings over the last month.,get_income
+Show me how much I've earned in total.,get_income
+Can you help me track my income history?,get_income
+What is my latest earnings report?,get_income
+Show me the details of my income over the last year.,get_income
+Can you provide information on my recent earnings?,get_income
+How much have I earned this year?,get_income
+I'd like an overview of my financial earnings.,get_income
+Tell me my total salary for the last month.,get_income
+Can you show my earnings for the previous month?,get_income
+What's the breakdown of my earnings from all sources?,get_income
+Give me an overview of my income trends.,get_income
+I need to see my recent earnings information.,get_income
+How much did I earn last year?,get_income
+What are the details of my salary?,get_income
+Can you display my income from all sources?,get_income
+Show me my salary for the previous year.,get_income
+What is my income history for the past month?,get_income
+How much have I been paid in recent months?,get_income
+Can you show me my current salary information?,get_income
+I’d like to review how much I’ve earned.,get_income
+Give me a breakdown of my earnings for this year.,get_income
+Can you provide me with a summary of my recent income?,get_income
+What’s my total salary for the past few months?,get_income
+Can you help me analyze my income streams?,get_income
+What’s the full breakdown of my income sources?,get_income
+Show me my earnings report for the last year.,get_income
+Give me a summary of my salary information.,get_income
+What is my total income this month?,get_income
+I need to see my earnings data for the past few months.,get_income
+Can you summarize my earnings for me?,get_income
+How much have I made in the last year?,get_income
+What are my income details from last month?,get_income
+Can you provide me with an earnings overview for the year?,get_income
+Show me the amount of money I’ve earned this month.,get_income
+Give me a financial breakdown of my recent income.,get_income
+Can you give me details of my salary history?,get_income
+I want a breakdown of my income over the past year.,get_income
+What is the total of my earnings for the month?,get_income
+How much money have I earned so far this year?,get_income
+Can you summarize my monthly income?,get_income
+What are my income totals for the last few months?,get_income
+How much did I make last month?,get_income
+Provide me with a detailed breakdown of my salary.,get_income
+Can you show me my financial earnings report?,get_income
+I want to know how much I earned in the last year.,get_income
+What’s my salary for the last month?,get_income
+Can you give me a report on my total income?,get_income
+How much have I earned in recent weeks?,get_income
+Show me my income breakdown over the past few months.,get_income
+Can you display my salary report for the past year?,get_income
+I need a breakdown of my income sources for the year.,get_income
+Tell me my total earnings for this year.,get_income
+What’s my total income for the last quarter?,get_income
+I’d like an earnings summary for the last year.,get_income
+Can you show me the total amount of money I’ve earned this year?,get_income
+What’s my overall income for the past month?,get_income
+I want to see a full report on my earnings.,get_income
+Show me my salary information for the previous year.,get_income
+What are the details of my income from the past few months?,get_income
+Provide a breakdown of my earnings for this year.,get_income
+Can you display my monthly salary details?,get_income
+How much income have I generated recently?,get_income
+What’s my income for the last few months?,get_income
+Show me a summary of my financial earnings.,get_income
+How much have I earned in total this year?,get_income
+I need an income report for the last month.,get_income
+Provide me with information about my total earnings for the year.,get_income
+What is the breakdown of my earnings for this month?,get_income
+I need to see how much I’ve earned in the past few weeks.,get_income
+Can you give me a summary of my financial earnings?,get_income
+What’s the report of my income for the previous month?,get_income
+Can you show me my salary history over the last few months?,get_income
+I need a financial breakdown of my total income.,get_income
+How much did I earn last year?,get_income
+Can you give me an earnings overview for the past month?,get_income
+What’s the breakdown of my salary for the last few months?,get_income
+I’d like to see the total of my earnings from this month.,get_income
+Show me my income details.,get_income
+Can you provide my income information?,get_income
+What is my current income?,get_income
+List my income sources.,get_income
+Give me an overview of my earnings.,get_income
+I'd like to review my income.,get_income
+Help me track my earnings.,get_income
+Could you provide a summary of my income?,get_income
+I want to see how much I've earned recently.,get_income
+Can you give me a breakdown of my income?,get_income
+Show me my income for the past month.,get_income
+Can you provide a detailed overview of my earnings?,get_income
+I need to analyze my income sources.,get_income
+Give me a summary of my recent income.,get_income
+Show me my income for the past year.,get_income
+Provide me with information about my earnings.,get_income
+Give me a breakdown of my income sources.,get_income
+Show me my overall income.,get_income
+Can you provide a financial overview of my income?,get_income
+List my income for the past year.,get_income
