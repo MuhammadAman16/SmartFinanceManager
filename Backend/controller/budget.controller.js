@@ -1,14 +1,25 @@
 const { Budget } = require("../models");
+const { BudgetCategory,BudgetLabel,Category,Label } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
 
 exports.getAllBudgets = async (req, res, next) => {
   try {
-    const budgets = await Budget.findAll();
+    const budgets = await Budget.findAll({
+      include: [
+        {
+          model: Category,as:"Categories"
+        },
+        {
+          model: Label,
+          as:"Labels"
+        },
+      ],
+      logging: true
+    });
     return res.status(200).json(budgets);
   } catch (error) {
     console.log("Error fetching budgets:", error);
     next(error);
-    console.log("hhjgj");
   }
 };
 
@@ -16,7 +27,18 @@ exports.getBudgetById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const budget = await Budget.findByPk(id);
+    const budget = await Budget.findByPk(id,{
+      include: [
+        {
+          model: Category,
+          as: 'Categories', // Use the alias you provided in your association
+        },
+        {
+          model: Label,
+          as:"Labels"
+        },
+      ],
+    });
     if (!budget) {
       return next(errorHandler(404, "Budget not found"));
     }
@@ -37,6 +59,8 @@ exports.createBudget = async (req, res, next) => {
     account,
     startDate,
     endDate,
+    categoryIds,
+    labelIds
   } = req.body;
 
   // Validation
@@ -50,6 +74,8 @@ exports.createBudget = async (req, res, next) => {
   }
 
   try {
+
+
     const newBudget = await Budget.create({
       name,
       userId,
@@ -60,6 +86,24 @@ exports.createBudget = async (req, res, next) => {
       startDate,
       endDate,
     });
+
+    if(categoryIds?.length){
+      const BudgetCategoriesPayload = categoryIds.map(id => {
+        return {budgetId: newBudget.id,categoryId: id}
+      })
+  
+      await BudgetCategory.bulkCreate(BudgetCategoriesPayload,{logging:true})
+    }
+   
+
+    if(labelIds?.length){
+      const BudgetLabelPayload = labelIds.map(id => {
+        return {budgetId: newBudget.id,labelId: id}
+      })
+  
+      await BudgetLabel.bulkCreate(BudgetLabelPayload,{logging:true})
+    }
+
     return res.status(201).json(newBudget);
   } catch (error) {
     console.log("Error creating budget:", error);
@@ -103,6 +147,9 @@ exports.deleteBudget = async (req, res, next) => {
     if (!budget) {
       return next(errorHandler(404, "Budget not found"));
     }
+
+    await budget.setCategories([]); // Remove all associations with Categories
+    await budget.setLabels([]); // Remove all associations with Labels
 
     await budget.destroy();
     return res
