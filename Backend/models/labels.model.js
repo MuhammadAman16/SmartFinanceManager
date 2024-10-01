@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: true,
         paranoid: true // This will add `deletedAt` for soft delete
       });
+
+      Label.associate = (models) => {
+        Label.belongsToMany(models.Budget, { through: 'BudgetLabels', foreignKey: 'labelId' });
+      };
     
       return Label;
   };
