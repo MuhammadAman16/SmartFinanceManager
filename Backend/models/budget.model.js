@@ -50,5 +50,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
+  Budget.associate = (models) => {
+    Budget.belongsToMany(models.Label, { through: 'BudgetLabels', foreignKey: 'budgetId',as:"Labels" });
+    Budget.belongsToMany(models.Category, { through: models.BudgetCategory, foreignKey: 'budgetId', as:"Categories" });
+  };
+
   return Budget;
 };
