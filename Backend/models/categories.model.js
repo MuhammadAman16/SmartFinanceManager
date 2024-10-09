@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: true, 
         paranoid: true 
       });
+
+      Category.associate = (models) => {
+        Category.belongsToMany(models.Budget, { through: models.BudgetCategory, foreignKey: 'categoryId',as:"Budgets" });
+      };
   
     return Category;
   };
