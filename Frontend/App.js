@@ -1,9 +1,11 @@
 import React, { useContext } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthContext, AuthProvider } from './app/context/AuthContext';
+import { BudgetProvider } from './app/context/BudgetContext';
 import Welcome from './src/Screens/Welcome';
 import Home from './src/Screens/Home';
-import { Text, StatusBar, SafeAreaView } from 'react-native';
+import BudgetScreen from './src/Screens/Section-2-Screens/TheHomeSackNavigationScreens/BudgetScreen';
+import { ActivityIndicator , StatusBar, SafeAreaView, View } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
@@ -11,7 +13,11 @@ const App = () => {
     const { user, loading } = useContext(AuthContext);
 
     if (loading) {
-        return <Text>Loading....</Text>
+        return(
+            <View style={{flex: 1, justifyContent: 'center'}}>
+                <ActivityIndicator size={'large'} color={'blue'}/>
+            </View>
+        )
     }
 
     return (
@@ -28,6 +34,7 @@ const App = () => {
                         (<Stack.Screen name={'Home'} component={Home} />) :
                         (<Stack.Screen name={'Wellcome'} component={Welcome} />)
                 }
+                <Stack.Screen name='BudgetScreen' component={BudgetScreen}/>
             </Stack.Navigator>
         </SafeAreaView>
     );
@@ -35,6 +42,8 @@ const App = () => {
 
 export default () => (
     <AuthProvider>
-        <App />
+        <BudgetProvider>
+            <App />
+        </BudgetProvider>
     </AuthProvider>
 );

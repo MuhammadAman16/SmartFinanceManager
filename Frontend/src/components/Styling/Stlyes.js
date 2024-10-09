@@ -144,13 +144,20 @@ const styles = StyleSheet.create({
     },
     centeredView: {
         flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'center'
+        justifyContent: 'center',
+        marginHorizontal: 15
     },
     modalView: {
         backgroundColor: 'white',
-        marginHorizontal: 5,
-        borderRadius: 10
+        padding: 40,
+        borderRadius: 10,
+        boxShadow: 'black',
+        elevation: 15
+    },
+    textModal: {
+        alignSelf: 'center',
+        fontSize: 18,
+        fontWeight: 'bold'
     },
     maptouch: {
         backgroundColor: 'white',
@@ -205,6 +212,176 @@ const styles = StyleSheet.create({
     },
     StatsViewStyling: {
         marginLeft: 20
+    },
+    OnGoingBudgetContainer: {
+        flex: 1,
+        padding: 16,
+        backgroundColor: '#f5f5f5'
+    },
+    headerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    header: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    addButton: {
+        backgroundColor: 'rgb(174,198,207)',
+        padding: 8,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        width: '30%',
+        borderRadius: 10
+    },
+    section: {
+        marginBottom: 16,
+    },
+    sectionHeader: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 8,
+    },
+    card: {
+        backgroundColor: '#ffffff',
+        borderRadius: 8,
+        padding: 16,
+        marginBottom: 8,
+        elevation: 3,
+    },
+    ongoingCard: {
+        backgroundColor: '#e0f7fa', // Light cyan for ongoing budgets
+    },
+    successfulCard: {
+        backgroundColor: '#dcedc8', // Light green for successful budgets
+    },
+    unsuccessfulCard: {
+        backgroundColor: '#ffebee', // Light red for unsuccessful budgets
+    },
+    budgetHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    positiveIncomeMessage: {
+        fontSize: 14,
+        color: '#2e7d32', // Dark green for positive message
+        fontWeight: 'bold',
+        marginTop: 8,
+    },
+    category: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    ongoingCategory: {
+        color: '#2196F3', // Blue for ongoing budgets
+    },
+    successfulCategory: {
+        color: '#4CAF50', // Green for successful budgets
+    },
+    unsuccessfulCategory: {
+        color: '#F44336', // Red for unsuccessful budgets
+    },
+    viewMore: {
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+    ongoingViewMore: {
+        color: '#2196F3', // Blue for ongoing budgets
+    },
+    successfulViewMore: {
+        color: '#4CAF50', // Green for successful budgets
+    },
+    unsuccessfulViewMore: {
+        color: '#F44336', // Red for unsuccessful budgets
+    },
+    amount: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        marginTop: 8,
+        color: '#333',
+    },
+    amountSpent: {
+        fontSize: 14,
+        color: '#666',
+    },
+
+    progressBarContainer: {
+        marginVertical: 5
+    },
+
+    progressBar: {
+        borderRadius: 6,
+        overflow: 'hidden',
+
+    },
+    remainingAmount: {
+        fontSize: 14,
+        fontWeight: 'bold',
+
+    },
+    separator: {
+        height: 1,
+        backgroundColor: '#e0e0e0',
+        marginTop: 8,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    modalContent: {
+        width: '80%',
+        padding: 20,
+        backgroundColor: '#ffffff',
+        borderRadius: 8,
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 16,
+    },
+    input: {
+        height: 40,
+        borderColor: '#ddd',
+        borderWidth: 1,
+        borderRadius: 4,
+        marginBottom: 12,
+        paddingHorizontal: 8,
+    },
+    createBudgetButonText: {
+        fontSize: 20,
+        color: 'white'
+    },
+    BudgetInputFieldStyling: {
+        borderBottomWidth: 1,
+        borderColor: '#1b1b33',
+        fontSize: 16,
+        paddingLeft: 10,
+        borderRadius: 8,
+        paddingVertical: 5,
+        flex: 1,
+        paddingRight: 10
+    },
+    activityIndicatorViewStyle: {
+        flex: 1,
+        justifyContent: 'center'
+    },
+    BudgetInputFieldView: {
+        flexDirection: 'row',          // Set the input and icon in a row
+        justifyContent: 'space-between',
+        alignItems: 'center',          // Align items vertically centered
+        borderRadius: 5,
+    },
+    iconContainer: {
+        paddingHorizontal: 5,          // Space around the icon
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 })
 

@@ -1,5 +1,5 @@
-import { View, Text } from 'react-native'
-import React, { useContext, useState } from 'react'
+import { View, Text, Animated } from 'react-native'
+import React, { useContext, useState, useRef, useEffect } from 'react'
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { AuthContext } from '@/app/context/AuthContext';
 import { Avatar } from 'react-native-paper';
@@ -23,6 +23,15 @@ const CustomDrawerContent = (props) => {
     const { user, logout } = useContext(AuthContext);
     const { state } = props;
     const [NestedDrawer, setNestedDrawer] = useState(false);
+    const animation = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        Animated.timing(animation, {
+            toValue: NestedDrawer ? 1 : 0,
+            duration: 500,
+            useNativeDriver: true
+        }).start();
+    }, [NestedDrawer])
 
     const AvatarTextReurn = (fullName) => {
         if (!fullName) { return '' }
@@ -31,6 +40,11 @@ const CustomDrawerContent = (props) => {
         const lastInittal = names[1] ? names[1][0] : names[0][names.length - 1];
         return `${firstInitial}${lastInittal}`.toUpperCase();
     }
+
+    const rotateIcon = animation.interpolate({
+        inputRange: [0 , 1],
+        outputRange: ['0deg' , '180deg']
+    })
 
     return (
         <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerScrollViewStyling}>
@@ -109,8 +123,9 @@ const CustomDrawerContent = (props) => {
                     label={() =>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text>Statistics</Text>
-                            {NestedDrawer ? <AntDesign name='up' color={'#4e814a'} /> :
-                                <AntDesign name='down' color={'#4e814a'} />}
+                            <Animated.View style={{transform: [{rotate: rotateIcon}]}}>
+                                <AntDesign name='down' color={'#4e814a'} />
+                            </Animated.View>
                         </View>
                     }
                     onPress={() => {
@@ -339,6 +354,90 @@ const CustomDrawerContent = (props) => {
                     }}
                     style={{
                         backgroundColor: state.index === 23 ? '#c1deed' : 'transparent'
+                    }}
+                />
+                <DrawerItem
+                    icon={() => (
+                        <MaterialIcons name='settings' size={20} color={state.index === 24 ? '#6bafd1' : '#007f49'} />
+                    )}
+                    label={'About'}
+                    onPress={() => {
+                        props.navigation.navigate('About');
+                    }}
+                    style={{
+                        backgroundColor: state.index === 24 ? '#c1deed' : 'transparent'
+                    }}
+                />
+                <DrawerItem
+                    icon={() => (
+                        <MaterialIcons name='settings' size={20} color={state.index === 25 ? '#6bafd1' : '#007f49'} />
+                    )}
+                    label={'Faq'}
+                    onPress={() => {
+                        props.navigation.navigate('Faq');
+                    }}
+                    style={{
+                        backgroundColor: state.index === 25 ? '#c1deed' : 'transparent'
+                    }}
+                />
+                <DrawerItem
+                    icon={() => (
+                        <MaterialIcons name='settings' size={20} color={state.index === 26 ? '#6bafd1' : '#007f49'} />
+                    )}
+                    label={'Follow'}
+                    onPress={() => {
+                        props.navigation.navigate('Follow');
+                    }}
+                    style={{
+                        backgroundColor: state.index === 26 ? '#c1deed' : 'transparent'
+                    }}
+                />
+                <DrawerItem
+                    icon={() => (
+                        <MaterialIcons name='settings' size={20} color={state.index === 27 ? '#6bafd1' : '#007f49'} />
+                    )}
+                    label={'Help'}
+                    onPress={() => {
+                        props.navigation.navigate('Help');
+                    }}
+                    style={{
+                        backgroundColor: state.index === 27 ? '#c1deed' : 'transparent'
+                    }}
+                />
+                <DrawerItem
+                    icon={() => (
+                        <MaterialIcons name='settings' size={20} color={state.index === 28 ? '#6bafd1' : '#007f49'} />
+                    )}
+                    label={'Profile'}
+                    onPress={() => {
+                        props.navigation.navigate('Profile');
+                    }}
+                    style={{
+                        backgroundColor: state.index === 28 ? '#c1deed' : 'transparent'
+                    }}
+                />
+                <DrawerItem
+                    icon={() => (
+                        <MaterialIcons name='settings' size={20} color={state.index === 29 ? '#6bafd1' : '#007f49'} />
+                    )}
+                    label={'SettingsScreen'}
+                    onPress={() => {
+                        props.navigation.navigate('SettingsScreen');
+                    }}
+                    style={{
+                        backgroundColor: state.index === 29 ? '#c1deed' : 'transparent'
+                    }}
+                />
+                <DrawerItem
+                    icon={() => (
+                        <MaterialIcons name='settings' size={20} color={state.index === 30 ? '#6bafd1' : '#007f49'} />
+                    )}
+                    label={'SupportPage'}
+                    onPress={() => {
+                        props.navigation.navigate('SupportPage');
+                    }}
+                    style={{
+                        backgroundColor: state.index === 30 ? '#c1deed' : 'transparent'
                     }}
                 />
                 <DrawerItem

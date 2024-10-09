@@ -6,7 +6,6 @@ import styles from '../Styling/Stlyes'
 import FormInput from './FormInput'
 import FormSubmitButton from './FormSubmitButton'
 import user_api from '../../../app/api/user_api'
-import { useNavigation } from '@react-navigation/native'
 import { AuthContext } from '@/app/context/AuthContext'
 
 const validationSchema = Yup.object({
