@@ -29,6 +29,13 @@ import GroupSharing from '@/src/Screens/Section-3-Screens/GroupSharing';
 import Exports from '@/src/Screens/Section-3-Screens/Exports';
 // Impor for Section 4 Screens
 import Settings from '@/src/Screens/Section-4-Screens/Settings';
+import About from '@/src/Screens/Section-4-Screens/SettingScreens/About';
+import Faq from '@/src/Screens/Section-4-Screens/SettingScreens/Faq';
+import Follow from '@/src/Screens/Section-4-Screens/SettingScreens/Follow';
+import Help from '@/src/Screens/Section-4-Screens/SettingScreens/Help';
+import Profile from '@/src/Screens/Section-4-Screens/SettingScreens/Profile';
+import SettingsScreen from '@/src/Screens/Section-4-Screens/SettingScreens/SettingScreen';
+import SupportPage from '@/src/Screens/Section-4-Screens/SettingScreens/Support';
 
 import { FontAwesome } from '@expo/vector-icons';
 import CustomDrawerContent from './CustomDrawerContent';
@@ -87,6 +94,13 @@ const Drawer = () => {
 
                 {/* Components for Section 4 Screens */}
                 <DrawerComponent.Screen name='Settings' component={Settings} />
+                <DrawerComponent.Screen name='About' component={About} />
+                <DrawerComponent.Screen name='Faq' component={Faq} />
+                <DrawerComponent.Screen name='Follow' component={Follow} />
+                <DrawerComponent.Screen name='Help' component={Help} />
+                <DrawerComponent.Screen name='Profile' component={Profile} />
+                <DrawerComponent.Screen name='SettingsScreen' component={SettingsScreen} />
+                <DrawerComponent.Screen name='SupportPage' component={SupportPage} />
             </DrawerComponent.Navigator>
     )
 }

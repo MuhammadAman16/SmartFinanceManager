@@ -1,6 +1,5 @@
 import { Text, TextInput, View } from 'react-native'
-import React, { useState } from 'react'
-import { Feather } from '@expo/vector-icons'
+import React from 'react'
 import styles from '../Styling/Stlyes'
 
 const FormInput = (props) => {
