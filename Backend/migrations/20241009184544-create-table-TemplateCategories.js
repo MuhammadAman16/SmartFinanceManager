@@ -2,22 +2,22 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("BudgetLabels", {
-      budgetId: {
+    await queryInterface.createTable("TemplateCategories", {
+      templateId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "Budgets",
+          model: "Templates", // Reference to the Templates table
           key: "id",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      labelId: {
+      categoryId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "Labels",
+          model: "Categories", // Reference to the Categories table
           key: "id",
         },
         onUpdate: "CASCADE",
@@ -35,14 +35,15 @@ module.exports = {
       },
     });
 
-    await queryInterface.addConstraint("BudgetLabels", {
-      fields: ["budgetId", "labelId"],
+    // Adding unique constraint for templateId and categoryId combination
+    await queryInterface.addConstraint("TemplateCategories", {
+      fields: ["templateId", "categoryId"],
       type: "unique",
-      name: "budget_label_unique",
+      name: "template_category_unique",
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("BudgetLabels");
+    await queryInterface.dropTable("TemplateCategories");
   },
 };

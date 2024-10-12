@@ -1,5 +1,5 @@
 const { Budget } = require("../models");
-const { BudgetCategory,BudgetLabel,Category,Label } = require("../models");
+const { BudgetCategory, BudgetLabel, Category, Label } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
 
 exports.getAllBudgets = async (req, res, next) => {
@@ -7,14 +7,14 @@ exports.getAllBudgets = async (req, res, next) => {
     const budgets = await Budget.findAll({
       include: [
         {
-          model: Category,as:"Categories"
+          model: Category,
+          as: "Categories",
         },
         {
           model: Label,
-          as:"Labels"
+          as: "Labels",
         },
       ],
-      logging: true
     });
     return res.status(200).json(budgets);
   } catch (error) {
@@ -27,15 +27,15 @@ exports.getBudgetById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const budget = await Budget.findByPk(id,{
+    const budget = await Budget.findByPk(id, {
       include: [
         {
           model: Category,
-          as: 'Categories', // Use the alias you provided in your association
+          as: "Categories", // Use the alias you provided in your association
         },
         {
           model: Label,
-          as:"Labels"
+          as: "Labels",
         },
       ],
     });
@@ -60,7 +60,7 @@ exports.createBudget = async (req, res, next) => {
     startDate,
     endDate,
     categoryIds,
-    labelIds
+    labelIds,
   } = req.body;
 
   // Validation
@@ -74,8 +74,6 @@ exports.createBudget = async (req, res, next) => {
   }
 
   try {
-
-
     const newBudget = await Budget.create({
       name,
       userId,
@@ -87,21 +85,20 @@ exports.createBudget = async (req, res, next) => {
       endDate,
     });
 
-    if(categoryIds?.length){
-      const BudgetCategoriesPayload = categoryIds.map(id => {
-        return {budgetId: newBudget.id,categoryId: id}
-      })
-  
-      await BudgetCategory.bulkCreate(BudgetCategoriesPayload,{logging:true})
-    }
-   
+    if (categoryIds?.length) {
+      const BudgetCategoriesPayload = categoryIds.map((id) => {
+        return { budgetId: newBudget.id, categoryId: id };
+      });
 
-    if(labelIds?.length){
-      const BudgetLabelPayload = labelIds.map(id => {
-        return {budgetId: newBudget.id,labelId: id}
-      })
-  
-      await BudgetLabel.bulkCreate(BudgetLabelPayload,{logging:true})
+      await BudgetCategory.bulkCreate(BudgetCategoriesPayload);
+    }
+
+    if (labelIds?.length) {
+      const BudgetLabelPayload = labelIds.map((id) => {
+        return { budgetId: newBudget.id, labelId: id };
+      });
+
+      await BudgetLabel.bulkCreate(BudgetLabelPayload);
     }
 
     return res.status(201).json(newBudget);
