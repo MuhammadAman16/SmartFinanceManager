@@ -164,7 +164,10 @@ exports.deleteRecord = async (req, res, next) => {
     }
 
     // Remove associations with labels
-    await record.setLabels([]); // Remove all associated labels
+    // If there are labels associated, remove them
+    if (record.labelId) {
+      await record.setLabels([]); // Remove all associated labels
+    }
 
     await record.destroy(); // Delete the record
 
