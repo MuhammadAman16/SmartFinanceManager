@@ -83,6 +83,7 @@ module.exports = {
       name: {
         type: Sequelize.STRING,
         allowNull: true,
+        unique: true,
       },
       accountId: {
         type: Sequelize.INTEGER,
