@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
+import CustomHeader from "@/src/components/SettingsScreens/CustomHeader";
 
 // Example user object
 const user = {
@@ -17,6 +18,7 @@ const user = {
 const SupportPage = () => {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  CustomHeader('Settings');
 
   const handleSubmit = () => {
     if (!subject || !message) {

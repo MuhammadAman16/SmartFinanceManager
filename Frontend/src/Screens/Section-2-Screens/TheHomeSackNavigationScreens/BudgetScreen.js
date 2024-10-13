@@ -18,11 +18,7 @@ const BudgetScreen = () => {
                 headerTintColor: 'white'
             }}>
             <Stack.Screen name='Your Budgets' component={OngoingBudget} />
-            <Stack.Screen name='New Budget' component={BudgetCreation} options={{
-                headerRight: () => (
-                    <Feather name='check' size={30} color={'white'} />
-                )
-            }} />
+            <Stack.Screen name='New Budget' component={BudgetCreation}/>
             <Stack.Screen name='Select Categories' component={CategoriesScreen}
                 options={({ route, navigation }) => ({
                     title: route.params?.title || 'Select Categories',
@@ -32,8 +28,9 @@ const BudgetScreen = () => {
                             size={30}
                             color={'white'}
                             onPress={() => {
-                                const selectedCategories = route.params?.selectedCategories
-                                navigation.navigate('New Budget', { selectedCategories })
+                                const selectedCategories = route.params?.selectedCategories || [];
+                                route.params?.onCategoriesSelected(selectedCategories);
+                                navigation.goBack();
                             }}
                         />
                     )
@@ -41,16 +38,20 @@ const BudgetScreen = () => {
                 }
             />
             <Stack.Screen name='Select Labels' component={LabelScreen}
-                options={{
+                options={({route, navigation}) => ({
                     headerRight: () => (
                         <Feather
-                            name='search'
-                            size={20}
+                            name='check'
+                            size={30}
                             color={'white'}
-                            onPress={() => console.warn('Search Pressed')}
+                            onPress={() => {
+                                const selectedLabels = route.params?.selectedLabels || [];
+                                route.params?.onLabelsSelected(selectedLabels);
+                                navigation.goBack();
+                            }}
                         />
                     )
-                }}
+                })}
             />
         </Stack.Navigator>
     )

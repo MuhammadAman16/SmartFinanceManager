@@ -1,92 +1,43 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { View, Text } from 'react-native';
+import CustomHeader from '@/src/components/SettingsScreens/CustomHeader';
+import styles from '@/src/components/Styling/Stlyes';
+import SocialMedaiHandle from '@/src/components/SettingsScreens/SocialMediaHandles';
 
 const Follow = () => {
-  const openLink = (url) => {
-    Linking.openURL(url).catch(err => console.error("Failed to open URL:", err));
-  };
+  CustomHeader('Settings');
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Follow Us</Text>
-      <View style={styles.linksContainer}>
-        <TouchableOpacity 
-          style={[styles.link, styles.instagram]} 
-          onPress={() => openLink('https://www.instagram.com/yourusername')}
-        >
-          <Icon name="camera-alt" size={36} color="#fff" />
-          <Text style={styles.linkText}>Instagram</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.link, styles.linkedin]} 
-          onPress={() => openLink('https://www.linkedin.com/in/yourusername')}
-        >
-          <Icon name="business-center" size={36} color="#fff" />
-          <Text style={styles.linkText}>LinkedIn</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.link, styles.twitter]} 
-          onPress={() => openLink('https://twitter.com/yourusername')}
-        >
-          <Icon name="twitter" size={36} color="#fff" />
-          <Text style={styles.linkText}>Twitter</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.link, styles.facebook]} 
-          onPress={() => openLink('https://www.facebook.com/yourusername')}
-        >
-          <Icon name="facebook" size={36} color="#fff" />
-          <Text style={styles.linkText}>Facebook</Text>
-        </TouchableOpacity>
+    <View style={styles.FollowScreenContainer}>
+      <Text style={styles.FollowScreenTitle}>Follow Us</Text>
+      <View style={styles.FollowScreenLinksContainer}>
+        <SocialMedaiHandle
+          backgroundColor='#C13584'
+          link={'https://www.instagram.com/yourusername'}
+          iconName={'logo-instagram'}
+          handleName={'Instagram'}
+        />
+        <SocialMedaiHandle
+          backgroundColor='#0077B5'
+          link={'https://www.linkedin.com/in/yourusername'}
+          iconName={'logo-linkedin'}
+          handleName={'LinkedIn'}
+        />
+        <SocialMedaiHandle
+          backgroundColor='#1DA1F2'
+          link={'https://twitter.com/yourusername'}
+          iconName={'logo-twitter'}
+          handleName={'Twitter'}
+        />
+        <SocialMedaiHandle
+          backgroundColor='#4267B2'
+          link={'https://www.facebook.com/yourusername'}
+          iconName={'logo-facebook'}
+          handleName={'Facebook'}
+        />
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 16,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
-  },
-  linksContainer: {
-    width: '100%',
-    paddingHorizontal: 16,
-  },
-  link: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 10,
-    elevation: 4,
-  },
-  linkText: {
-    fontSize: 20,
-    marginLeft: 12,
-    color: '#fff',
-    fontWeight: '500',
-  },
-  instagram: {
-    backgroundColor: '#C13584',
-  },
-  linkedin: {
-    backgroundColor: '#0077B5',
-  },
-  twitter: {
-    backgroundColor: '#1DA1F2',
-  },
-  facebook: {
-    backgroundColor: '#4267B2',
-  },
-});
 
 export default Follow;

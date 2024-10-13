@@ -15,24 +15,24 @@ const PeriodCurrencyModal = ({
         <Modal
             transparent={true}
             visible={isModalVisible}
-            animationType="fade"
+            animationType="slide"
         >
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
                     <Text style={styles.textModal}>Select {modalName === 'Period' ? 'Period' : 'Currency'}</Text>
                     <RadioButton.Group
-                        onValueChange={value => {
-                            setInputField(value);
-                            setModalVisible({value: false, modalName: ''})
+                        onValueChange={(selectedValue) => {
+                            setInputField(selectedValue); // Update the Formik field directly
+                            setModalVisible({ value: false, modalName: '' });
                         }}
                         value={value}
                     >
-                        { modalName === 'Period' ?
+                        {modalName === 'Period' ?
                             (PeriodDropDownValues.map((item, index) =>
-                            <RadioButton.Item key={index} label={item.label} value={item.value} />)
-                            ) :
-                            (CurrencyDropDownValues.map((item, index) => 
-                                <RadioButton.Item key={index} label={item.label} value={item.value}/>
+                                <RadioButton.Item key={index} label={item.label} value={item.value} />)
+                            ) : 
+                            (CurrencyDropDownValues.map((item, index) =>
+                                <RadioButton.Item key={index} label={item.label} value={item.value} />
                             ))
                         }
                     </RadioButton.Group>

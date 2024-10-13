@@ -6,7 +6,7 @@ const NotificationComponent = () => {
     const [isBudgetOverspent, setIsBudgetOverspent] = useState(true);
     const [isRiskOverspending, setIsRiskOverspending] = useState(true);
     return (
-        <View style={{ marginVertical: 20 }}>
+        <View style={{ marginVertical: 5 }}>
             <Text style={{marginVertical: 20, fontWeight: 'bold', fontSize: 15}}>NOIFICATIONS</Text>
             <View style={{ flexDirection: 'row', justifyContent:'space-between', alignItems: 'center' }}>
                 <View>

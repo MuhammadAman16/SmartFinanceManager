@@ -5,7 +5,7 @@ export const PeriodDropDownValues = [
     { label: 'Week', value: 'Week' },
     { label: 'Month', value: 'Month' },
     { label: 'Year', value: 'Year' },
-    { label: 'One time', value: 'One time' }
+    { label: 'One-time', value: 'One-time' }
 ];
 
 export const CurrencyDropDownValues =[

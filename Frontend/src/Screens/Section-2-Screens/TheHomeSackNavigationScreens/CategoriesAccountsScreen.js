@@ -16,14 +16,14 @@ const CategoriesScreen = ({ navigation, route }) => {
   const [loading, setLoading] = useState(true);
   const [allChecked, setAllChecked] = useState(true); // State for "All" checkbox
   const [accounts, setAccounts] = useState([]);
-  const { fieldName } = route.params;
+  const { selectedCategories, fieldName } = route.params;
 
   const loadCategories = async () => {
     try {
       let res = await user_api.get('/api/category');
       const updatedCategoriesList = res.data.data.map((category) => ({
         ...category,
-        checked: false
+        checked: selectedCategories.includes(category.id)
       }));
       setCategories(updatedCategoriesList);
     } catch (error) {
@@ -80,7 +80,10 @@ const CategoriesScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     const checkedCategories = categories.filter(category => category.checked);
-    const selectedCategoryIds = checkedCategories.map(category => category.id);
+    const selectedCategoryIds = checkedCategories.map((category) => ({
+      id: category.id,
+      name: category.name
+    }));
 
     // Update the navigation params with selected categories
     navigation.setParams({ selectedCategories: selectedCategoryIds });
@@ -95,13 +98,29 @@ const CategoriesScreen = ({ navigation, route }) => {
   }
 
   return (
-    <ScrollView style={{ flex: 1 }}>
-      <View style={{ flexDirection: 'row', marginVertical: 10, marginHorizontal: 5, alignItems: 'center', justifyContent: 'space-between' }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <View style={{ width: 40, height: 40, borderRadius: 50, backgroundColor: '#8fbc8f', justifyContent: 'center', alignItems: 'center' }}>
-            <FontAwesome5 name={'dice-four'} size={20} color={'white'} />
+    <ScrollView
+      style={styles.CategoriesScreenScrollViewStyling}
+    >
+      <View
+        style={styles.CategoriesScreenViewStyling}
+      >
+        <View
+          style={styles.CategoriesScreenAllCategoryViewStyling}
+        >
+          <View
+            style={styles.CategoriesScreenAllCategoryTextFeatherViewStyling}
+          >
+            <FontAwesome5
+              name={'dice-four'}
+              size={20}
+              color={'white'}
+            />
           </View>
-          <Text style={{ marginLeft: 20 }}>All</Text>
+          <Text
+            style={styles.CategoriesScreenAllCategoryTextStyling}
+          >
+            All
+          </Text>
         </View>
         <Checkbox.Item
           status={allChecked ? "checked" : "unchecked"}
@@ -109,17 +128,17 @@ const CategoriesScreen = ({ navigation, route }) => {
         />
       </View>
       <View>
-        <Text style={{ backgroundColor: '#dcdcdc', paddingHorizontal: 20 }}>Select {fieldName === 'Category' ? 'Categories' : 'Accounts'}</Text>
+        <Text style={styles.CategoriesScreenSelectCategoryTextStyling}>Select {fieldName === 'Category' ? 'Categories' : 'Accounts'}</Text>
         {fieldName === 'Category' ? (categories.map((item, index) => (
-          <View key={index} style={{ flexDirection: 'row', marginVertical: 10, marginHorizontal: 5, alignItems: 'center', justifyContent: 'space-between' }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <View style={{ width: 40, height: 40, borderRadius: 50, backgroundColor: 'blue', justifyContent: 'center', alignItems: 'center' }}>
+          <View key={index} style={styles.CategoriesScreenViewStyling}>
+            <View style={styles.CategoriesScreenAllCategoryViewStyling}>
+              <View style={styles.CategoriesScreenAllCategoryTextFeatherViewStyling}>
                 <Image
-                  style={{ width: 35, height: 35, borderRadius: 50 }}
+                  style={styles.CategoriesScreenItemIamageStyling}
                   source={{ uri: item.icon }}
                 />
               </View>
-              <Text style={{ marginLeft: 20 }}>{item.name}</Text>
+              <Text style={styles.CategoriesScreenAllCategoryTextStyling}>{item.name}</Text>
             </View>
             <Checkbox.Item
               status={item.checked ? "checked" : "unchecked"}
@@ -128,12 +147,12 @@ const CategoriesScreen = ({ navigation, route }) => {
           </View>
         ))) :
           (AccountsArray.map((item, index) => (
-            <View key={index} style={{ flexDirection: 'row', marginVertical: 10, marginHorizontal: 5, alignItems: 'center', justifyContent: 'space-between' }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View style={{ width: 40, height: 40, borderRadius: 50, backgroundColor: 'blue', justifyContent: 'center', alignItems: 'center' }}>
+            <View key={index} style={styles.CategoriesScreenViewStyling}>
+              <View style={styles.CategoriesScreenAllCategoryViewStyling}>
+                <View style={styles.CategoriesScreenAllCategoryTextFeatherViewStyling}>
                   <MaterialCommunityIcons name={'cash'} size={30} color={'white'} />
                 </View>
-                <Text style={{ marginLeft: 20 }}>{item.value}</Text>
+                <Text style={styles.CategoriesScreenAllCategoryTextStyling}>{item.value}</Text>
               </View>
               <Checkbox.Item
                 status={item.checked ? "checked" : "unchecked"}

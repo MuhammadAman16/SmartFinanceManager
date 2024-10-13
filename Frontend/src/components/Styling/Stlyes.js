@@ -1,4 +1,4 @@
-import { StyleSheet, StatusBar } from "react-native-web";
+import { StyleSheet, StatusBar } from "react-native";
 
 const styles = StyleSheet.create({
     container: {
@@ -382,6 +382,363 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5,          // Space around the icon
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    // LABEL SCREEN STYLING
+    LabelScreenCancelButton: {
+        borderWidth: 2,
+        borderRadius: 10,
+        marginTop: 5,
+        alignItems: 'center'
+    },
+    LabelScreenCancelButtonText: {
+        padding: 10,
+        fontSize: 18
+    },
+    LabelScreenScrollViewStyling: {
+        flex: 1,
+        backgroundColor: '#dcdcdc'
+    },
+    LabelScreenMapViewStyling: {
+        marginVertical: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        height: 40,
+        backgroundColor: 'white'
+    },
+    LabelScreenColorViewSyling: {
+        marginHorizontal: 20,
+        width: 30,
+        height: 30,
+        borderRadius: 10
+    },
+    LabelScreenLabelTextStyling: {
+        fontSize: 16
+    },
+    LabelScreenAddLabelButtonViewStyling: {
+        backgroundColor: '#dcdcdc',
+        alignItems: 'flex-end',
+        justifyContent: 'flex-end'
+    },
+    LabelScreenAddLabelButtonStyling: {
+        margin: 20,
+        backgroundColor: 'rgba(34,68,35,255)',
+        borderRadius: 50,
+        boxShadow: 'black',
+        elevation: 5
+    },
+    LabelScreenAddLablePlusIconStyling: {
+        margin: 15
+    },
+    LabelScreenTTextColorView: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    // CATEGORIES SCREEN STYLING
+    CategoriesScreenScrollViewStyling: {
+        flex: 1
+    },
+    CategoriesScreenViewStyling: {
+        flexDirection: 'row',
+        marginVertical: 10,
+        marginHorizontal: 5,
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    CategoriesScreenAllCategoryViewStyling: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    CategoriesScreenAllCategoryTextFeatherViewStyling: {
+        width: 40,
+        height: 40,
+        borderRadius: 50,
+        backgroundColor: '#8fbc8f',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 10
+    },
+    CategoriesScreenAllCategoryTextStyling: {
+        marginLeft: 20
+    },
+    CategoriesScreenSelectCategoryTextStyling: {
+        backgroundColor: '#dcdcdc',
+        paddingHorizontal: 30
+    },
+    CategoriesScreenItemIamageStyling: {
+        width: 35,
+        height: 35,
+        borderRadius: 50
+    },
+    // Profile Screen Styling
+    ProfileScreencontainer: {
+        flexGrow: 1,
+        backgroundColor: '#f0f4f7',
+        padding: 16,
+    },
+    profileContainer: {
+        backgroundColor: '#ffffff',
+        borderRadius: 12,
+        padding: 16,
+        elevation: 4,
+        marginBottom: 24,
+    },
+    ProfileScreenTitle: {
+        fontSize: 28,
+        fontWeight: '600',
+        color: '#333',
+        marginBottom: 16,
+        textAlign: 'center',
+    },
+    ProfileScreenInfoContainer: {
+        marginBottom: 24,
+    },
+    ProfileScreenlabel: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#555',
+        marginBottom: 8,
+    },
+    ProfileScreenInfo: {
+        fontSize: 18,
+        color: '#333',
+        marginBottom: 8,
+    },
+    ProfileScreenEmailNote: {
+        fontSize: 14,
+        color: '#888',
+    },
+    ProfileScreenResetPasswordContainer: {
+        backgroundColor: '#ffffff',
+        borderRadius: 12,
+        padding: 16,
+        elevation: 4,
+    },
+    ProfileScreenSubTitle: {
+        fontSize: 24,
+        fontWeight: '600',
+        color: '#333',
+        marginBottom: 16,
+        textAlign: 'center',
+    },
+    ProfileScreenInput: {
+        height: 48,
+        borderColor: '#ddd',
+        borderWidth: 1,
+        borderRadius: 8,
+        paddingHorizontal: 16,
+        fontSize: 16,
+        marginBottom: 12,
+        backgroundColor: '#fff',
+    },
+    ProfileScreenButton: {
+        backgroundColor: '#007bff',
+        borderRadius: 8,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        alignItems: 'center',
+        marginBottom: 12,
+        alignSelf: 'center',
+    },
+    ProfileScreenButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    ProfileScreenErrorText: {
+        color: '#ff4d4d',
+        marginBottom: 12,
+        textAlign: 'center',
+    },
+    // FAQ Screen Styling
+    FAQScreenContainer: {
+        flexGrow: 1,
+        backgroundColor: "#f5f5f5",
+        padding: 16,
+    },
+    FAQScreenTitle: {
+        fontSize: 24,
+        fontWeight: "bold",
+        marginBottom: 16,
+        color: "#333",
+    },
+    FAQScreenItem: {
+        marginBottom: 12,
+        backgroundColor: "#fff",
+        borderRadius: 8,
+        elevation: 2,
+        overflow: "hidden",
+    },
+    FAQScreenQuestionContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 16,
+        backgroundColor: "#e0e0e0",
+    },
+    FAQScreenQuestion: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#333",
+        flex: 1,
+    },
+    FAQScreenAnswerContainer: {
+        paddingHorizontal: 16,
+        paddingBottom: 16,
+        overflow: "hidden",
+    },
+    FAQScreenAnswer: {
+        fontSize: 14,
+        color: "#555",
+    },
+    // Follow ScreenStyling
+    FollowScreenContainer: {
+        flex: 1,
+        backgroundColor: '#f5f5f5',
+        padding: 16,
+        alignItems: 'center',
+    },
+    FollowScreenTitle: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        color: '#333',
+    },
+    FollowScreenLinksContainer: {
+        width: '100%',
+        paddingHorizontal: 16,
+    },
+    FollowScreenLink: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 16,
+        borderRadius: 8,
+        marginBottom: 10,
+        elevation: 4,
+    },
+    FollowScreenLinkText: {
+        fontSize: 20,
+        marginLeft: 12,
+        color: '#fff',
+        fontWeight: '500',
+    },
+    // About Screen Styling
+    AboutScreenContainer: {
+        flexGrow: 1,
+        backgroundColor: '#f0f4f7',
+        padding: 16,
+    },
+    AboutScreenHeader: {
+        alignItems: 'center',
+        marginBottom: 24,
+    },
+    AboutScreenLogo: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        marginBottom: 16,
+    },
+    AboutScreenTitle: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    AboutScreenDescription: {
+        fontSize: 18,
+        color: '#555',
+        marginBottom: 24,
+        textAlign: 'center',
+    },
+    AboutScreenFeatureSection: {
+        backgroundColor: '#ffffff',
+        borderRadius: 12,
+        padding: 16,
+        elevation: 4,
+        marginBottom: 24,
+    },
+    AboutScreenFeatureTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 12,
+    },
+    AboutScreenFeatureItem: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginBottom: 12,
+    },
+    AboutScreenFeatureIcon: {
+        fontSize: 28,
+        marginRight: 12,
+    },
+    AboutScreenFeatureText: {
+        fontSize: 16,
+        color: '#444',
+        flex: 1,
+    },
+    AboutScreenFooter: {
+        fontSize: 16,
+        color: '#666',
+        textAlign: 'center',
+        marginBottom: 16,
+    },
+    // Help Screen Styling
+    HelpScreenContainer: {
+        flexGrow: 1,
+        backgroundColor: '#f5f5f5',
+        padding: 16,
+    },
+    HelpScreenSearchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    HelpScreenSearchIcon: {
+        marginRight: 8,
+    },
+    HelpScreenSearchInput: {
+        flex: 1,
+        height: 40,
+        borderColor: '#ddd',
+        borderWidth: 1,
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        backgroundColor: '#fff',
+        fontSize: 16,
+    },
+    HelpScreenTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        color: '#333',
+    },
+    HelpScreenSection: {
+        marginBottom: 20,
+        padding: 16,
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        elevation: 2,
+    },
+    HelpScreenSectionTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 8,
+    },
+    HelpScreenSectionContent: {
+        fontSize: 14,
+        color: '#555',
+    },
+    HelpScreenNoResult: {
+        fontSize: 16,
+        color: '#999',
+        textAlign: 'center',
+    },
+    ColorComponentView: {
+        width: 250,
+        height: 30
+    },
+    ColorView: {
+        marginVertical: 5
     }
 })
 
