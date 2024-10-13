@@ -3,12 +3,24 @@ import React from 'react';
 import styles from '../Styling/Stlyes';
 import { AntDesign } from '@expo/vector-icons';
 
-const BudgetInputFields = ({ label, placeHolder, secureTextEntry, autoCapitalize, value, onChangeText, onBlur, error, keyboardype, editable, iconName, color }) => {
+const BudgetInputFields = ({
+    label,
+    placeHolder,
+    secureTextEntry,
+    autoCapitalize,
+    value,
+    onChangeText,
+    onBlur,
+    error,
+    keyboardype,
+    editable,
+    iconName,
+    color 
+}) => {
     return (
         <>
             <View style={styles.errorTextView}>
                 <Text style={styles.viewInputText}>{label}</Text>
-                {error ? <Text style={styles.errorText}>{error}</Text> : null}
             </View>
             <View style={styles.BudgetInputFieldView}>
                 <TextInput
@@ -29,6 +41,7 @@ const BudgetInputFields = ({ label, placeHolder, secureTextEntry, autoCapitalize
                     </View>
                 )}
             </View>
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
         </>
     );
 };

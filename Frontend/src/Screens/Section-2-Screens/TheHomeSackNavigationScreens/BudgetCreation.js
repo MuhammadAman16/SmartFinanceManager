@@ -1,59 +1,97 @@
-import { View, KeyboardAvoidingView, Platform, ActivityIndicator, ScrollView, Keyboard, TouchableOpacity, Text } from 'react-native';
+import {
+    View,
+    KeyboardAvoidingView,
+    Platform,
+    ActivityIndicator,
+    ScrollView,
+    Keyboard,
+    TouchableOpacity,
+    Alert,
+    TextInput,
+    Text
+} from 'react-native';
 import { Formik } from 'formik';
-import React, { useRef, useState, useEffect } from 'react';
+import * as Yup from 'yup'
+import React, { useRef, useState, useEffect, useContext } from 'react';
 import BudgetInputFields from '@/src/components/OnGoingBudget/BudgetInputFields';
 import DatePickerModal from '@/src/components/OnGoingBudget/DatePickerModal';
 import user_api from '@/app/api/user_api';
-import DropDownPicker from 'react-native-dropdown-picker';
 import styles from '@/src/components/Styling/Stlyes';
 import PeriodCurrencyModal from '@/src/components/OnGoingBudget/PeriodCurrencyModal';
 import NotificationComponent from '@/src/components/OnGoingBudget/NotificationComponent';
+import FormSubmitButton from '@/src/components/Login&Signup/FormSubmitButton';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { AuthContext } from '@/app/context/AuthContext';
+
+const validationSchema = Yup.object({
+    name: Yup.string().trim().min(3, 'Name must be 3 or more').required('Name field is required'),
+    period: Yup.string().test('notNone', 'Please select a Period value', function (val) {
+        return val !== 'None'
+    }),
+    amount: Yup.number()
+        .required('Amount field is required')
+        .positive('Amount should be positive')
+        .integer('Amount should be an integer')
+        .moreThan(0, 'Amount cannot be zero'),
+    endDate: Yup.string().when('period', {
+        is: (value) => value === 'One-time',
+        then: (endDate) => endDate.required('End Date is required for "One time" period')
+    })
+});
+
 
 const BudgetCreation = (props) => {
+    const formatDate = (rawDate) => {
+        const dateToBeFormat = new Date(rawDate);
+
+        return `${dateToBeFormat.getMonth() + 1}/${dateToBeFormat.getDate()}/${dateToBeFormat.getFullYear()} ${dateToBeFormat.getHours()}:${dateToBeFormat.getMinutes()}:${dateToBeFormat.getSeconds()}`
+    };
+
+    const todaysDate = new Date();
+    const { user } = useContext(AuthContext);
     const [showModal, setShowModal] = useState(false);
-    const [currentFieldVaslue, setCurrentFieldValue] = useState('');
     const [categories, setCategories] = useState([]);
+    const [labels, setLabels] = useState();
     const [loading, setLoading] = useState(true);
-    const [isOpen, seIsOpen] = useState(false);
-    const [currentValue, setCurrentValue] = useState();
-    const { selectedCategories } = props.route.params || [];
+    const { selectedCategories, selectedLabels } = props.route.params || [];
     const [periodValue, setPeriodValue] = useState('None');
     const [currencyValue, setCurrencyValue] = useState('PKR');
     const [isModalVisible, setModalVisible] = useState({ value: false, modalName: '' });
-    const endDateInputRef = useRef(null);
-
 
     const budgetInfo = {
         name: '',
-        period: 'None',
         amount: '0',
-        currency: 'PKR',
         account: 'All',
-        categoryIds: [],
-        labelIds: ['Add a Label+'],
-        startDate: '',
-        endDate: '',
+        startDate: formatDate(todaysDate),
+        endDate: ''
     };
 
     const getCategoriesItems = (categ) => {
-        // console.warn('Good')
         if (categ !== undefined) {
             if (categ.length === 9) {
                 return 'All';
             }
-            return `${categ.length} items`;
+            return categ.map(cat => cat.name).join(', ')
         }
     };
 
-    const categoriesScreenIds = () => {
-        setCategories(selectedCategories);
+    const getLabelItesm = (label) => {
+        if (label !== undefined) {
+            if (label.length !== 0) {
+                return label.map(lab => lab.name).join(', ')
+            }
+            return "Add a Label+"
+        }
     }
 
     const fetchCategories = async () => {
         try {
             let res = await user_api.get('/api/category');
             const dataArray = res.data.data;
-            const categ = dataArray.map(item => item.id);
+            const categ = dataArray.map(item => ({
+                id: item.id,
+                name: item.name
+            }));
             setCategories(categ);
         } catch (error) {
             if (error.response) {
@@ -75,8 +113,14 @@ const BudgetCreation = (props) => {
     }, []);
 
     useEffect(() => {
-        categoriesScreenIds();
+        if (selectedCategories) {
+            setCategories(selectedCategories);
+        }
     }, [selectedCategories])
+
+    useEffect(() => {
+        setLabels(selectedLabels);
+    }, [selectedLabels])
 
     const scrollViewRef = useRef(null);
 
@@ -86,19 +130,75 @@ const BudgetCreation = (props) => {
         });
     };
 
-
-    const showDatePicker = () => {
-        setShowModal(true);
-    };
-
-    const hideDatePicker = () => {
+    const handleConfirm = (date, setFieldValue) => {
+        const formattedDate = formatDate(date);
+        setFieldValue('endDate', formattedDate); // Update formik state
         setShowModal(false);
     };
 
-    const handleConfirm = (date, setFieldValue) => {
-        setFieldValue('startDate', date);
-        hideDatePicker();
+
+    const saveBudget = async (values, formikActions) => {
+        // if (values.endDate === '') {
+        //     console.log('Good');
+        // } else {
+        //     console.log('Bad');
+        // }
+        try {
+            const categ = values.categoryIds.map(cat => cat.id);
+            const labels = values.labelIds.map(lab => lab.id);
+            let endDate = values.endDate;
+
+            switch (values.period) {
+                case 'Week':
+                    const weekDate = new Date();
+                    weekDate.setDate(weekDate.getDate() + 7);
+                    endDate = formatDate(weekDate);
+                    break;
+
+                case 'Month':
+                    const monthDate = new Date();
+                    monthDate.setMonth(monthDate.getMonth() + 1);
+                    endDate = formatDate(monthDate);
+                    break;
+
+                case 'Year':
+                    const yearDate = new Date();
+                    yearDate.setFullYear(yearDate.getFullYear() + 1);
+                    endDate = formatDate(yearDate);
+                    break;
+
+                default:
+                    endDate = values.endDate;
+                    break;
+            }
+
+            await user_api.post('/api/budget', {
+                name: values.name,
+                period: values.period,
+                currency: values.currency,
+                amount: values.amount,
+                account: values.account,
+                labelIds: labels,
+                categoryIds: categ,
+                startDate: values.startDate,
+                endDate: endDate,
+                userId: user.id
+            });
+
+            formikActions.resetForm();
+            Alert.alert("Budget Created Successfully");
+            props.navigation.navigate('Your Budgets');
+        } catch (error) {
+            if (error.response) {
+                Alert.alert(`Error: ${error.response.data.message}`)
+            } else if (error.request) {
+                console.log(`No response from server`);
+            } else {
+                console.log("Error: ", error.error);
+            }
+        }
     };
+
 
     return (
         <KeyboardAvoidingView
@@ -118,24 +218,21 @@ const BudgetCreation = (props) => {
                         keyboardShouldPersistTaps="handled"
                     >
                         <View style={{ padding: 20 }}>
-                            {showModal &&
-                                <DatePickerModal datePickerVisible={true} handleConfirm={handleConfirm} hideDatePicker={hideDatePicker} />}
-                            {isModalVisible.value &&
-                                <PeriodCurrencyModal
-                                    isModalVisible={isModalVisible.value}
-                                    setInputField={isModalVisible.modalName === 'Period' ? setPeriodValue : setCurrencyValue}
-                                    setModalVisible={setModalVisible}
-                                    value={isModalVisible.modalName === 'Period' ? periodValue : currencyValue}
-                                    modalName={isModalVisible.modalName}
-                                />
-                            }
                             <Formik
-                                initialValues={{ ...budgetInfo, categoryIds: categories }}
-                                enableReinitialize={true}
+                                initialValues={{
+                                    ...budgetInfo,
+                                    categoryIds: categories,
+                                    period: periodValue,
+                                    currency: currencyValue,
+                                    labelIds: labels || []
+                                }}
+                                validationSchema={validationSchema}
+                                onSubmit={saveBudget}
                             >
-                                {({ handleChange, handleBlur, values, setFieldValue }) => {
-                                    const { name, period, amount, account, currency, categoryIds, labelIds, startDate, endDate } = values;
+                                {({ handleChange, handleBlur, values, errors, touched, handleSubmit, setFieldValue }) => {
+                                    const { name, period, amount, account, categoryIds, currency, labelIds, startDate, endDate } = values;
                                     const displayCategories = getCategoriesItems(categoryIds);
+                                    const displayLabels = getLabelItesm(labelIds);
                                     return (
                                         <>
                                             <BudgetInputFields
@@ -143,6 +240,7 @@ const BudgetCreation = (props) => {
                                                 value={name}
                                                 onChangeText={handleChange('name')}
                                                 onBlur={handleBlur('name')}
+                                                error={touched.name && errors.name}
                                             />
                                             <TouchableOpacity
                                                 onPress={() => {
@@ -150,18 +248,68 @@ const BudgetCreation = (props) => {
                                                 }}>
                                                 <BudgetInputFields
                                                     label={'Period'}
-                                                    value={periodValue}
+                                                    value={period}
                                                     iconName={'down'}
                                                     editable={false}
                                                     color={'black'}
+                                                    error={touched.period && errors.period}
                                                 />
                                             </TouchableOpacity>
+                                            {period === 'One-time' && (
+                                                <View style={{
+                                                    flexDirection: 'row',
+                                                    alignItems: 'flex-start',
+                                                    justifyContent: 'space-between',
+                                                    marginTop: 20
+                                                }}>
+                                                    <View style={{ flex: 1 }}>
+                                                        <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Start Date</Text>
+                                                        <TextInput
+                                                            style={{
+                                                                borderBottomWidth: 1,
+                                                                paddingVertical: 8,
+                                                                width: '100%',
+                                                                borderRadius: 5,
+                                                                paddingHorizontal: 10
+                                                            }}
+                                                            editable={false}
+                                                            value={startDate}
+                                                        />
+                                                    </View>
+                                                    <TouchableOpacity
+                                                        onPress={() => {
+                                                            setShowModal(true); // This will trigger the DatePickerModal
+                                                        }}
+                                                        activeOpacity={0.7} // Optional: gives visual feedback when pressed
+                                                    >
+                                                        <View style={{ flex: 1, marginHorizontal: 10 }}>
+                                                            <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>End Date</Text>
+                                                            <TextInput
+                                                                style={{
+                                                                    borderBottomWidth: 1,
+                                                                    paddingVertical: 8,
+                                                                    width: '100%',
+                                                                    borderRadius: 5,
+                                                                    paddingHorizontal: 10,
+                                                                }}
+                                                                placeholder="Select End Date"
+                                                                editable={false} // Make sure TextInput is non-editable
+                                                                value={endDate}
+                                                            />
+                                                        </View>
+                                                    </TouchableOpacity>
+
+                                                </View>
+                                            )}
+
+
                                             <BudgetInputFields
                                                 label={'Amount'}
-                                                value={amount.toString()} // Ensure amount is a string
+                                                value={amount}
                                                 onChangeText={handleChange('amount')}
                                                 onBlur={handleBlur('amount')}
                                                 keyboardType="numeric"
+                                                error={touched.amount && errors.amount}
                                             />
                                             <TouchableOpacity
                                                 onPress={() => {
@@ -184,7 +332,7 @@ const BudgetCreation = (props) => {
                                             >
                                                 <BudgetInputFields
                                                     label={'Currency'}
-                                                    value={currencyValue}
+                                                    value={currency}
                                                     iconName={'down'}
                                                     editable={false}
                                                     color={'black'}
@@ -193,8 +341,14 @@ const BudgetCreation = (props) => {
                                             <TouchableOpacity
                                                 onPress={() => {
                                                     Keyboard.dismiss();
-                                                    props.navigation.navigate('Select Categories', { fieldName: 'Category' })
-                                                }}  // Navigate to the Select Categories screen
+                                                    props.navigation.navigate('Select Categories', {
+                                                        fieldName: 'Category',
+                                                        selectedCategories: values.categoryIds,
+                                                        onCategoriesSelected: (selectedCategories) => {
+                                                            setFieldValue('categoryIds', selectedCategories)
+                                                        }
+                                                    })
+                                                }}
                                             >
                                                 <BudgetInputFields
                                                     label={'Category'}
@@ -207,31 +361,47 @@ const BudgetCreation = (props) => {
                                             <TouchableOpacity
                                                 onPress={() => {
                                                     Keyboard.dismiss();
-                                                    props.navigation.navigate('Select Labels')
+                                                    props.navigation.navigate('Select Labels', {
+                                                        selectedLabels: values.labelIds,
+                                                        onLabelsSelected: (selectedLabels) => {
+                                                            setFieldValue('labelIds', selectedLabels)
+                                                        }
+                                                    })
                                                 }}
                                             >
                                                 <BudgetInputFields
                                                     label={'Labels'}
-                                                    value={labelIds.join(', ')} // Join array for display
+                                                    value={displayLabels} // Join array for display
                                                     editable={false}
-                                                    color={'blue'}
+                                                    color={labelIds.length === 0 ? 'blue' : 'black'}
                                                 />
                                             </TouchableOpacity>
-                                            <BudgetInputFields
-                                                label={'Start Date'}
-                                                value={startDate}
-                                                onChangeText={handleChange('startDate')}
-                                                onBlur={handleBlur('startDate')}
-                                                onFocus={() => handleFocus(startDate)}
+                                            <FormSubmitButton
+                                                title={'Save'}
+                                                onPressFunction={handleSubmit}
                                             />
-                                            <BudgetInputFields
-                                                label={'End Date'}
-                                                value={endDate}
-                                                onChangeText={handleChange('endDate')}
-                                                onBlur={handleBlur('endDate')}
-                                                onFocus={() => handleFocus(endDate)}
-                                                inputRef={endDateInputRef}
-                                            />
+                                            {isModalVisible.value &&
+                                                <PeriodCurrencyModal
+                                                    isModalVisible={isModalVisible.value}
+                                                    setInputField={(value) => {
+                                                        setFieldValue(isModalVisible.modalName.toLowerCase(), value);
+                                                        if (isModalVisible.modalName === 'Period')
+                                                        {
+                                                            setPeriodValue(value);
+                                                        } else { setCurrencyValue(value); }
+                                                    }}
+                                                    setModalVisible={setModalVisible}
+                                                    value={isModalVisible.modalName === 'Period' ? periodValue : currencyValue}
+                                                    modalName={isModalVisible.modalName}
+                                                />
+                                            }
+                                            {showModal &&
+                                                <DateTimePickerModal
+                                                    isVisible={true}
+                                                    mode="datetime"
+                                                    onConfirm={(date) => handleConfirm(date, setFieldValue)}
+                                                    onCancel={() => setShowModal(false)}
+                                                />}
                                         </>
                                     );
                                 }}
@@ -241,7 +411,7 @@ const BudgetCreation = (props) => {
                     </ScrollView>
                 )
             }
-        </KeyboardAvoidingView>
+        </KeyboardAvoidingView >
     );
 };
 

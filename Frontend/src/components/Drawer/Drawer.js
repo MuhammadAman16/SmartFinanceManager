@@ -29,13 +29,7 @@ import GroupSharing from '@/src/Screens/Section-3-Screens/GroupSharing';
 import Exports from '@/src/Screens/Section-3-Screens/Exports';
 // Impor for Section 4 Screens
 import Settings from '@/src/Screens/Section-4-Screens/Settings';
-import About from '@/src/Screens/Section-4-Screens/SettingScreens/About';
-import Faq from '@/src/Screens/Section-4-Screens/SettingScreens/Faq';
-import Follow from '@/src/Screens/Section-4-Screens/SettingScreens/Follow';
-import Help from '@/src/Screens/Section-4-Screens/SettingScreens/Help';
-import Profile from '@/src/Screens/Section-4-Screens/SettingScreens/Profile';
-import SettingsScreen from '@/src/Screens/Section-4-Screens/SettingScreens/SettingScreen';
-import SupportPage from '@/src/Screens/Section-4-Screens/SettingScreens/Support';
+import SettingScreenStack from '@/src/Screens/Section-4-Screens/SettingScreenStack';
 
 import { FontAwesome } from '@expo/vector-icons';
 import CustomDrawerContent from './CustomDrawerContent';
@@ -45,63 +39,60 @@ const DrawerComponent = createDrawerNavigator();
 
 const Drawer = () => {
     return (
-            <DrawerComponent.Navigator
-                drawerContent={(props) => <CustomDrawerContent {...props} />}
-                initialRouteName='Home Screen'
-                screenOptions={{
-                    headerStatusBarHeight: 35,
-                    headerStyle: {
-                        backgroundColor: 'rgba(56,142,60,255)'
-                    },
-                    drawerActiveTintColor: 'white',
-                    drawerActiveBackgroundColor: 'black',
-                    drawerInactiveTintColor: 'black',
-                    drawerInactiveBackgroundColor: 'transparent',
-                    headerTintColor: 'white',
-                    headerRight: () => <FontAwesome style={{ marginHorizontal: 10 }} name='bell' size={20} color={'white'} onPress={() => console.warn('Pressed')} />
-                }}
-            >
-                {/* Components for Secion 1 Screens */}
-                <DrawerComponent.Screen name='Bank Sync' component={BankSync} />
-                <DrawerComponent.Screen name='Imports' component={Imports} />
+        <DrawerComponent.Navigator
+            drawerContent={(props) => <CustomDrawerContent {...props} />}
+            initialRouteName='Home Screen'
+            screenOptions={{
+                headerStatusBarHeight: 35,
+                headerStyle: {
+                    backgroundColor: 'rgba(56,142,60,255)'
+                },
+                drawerActiveTintColor: 'white',
+                drawerActiveBackgroundColor: 'black',
+                drawerInactiveTintColor: 'black',
+                drawerInactiveBackgroundColor: 'transparent',
+                headerTintColor: 'white',
+                headerRight: () => <FontAwesome style={{ marginHorizontal: 10 }} name='bell' size={20} color={'white'} onPress={() => console.warn('Pressed')} />
+            }}
+        >
+            {/* Components for Secion 1 Screens */}
+            <DrawerComponent.Screen name='Bank Sync' component={BankSync} />
+            <DrawerComponent.Screen name='Imports' component={Imports} />
 
-                {/* Components for Section 2 Screens */}
-                <DrawerComponent.Screen name='Home Screen' component={HomeSecondScreen} />
-                <DrawerComponent.Screen name='Records' component={Records} />
-                <DrawerComponent.Screen name='Investments' component={Investments} />
-                <DrawerComponent.Screen name='Planned Payments' component={PlannedPayments} />
+            {/* Components for Section 2 Screens */}
+            <DrawerComponent.Screen name='Home Screen' component={HomeSecondScreen} />
+            <DrawerComponent.Screen name='Records' component={Records} />
+            <DrawerComponent.Screen name='Investments' component={Investments} />
+            <DrawerComponent.Screen name='Planned Payments' component={PlannedPayments} />
 
-                {/* Components for Staistics Screens */}
-                <DrawerComponent.Screen name='Statistics' component={Statistics}/>
-                <DrawerComponent.Screen name='Balance' component={Balance} />
-                <DrawerComponent.Screen name='Outlook' component={Outlook} />
-                <DrawerComponent.Screen name='Cash-Flow' component={CashFlow} />
-                <DrawerComponent.Screen name='Spending' component={Spending} />
-                <DrawerComponent.Screen name='Credit' component={Credit} />
-                <DrawerComponent.Screen name='Reports' component={Reports} />
-                <DrawerComponent.Screen name='Assets' component={Assets} />
+            {/* Components for Staistics Screens */}
+            <DrawerComponent.Screen name='Statistics' component={Statistics} />
+            <DrawerComponent.Screen name='Balance' component={Balance} />
+            <DrawerComponent.Screen name='Outlook' component={Outlook} />
+            <DrawerComponent.Screen name='Cash-Flow' component={CashFlow} />
+            <DrawerComponent.Screen name='Spending' component={Spending} />
+            <DrawerComponent.Screen name='Credit' component={Credit} />
+            <DrawerComponent.Screen name='Reports' component={Reports} />
+            <DrawerComponent.Screen name='Assets' component={Assets} />
 
-                {/* Components for Section 3 Screens */}
-                <DrawerComponent.Screen name='Budgets' component={Budgets} />
-                <DrawerComponent.Screen name='Debts' component={Debts} />
-                <DrawerComponent.Screen name='Goals' component={Goals} />
-                <DrawerComponent.Screen name='Shopping Lists' component={ShoppingLists} />
-                <DrawerComponent.Screen name='Warranties' component={Warranties} />
-                <DrawerComponent.Screen name='Loyalty Cards' component={LoyaltyCards} />
-                <DrawerComponent.Screen name='Currency Rates' component={CurrencyRates} />
-                <DrawerComponent.Screen name='Group Sharing' component={GroupSharing} />
-                <DrawerComponent.Screen name='Exports' component={Exports} />
+            {/* Components for Section 3 Screens */}
+            <DrawerComponent.Screen name='Budgets' component={Budgets} />
+            <DrawerComponent.Screen name='Debts' component={Debts} />
+            <DrawerComponent.Screen name='Goals' component={Goals} />
+            <DrawerComponent.Screen name='Shopping Lists' component={ShoppingLists} />
+            <DrawerComponent.Screen name='Warranties' component={Warranties} />
+            <DrawerComponent.Screen name='Loyalty Cards' component={LoyaltyCards} />
+            <DrawerComponent.Screen name='Currency Rates' component={CurrencyRates} />
+            <DrawerComponent.Screen name='Group Sharing' component={GroupSharing} />
+            <DrawerComponent.Screen name='Exports' component={Exports} />
 
-                {/* Components for Section 4 Screens */}
-                <DrawerComponent.Screen name='Settings' component={Settings} />
-                <DrawerComponent.Screen name='About' component={About} />
-                <DrawerComponent.Screen name='Faq' component={Faq} />
-                <DrawerComponent.Screen name='Follow' component={Follow} />
-                <DrawerComponent.Screen name='Help' component={Help} />
-                <DrawerComponent.Screen name='Profile' component={Profile} />
-                <DrawerComponent.Screen name='SettingsScreen' component={SettingsScreen} />
-                <DrawerComponent.Screen name='SupportPage' component={SupportPage} />
-            </DrawerComponent.Navigator>
+            {/* Components for Section 4 Screens */}
+            <DrawerComponent.Screen name='Settings' component={Settings} />
+            <DrawerComponent.Screen name='Setting Stack' component={SettingScreenStack}
+                options={{
+                    headerShown: false
+                }}/>
+        </DrawerComponent.Navigator>
     )
 }
 
