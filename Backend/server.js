@@ -1,9 +1,8 @@
 const express = require("express");
 // const { poolPromise } = require("./config/db.js");
-const db = require('./models');
-const syncDatabase = require('./config/dbconfig'); // Import syncDatabase
-const routes = require('./routes');
-
+const db = require("./models");
+const syncDatabase = require("./config/dbconfig"); // Import syncDatabase
+const routes = require("./routes");
 
 const app = express();
 app.use(express.json());
@@ -11,16 +10,15 @@ app.use(express.json());
 const PORT = process.env.PORT || 5000;
 
 // Example route to fetch users
-app.get('/users', async (req, res) => {
+app.get("/users", async (req, res) => {
   try {
     const users = await db.User.findAll(); // Assuming you have a User model defined
     res.json(users);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server error');
+    res.status(500).send("Server error");
   }
 });
-
 
 app.get("/", (req, res) => {
   res.send("Welcome to the API");
@@ -51,17 +49,16 @@ const startServer = async () => {
       console.log(`Server running on port ${PORT}`);
     });
   } catch (err) {
-    console.error('Failed to start server:', err);
+    console.error("Failed to start server:", err);
   }
 };
 
 startServer();
-app.use('/api', routes);
+app.use("/api", routes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error!'
+  const message = err.message || "Internal Server Error!";
 
-  res.status(statusCode).json({ message })
-})
-
+  res.status(statusCode).json({ message });
+});
