@@ -1,18 +1,35 @@
 import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { useNavigation } from "@react-navigation/native";
 
 // Define your settings options with icon names and colors
 const settingsOptions = [
-  { title: "Profile", iconName: "person-outline", color: "#1DA1F2" },
-  { title: "FAQ", iconName: "help-outline", color: "#1DA1F2" },
+  { title: "Profile", iconName: "person-outline", color: "#9131F3" },
+  { title: "FAQ", iconName: "help-outline", color: "#4CAF50" },
   { title: "Follow", iconName: "share", color: "#1DA1F2" },
-  { title: "About", iconName: "info-outline", color: "#1DA1F2" },
-  { title: "Help", iconName: "help-outline", color: "#1DA1F2" },
-  { title: "Support", iconName: "support-agent", color: "#1DA1F2" }
+  { title: "About", iconName: "info-outline", color: "#FF5722" },
+  { title: "Help", iconName: "help-outline", color: "#FFC107" },
+  { title: "Support", iconName: "support-agent", color: "#9C27B0" }, // Added Support button
+  { title: "Logout", iconName: "logout", color: "#F44336" },
 ];
 
-const Settings = ({ navigation }) => {
+const SettingsScreen = () => {
+  // const navigation = useNavigation();
+
+  const handlePress = (option) => {
+    if (option === "Support") {
+      // Navigate to the Support page or open a support dialog
+      console.log("Navigate to Support");
+    } else {
+      navigation.navigate(option);
+    }
+  };
+
+  const handleLogout = () => {
+    console.log("Logged out");
+    // Implement your logout logic here
+  };
 
   return (
     <View style={styles.container}>
@@ -21,7 +38,11 @@ const Settings = ({ navigation }) => {
           <TouchableOpacity
             key={index}
             style={[styles.card, { backgroundColor: option.color }]}
-            onPress={() => navigation.navigate('Setting Stack', {screen: option.title})}  // Handle navigation
+            onPress={
+              option.title === "Logout"
+                ? handleLogout
+                : () => handlePress(option.title)
+            }
           >
             <View style={styles.cardContent}>
               <Icon name={option.iconName} size={48} color="#fff" />
@@ -65,4 +86,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Settings;
+export default SettingsScreen;
