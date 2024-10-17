@@ -1,5 +1,5 @@
-import { View, Text } from 'react-native'
-import React, { useContext, useState } from 'react'
+import { View, Text, Animated } from 'react-native'
+import React, { useContext, useState, useRef, useEffect } from 'react'
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { AuthContext } from '@/app/context/AuthContext';
 import { Avatar } from 'react-native-paper';
@@ -23,6 +23,15 @@ const CustomDrawerContent = (props) => {
     const { user, logout } = useContext(AuthContext);
     const { state } = props;
     const [NestedDrawer, setNestedDrawer] = useState(false);
+    const animation = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        Animated.timing(animation, {
+            toValue: NestedDrawer ? 1 : 0,
+            duration: 500,
+            useNativeDriver: true
+        }).start();
+    }, [NestedDrawer])
 
     const AvatarTextReurn = (fullName) => {
         if (!fullName) { return '' }
@@ -31,6 +40,11 @@ const CustomDrawerContent = (props) => {
         const lastInittal = names[1] ? names[1][0] : names[0][names.length - 1];
         return `${firstInitial}${lastInittal}`.toUpperCase();
     }
+
+    const rotateIcon = animation.interpolate({
+        inputRange: [0 , 1],
+        outputRange: ['0deg' , '180deg']
+    })
 
     return (
         <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerScrollViewStyling}>
@@ -109,8 +123,9 @@ const CustomDrawerContent = (props) => {
                     label={() =>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text>Statistics</Text>
-                            {NestedDrawer ? <AntDesign name='up' color={'#4e814a'} /> :
-                                <AntDesign name='down' color={'#4e814a'} />}
+                            <Animated.View style={{transform: [{rotate: rotateIcon}]}}>
+                                <AntDesign name='down' color={'#4e814a'} />
+                            </Animated.View>
                         </View>
                     }
                     onPress={() => {
