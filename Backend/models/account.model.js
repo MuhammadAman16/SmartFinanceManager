@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      accountName: {
+      name: {
         type: DataTypes.STRING,
         allowNull: false, // Account name is compulsory
       },
@@ -37,6 +37,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true, // Optional field
         defaultValue: 0, // You can set a default value if desired
       },
+      currentValue: {
+        type: DataTypes.FLOAT,
+        allowNull: true, // Optional field
+        defaultValue: 0, // You can set a default value if desired
+      },
       currency: {
         type: DataTypes.STRING,
         allowNull: true, // Optional field
@@ -45,6 +50,16 @@ module.exports = (sequelize, DataTypes) => {
       color: {
         type: DataTypes.STRING, // You may choose a specific data type for the color representation (e.g., HEX code)
         allowNull: true, // Optional field
+      },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Users", // Reference the Users table
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL",
       },
     },
     {
@@ -58,6 +73,11 @@ module.exports = (sequelize, DataTypes) => {
     Account.hasMany(models.Record, {
       foreignKey: "accountId", // The foreign key in the Record model
       as: "Records", // Alias for the association
+    });
+
+    Account.belongsTo(models.User, {
+      foreignKey: "userId",
+      as: "User", // A Record belongs to one User
     });
   };
 
