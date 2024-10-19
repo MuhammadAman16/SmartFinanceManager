@@ -8,7 +8,7 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
-      accountName: {
+      name: {
         type: Sequelize.STRING,
         allowNull: false, // Account name is compulsory
       },
@@ -34,6 +34,11 @@ module.exports = {
         defaultValue: "General", // Default type is General
       },
       initialValue: {
+        type: Sequelize.FLOAT,
+        allowNull: true, // Optional field
+        defaultValue: 0, // You can set a default value if desired
+      },
+      currentValue: {
         type: Sequelize.INTEGER,
         allowNull: true, // Optional field
         defaultValue: 0, // You can set a default value if desired
