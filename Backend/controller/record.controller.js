@@ -1,13 +1,13 @@
 const { Record, Account, Category, Label } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
+const { Op } = require("sequelize");
 
 exports.createRecord = async (req, res, next) => {
   const {
     userId,
     note,
     payee,
-    date,
-    time,
+    datetime,
     paymentType,
     warranty,
     status, // Record-specific field
@@ -34,20 +34,34 @@ exports.createRecord = async (req, res, next) => {
     );
   }
 
-  if (isTemplate === "No" && (!amount || !currency || !status)) {
+  if (isTemplate === "No" && (!amount || !currency || !status || !type)) {
     return next(
-      errorHandler(400, "Required fields for record: amount, currency, status")
+      errorHandler(400, "Required fields for record: amount, currency, status,type")
+    );
+  }
+
+  if (isTemplate === "No" && (type != 'INCOME' && type != 'EXPENSE')) {
+    return next(
+      errorHandler(400, "Invalid value for record type")
     );
   }
 
   try {
+
+    if(isTemplate === "No"){
+      // await Budget.findAll({
+      //   where:{
+      //     userId,
+
+      //   }
+      // })
+    }
     // Create the record with conditional field assignments
     const newRecord = await Record.create({
       userId,
       note,
       payee,
-      date,
-      time,
+      datetime,
       paymentType,
       warranty,
       status: isTemplate === "No" ? status : null, // Include status only if it's a record
@@ -177,3 +191,81 @@ exports.deleteRecord = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getAllRecords = async (req, res, next) => {
+  const { createdAt } = req.query; // Extract the createdAt query param
+
+  try {
+    // Build the where clause for filtering by createdAt
+    let whereClause = {};
+
+    if (createdAt) {
+
+      const startOfDay = new Date(createdAt);
+    startOfDay.setUTCHours(0, 0, 0, 0); // Set to the start of the day (00:00:00)
+
+    const endOfDay = new Date(createdAt);
+    endOfDay.setUTCHours(23, 59, 59, 999); // Set to the end of the day (23:59:59)
+
+    whereClause.createdAt = {
+      [Op.between]: [startOfDay, endOfDay], 
+    };
+  }
+
+    const records = await Record.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: Account,
+          as: "Account", // Include associated account
+        },
+        {
+          model: Category,
+          as: "Category", // Include associated category
+        },
+        {
+          model: Label,
+          as: "Labels", // Include associated labels
+        },
+      ],
+    });
+
+    return res.status(200).json(records);
+  } catch (error) {
+    console.log("Error fetching records:", error);
+    next(error);
+  }
+};
+
+exports.getRecordById = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const record = await Record.findByPk(id, {
+      include: [
+        {
+          model: Account,
+          as: "Account", // Include associated account
+        },
+        {
+          model: Category,
+          as: "Category", // Include associated category
+        },
+        {
+          model: Label,
+          as: "Labels", // Include associated labels
+        },
+      ],
+    });
+
+    if (!record) {
+      return next(errorHandler(404, "Record not found"));
+    }
+
+    return res.status(200).json(record);
+  } catch (error) {
+    console.log("Error fetching record:", error);
+    next(error);
+  }
+};
+

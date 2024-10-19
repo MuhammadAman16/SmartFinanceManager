@@ -1,9 +1,29 @@
 const { Budget } = require("../models");
 const { BudgetCategory, BudgetLabel, Category, Label } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
+const { Op } = require('sequelize');
 
 exports.getAllBudgets = async (req, res, next) => {
   try {
+    const { startDate, endDate, createdAt } = req.query;
+
+    let whereClause = {};
+
+    // Apply filtering based on startDate and endDate (budget period)
+    if (startDate || endDate) {
+      whereClause.startDate = {
+        ...(startDate && { [Op.gte]: new Date(startDate) }), // Greater than or equal to startDate
+        ...(endDate && { [Op.lte]: new Date(endDate) }), // Less than or equal to endDate
+      };
+    }
+
+    // Apply filtering based on createdAt
+    if (createdAt) {
+      whereClause.createdAt = {
+        [Op.gte]: new Date(createdAt), // Only budgets created after the given createdAt
+      };
+    }
+
     const budgets = await Budget.findAll({
       include: [
         {
@@ -15,6 +35,7 @@ exports.getAllBudgets = async (req, res, next) => {
           as: "Labels",
         },
       ],
+      where:whereClause
     });
     return res.status(200).json(budgets);
   } catch (error) {
@@ -27,6 +48,7 @@ exports.getBudgetById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
+    
     const budget = await Budget.findByPk(id, {
       include: [
         {

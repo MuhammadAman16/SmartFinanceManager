@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
 
       Label.associate = (models) => {
         Label.belongsToMany(models.Budget, { through: 'BudgetLabels', foreignKey: 'labelId' });
+        Label.belongsToMany(models.Record, { through: 'RecordLabel', foreignKey: 'labelId' });
       };
     
       return Label;
