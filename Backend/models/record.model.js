@@ -22,24 +22,20 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      labelId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-          model: "Labels",
-          key: "id",
-        },
-      },
+      // labelId: {
+      //   type: DataTypes.INTEGER,
+      //   allowNull: true,
+      //   references: {
+      //     model: "Labels",
+      //     key: "id",
+      //   },
+      // },
       payee: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      date: {
-        type: DataTypes.DATEONLY,
-        allowNull: true,
-      },
-      time: {
-        type: DataTypes.TIME,
+      datetime: {
+        type: DataTypes.DATE,
         allowNull: true,
       },
       paymentType: {
@@ -96,13 +92,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
-          model: "Categories",
+          model: "Category",
           key: "id",
         },
       },
       type: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM("Income", "Expense"),
         allowNull: true,
+        defaultValue: "Expense",
       },
       // Template toggle
       isTemplate: {
@@ -137,6 +134,7 @@ module.exports = (sequelize, DataTypes) => {
     Record.belongsToMany(models.Label, {
       through: "RecordLabels",
       foreignKey: "recordId",
+      otherKey:'labelId',
       as: "Labels",
     });
 
@@ -148,6 +146,10 @@ module.exports = (sequelize, DataTypes) => {
     Record.belongsTo(models.Account, {
       foreignKey: "accountId",
       as: "Account", // A Record belongs to one Account
+    });
+    Record.belongsTo(models.Category, {
+      foreignKey: "categoryId",
+      as: "Category", // A Record belongs to one Account
     });
   };
 
