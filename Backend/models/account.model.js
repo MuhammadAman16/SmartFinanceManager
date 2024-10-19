@@ -51,6 +51,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING, // You may choose a specific data type for the color representation (e.g., HEX code)
         allowNull: true, // Optional field
       },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Users", // Reference the Users table
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL",
+      },
     },
     {
       timestamps: true,
@@ -63,6 +73,11 @@ module.exports = (sequelize, DataTypes) => {
     Account.hasMany(models.Record, {
       foreignKey: "accountId", // The foreign key in the Record model
       as: "Records", // Alias for the association
+    });
+
+    Account.belongsTo(models.User, {
+      foreignKey: "userId",
+      as: "User", // A Record belongs to one User
     });
   };
 
