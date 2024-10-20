@@ -21,6 +21,7 @@
   "homepage": "https://github.com/shaheryar-ahmed-ten/blog-app#readme",
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
+    "aws-sdk": "^2.1691.0",
     "@langchain/core": "^0.3.13",
     "@langchain/openai": "^0.3.11",
     "@langchain/pinecone": "^0.1.1",
