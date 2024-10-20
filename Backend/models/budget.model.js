@@ -37,11 +37,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       startDate: {
         type: DataTypes.DATE,
-        allowNull: true, // Optional
+        allowNull: false, // Optional
       },
       endDate: {
         type: DataTypes.DATE,
-        allowNull: true, // Optional
+        allowNull: false, // Optional
       },
     },
     {
@@ -51,8 +51,16 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Budget.associate = (models) => {
-    Budget.belongsToMany(models.Label, { through: 'BudgetLabels', foreignKey: 'budgetId',as:"Labels" });
-    Budget.belongsToMany(models.Category, { through: models.BudgetCategory, foreignKey: 'budgetId', as:"Categories" });
+    Budget.belongsToMany(models.Label, {
+      through: "BudgetLabels",
+      foreignKey: "budgetId",
+      as: "Labels",
+    });
+    Budget.belongsToMany(models.Category, {
+      through: models.BudgetCategory,
+      foreignKey: "budgetId",
+      as: "Categories",
+    });
   };
 
   return Budget;

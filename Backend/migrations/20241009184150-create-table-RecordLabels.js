@@ -2,26 +2,28 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("BudgetLabels", {
-      budgetId: {
+    await queryInterface.createTable("RecordLabels", {
+      recordId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "Budgets",
+          model: "Records", // Reference to the Records table
           key: "id",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
+        primaryKey: true,
       },
       labelId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "Labels",
+          model: "Labels", // Reference to the Labels table
           key: "id",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
+        primaryKey: true,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -33,16 +35,26 @@ module.exports = {
         allowNull: false,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
+      userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Users", // Name of the referenced table
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL",
+      },
     });
 
-    await queryInterface.addConstraint("BudgetLabels", {
-      fields: ["budgetId", "labelId"],
+    await queryInterface.addConstraint("RecordLabels", {
+      fields: ["recordId", "labelId"],
       type: "unique",
-      name: "budget_label_unique",
+      name: "record_label_unique",
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("BudgetLabels");
+    await queryInterface.dropTable("RecordLabels");
   },
 };
