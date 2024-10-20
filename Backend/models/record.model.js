@@ -107,6 +107,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: "No",
       },
+      attachmentUrl: {
+        type: DataTypes.STRING, 
+        allowNull: true,
+      },
     },
     {
       timestamps: true,
