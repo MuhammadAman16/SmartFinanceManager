@@ -1,7 +1,8 @@
 const { Record, Account, Category, Label } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
 const { Op } = require("sequelize");
-
+const constants = require('./../utils/constants');
+const s3 =  require('./../utils/bucket');
 exports.createRecord = async (req, res, next) => {
   const {
     userId,
@@ -22,7 +23,6 @@ exports.createRecord = async (req, res, next) => {
     type, // Template-specific field
     isTemplate, // Template toggle
   } = req.body;
-
   // Validation for required fields based on isTemplate value
   if (!userId || !isTemplate) {
     return next(errorHandler(400, "Required fields: userId and isTemplate"));
@@ -48,7 +48,22 @@ exports.createRecord = async (req, res, next) => {
 
   try {
 
-    // Create the record with conditional field assignments
+    let attachmentUrl
+    if(req.file){
+      // Configure the S3 upload parameters
+     const params = {
+      Bucket: constants.AWS.bucketName, 
+      Key: `uploads/${Date.now()}_${req.file.originalname}`, 
+      Body: req.file.buffer, 
+      ContentType: req.file.mimetype, 
+      // ACL: 'public-read', 
+    };
+
+    // Upload file to S3
+    const data = await s3.upload(params).promise();
+    attachmentUrl = data.Location
+    }
+     
     const newRecord = await Record.create({
       userId,
       note,
@@ -66,6 +81,7 @@ exports.createRecord = async (req, res, next) => {
       type, // Set type only if it's a template
       isTemplate,
       categoryId, // Always include categoryId for one-to-one relation
+      attachmentUrl
     });
 
     // If labelIds are provided, associate them with the record
