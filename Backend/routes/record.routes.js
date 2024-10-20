@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const recordController = require("../controller/record.controller");
-
-
+const upload = require('./../middlewares/upload');
 // Route to get all records with optional filters
 router.get("/", recordController.getAllRecords);
 
@@ -10,7 +9,7 @@ router.get("/", recordController.getAllRecords);
 router.get("/:id", recordController.getRecordById);
 
 // Route to create a new record
-router.post("/", recordController.createRecord);
+router.post("/", upload.single('file'),recordController.createRecord);
 
 // Route to update a record by ID
 router.put("/:id", recordController.updateRecord);
