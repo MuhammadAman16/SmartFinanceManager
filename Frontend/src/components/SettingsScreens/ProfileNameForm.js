@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useContext } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import styles from "../Styling/Stlyes";
+import { AuthContext } from "@/app/context/AuthContext";
 
 const ProfileNameForm = () => {
-  const [name, setName] = useState('John Doe');
+  const {user} = useContext(AuthContext);
 
   const handleNameChange = () => {
     console.log("Name changed to:", name);
@@ -14,8 +15,10 @@ const ProfileNameForm = () => {
       <Text style={styles.ProfileScreenlabel}>Name</Text>
       <TextInput
         style={styles.ProfileScreenInput}
-        value={name}
-        onChangeText={setName}
+        value={user.fullName}
+        onChangeText={(text) => {
+          user.fullName = text;
+        }}
         placeholder="Enter your name"
       />
       <TouchableOpacity style={styles.ProfileScreenButton} onPress={handleNameChange}>

@@ -1,12 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Alert, StatusBar } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
 import { useBudget } from '@/app/context/BudgetContext';
 import BudgetItem from '../../../components/OnGoingBudget/BudgetItem';
+import BudgetDetail from './BudgetDetail';
 import styles from '@/src/components/Styling/Stlyes';
 import { Feather } from '@expo/vector-icons';
 
 const OngoingBudget = (props) => {
-  const { budgets, addBudget, budgetCategories } = useBudget();
+  const { budgetCategories, loading, budgets } = useBudget();
+
+  useEffect(() => {
+    console.warn(budgets);
+  }, [])
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <ActivityIndicator size={'large'} color={'blue'} />
+      </View>
+    )
+  }
 
   return (
     <View style={styles.OnGoingBudgetContainer}>
@@ -25,12 +38,16 @@ const OngoingBudget = (props) => {
       {['ongoingBudgets', 'successfulBudgets', 'unsuccessfulBudgets'].map(category => (
         <View style={styles.section} key={category}>
           <Text style={styles.sectionHeader}>{category.charAt(0).toUpperCase() + category.slice(1)}</Text>
-          <FlatList
-            data={budgetCategories[category]}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <BudgetItem item={item} />}
-            showsVerticalScrollIndicator={false}
-          />
+          {budgets.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={{backgroundColor: 'white', margin: 7, padding: 20, borderColor: 'green',
+                borderWidth: 1, borderRadius: 10}}
+              onPress={() => props.navigation.navigate('Budget Detail')}
+            >
+              <Text style={{color: 'black'}}>{item.name}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
       ))}
     </View>

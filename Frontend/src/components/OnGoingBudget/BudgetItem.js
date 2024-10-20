@@ -1,9 +1,13 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import * as Progress from 'react-native-progress';
 import styles from '@/src/components/Styling/Stlyes';
 
 const BudgetItem = ({ item }) => {
+  const calculateAmountSpent = (budget) => {
+    const netSpent = budget.amount;
+    return netSpent;
+  };
   const amountSpent = calculateAmountSpent(item); // Assuming this function is accessible
   const remainingAmount = item.remainingAmount;
   const percentageSpent = (amountSpent / item.totalAmount) * 100;
