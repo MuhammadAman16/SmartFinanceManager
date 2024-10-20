@@ -60,7 +60,6 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
     },
     viewInputText: {
-        fontWeight: 'bold',
         marginTop: 13
     },
     submitButtonText: {
@@ -76,7 +75,10 @@ const styles = StyleSheet.create({
     },
     errorText: {
         color: 'red',
-        fontSize: 15
+        fontSize: 15,
+        flexWrap: 'wrap',
+        width: '90%',
+        marginLeft: 5
     },
     errorTextView: {
         flexDirection: 'row',
@@ -447,7 +449,8 @@ const styles = StyleSheet.create({
     },
     CategoriesScreenAllCategoryViewStyling: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginHorizontal: 10
     },
     CategoriesScreenAllCategoryTextFeatherViewStyling: {
         width: 40,
@@ -532,7 +535,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     ProfileScreenButton: {
-        backgroundColor: '#007bff',
+        backgroundColor: 'rgba(34,68,35,255)',
         borderRadius: 8,
         paddingVertical: 10,
         paddingHorizontal: 20,
@@ -739,6 +742,100 @@ const styles = StyleSheet.create({
     },
     ColorView: {
         marginVertical: 5
+    },
+    DateInputFieldView: {
+        flex: 1
+    },
+    DateInputFieldText: {
+        marginBottom: 3
+    },
+    DateInputField: {
+        borderBottomWidth: 1,
+        paddingVertical: 5,
+        width: '100%',
+        paddingRight: 40,
+        paddingLeft: 10,
+        color: 'black',
+        fontSize: 16
+    },
+    BudgetDetailcontainer: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#f5f5f5',
+    },
+    BudgetDetailheader: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        color: '#333',
+    },
+    BudgetDetailsubheader: {
+        fontSize: 16,
+        color: '#555',
+        marginBottom: 20,
+    },
+    BudgetDetailamountContainer: {
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 10,
+        padding: 15,
+        backgroundColor: '#fff',
+    },
+    BudgetDetailamountItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+    },
+    BudgetDetailtext: {
+        fontSize: 16,
+        color: '#333',
+    },
+    BudgetDetailamount: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    BudgetDetailprogressContainer: {
+        marginBottom: 20,
+
+        backgroundColor: '#ffffff', // White background for the chart container
+        borderRadius: 10,
+        padding: 10,
+    },
+    BudgetDetailprogressBarBackground: {
+        height: 20,
+        backgroundColor: '#e0e0e0',
+        borderRadius: 10,
+        overflow: 'hidden',
+        width: '100%',
+    },
+    BudgetDetailprogressBarFill: {
+        height: '100%',
+        borderRadius: 10,
+    },
+    BudgetDetailprogressPercent: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
+        textAlign: 'right',
+        marginTop: 5,
+    },
+    BudgetDetailchartContainer: {
+        marginBottom: 20,
+        backgroundColor: '#ffffff', // White background for the chart container
+        borderRadius: 10,
+        padding: 20,
+    },
+    BudgetDetailtooltipContainer: {
+        position: 'absolute',
+        backgroundColor: 'white',
+        borderRadius: 5,
+        padding: 10,
+        elevation: 5,
+    },
+    BudgetDetailtooltipText: {
+        fontSize: 12,
+        color: '#333',
     }
 })
 
