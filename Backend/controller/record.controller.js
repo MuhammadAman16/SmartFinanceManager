@@ -49,12 +49,36 @@ exports.createRecord = async (req, res, next) => {
   try {
 
     if(isTemplate === "No"){
-      // await Budget.findAll({
-      //   where:{
-      //     userId,
+      const periodBudgets = await Budget.findAll({
+        where:{
+          userId,
+          period:{
+            [Op.ne]:'One-Time'
+          }
+        }
+      })
 
-      //   }
-      // })
+      const oneTimeBudgets = await Budget.findAll({
+        where:{
+          userId,
+          period:{
+            [Op.eq]:'One-Time'
+          },
+          [Op.and]: [
+            {
+              startDate: {
+                [Op.gte]: datetime, // startDate greater than or equal to datetime
+              },
+            },
+            {
+              endDate: {
+                [Op.lte]: datetime, // endDate less than or equal to datetime
+              },
+            },
+          ],
+        }
+      })
+      
     }
     // Create the record with conditional field assignments
     const newRecord = await Record.create({

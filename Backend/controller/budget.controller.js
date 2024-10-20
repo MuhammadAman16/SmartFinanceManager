@@ -1,5 +1,5 @@
 const { Budget } = require("../models");
-const { BudgetCategory, BudgetLabel, Category, Label } = require("../models");
+const { BudgetCategory, BudgetLabel, Category, Label ,BudgetAccounts } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
 const { Op } = require('sequelize');
 
@@ -78,7 +78,7 @@ exports.createBudget = async (req, res, next) => {
     period,
     amount,
     currency,
-    account,
+    accountIds,
     startDate,
     endDate,
     categoryIds,
@@ -86,11 +86,11 @@ exports.createBudget = async (req, res, next) => {
   } = req.body;
 
   // Validation
-  if (!name || !period || !amount || !currency || !account || !userId) {
+  if (!name || !period || !amount || !currency || !accountIds?.length || !userId) {
     return next(
       errorHandler(
         400,
-        "All fields are required: name, userId, period, amount, currency, account"
+        "All fields are required: name, userId, period, amount, currency, accounts"
       )
     );
   }
@@ -102,7 +102,6 @@ exports.createBudget = async (req, res, next) => {
       period,
       amount,
       currency,
-      account,
       startDate,
       endDate,
     });
@@ -121,6 +120,14 @@ exports.createBudget = async (req, res, next) => {
       });
 
       await BudgetLabel.bulkCreate(BudgetLabelPayload);
+    }
+
+    if(accountIds?.length){
+      const BudgetAccountsPayload = accountIds.map((id) => {
+        return { budgetId: newBudget.id, accountId: id };
+      });
+
+      await BudgetAccounts.bulkCreate(BudgetAccountsPayload);
     }
 
     return res.status(201).json(newBudget);
