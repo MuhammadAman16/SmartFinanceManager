@@ -31,22 +31,27 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      account: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
       startDate: {
         type: DataTypes.DATE,
-        allowNull: false, // Optional
+        allowNull: true, // Optional
       },
       endDate: {
         type: DataTypes.DATE,
-        allowNull: false, // Optional
+        allowNull: true, // Optional
       },
     },
     {
       timestamps: true,
       paranoid: true,
+      validate: {
+        checkDates() {
+          if (this.period === "One-time") {
+            if (!this.startDate || !this.endDate) {
+              throw new Error("Start date and end date are required for 'One-time' period.");
+            }
+          }
+        },
+      },
     }
   );
 
@@ -60,6 +65,12 @@ module.exports = (sequelize, DataTypes) => {
       through: models.BudgetCategory,
       foreignKey: "budgetId",
       as: "Categories",
+    });
+
+    Budget.belongsToMany(models.Account, {
+      through: models.BudgetAccounts, // Reference the new link table
+      foreignKey: 'budgetId',
+      as: 'Accounts',
     });
   };
 
