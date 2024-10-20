@@ -1,5 +1,6 @@
 import OngoingBudget from './OngoingBudget';
 import BudgetCreation from './BudgetCreation';
+import BudgetDetail from './BudgetDetail';
 import CategoriesScreen from './CategoriesAccountsScreen';
 import LabelScreen from './LabelScreen';
 import React from 'react'
@@ -18,6 +19,7 @@ const BudgetScreen = () => {
                 headerTintColor: 'white'
             }}>
             <Stack.Screen name='Your Budgets' component={OngoingBudget} />
+            <Stack.Screen name='Budget Detail' component={BudgetDetail} />
             <Stack.Screen name='New Budget' component={BudgetCreation}/>
             <Stack.Screen name='Select Categories' component={CategoriesScreen}
                 options={({ route, navigation }) => ({
