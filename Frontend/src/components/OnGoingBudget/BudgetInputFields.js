@@ -15,12 +15,13 @@ const BudgetInputFields = ({
     keyboardype,
     editable,
     iconName,
-    color 
+    color,
 }) => {
+    const textcolor = error ? 'red' : 'rgb(169,169,169)' 
     return (
         <>
             <View style={styles.errorTextView}>
-                <Text style={styles.viewInputText}>{label}</Text>
+                <Text style={[styles.viewInputText, {color: textcolor}]}>{label}</Text>
             </View>
             <View style={styles.BudgetInputFieldView}>
                 <TextInput
