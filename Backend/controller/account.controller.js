@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 
 // Create a new Account
 exports.createAccount = async (req, res, next) => {
-  const { name, bankAccountNumber, type, initialValue, currency, color } = req.body;
+  const { name, bankAccountNumber, type, initialValue, currency, color,userId } = req.body;
 
   if (!name || !bankAccountNumber || !type || !initialValue || !currency) {
     return next(errorHandler(400, "All required fields must be provided."));
@@ -18,6 +18,7 @@ exports.createAccount = async (req, res, next) => {
       initialValue,
       currency,
       color,
+      userId
     });
 
     return res.status(201).json(newAccount);

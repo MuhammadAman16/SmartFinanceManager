@@ -79,6 +79,12 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "userId",
       as: "User", // A Record belongs to one User
     });
+
+    Account.belongsToMany(models.Budget, {
+      through: models.BudgetAccounts, // Reference the new link table
+      foreignKey: 'accountId',
+      as: 'Budgets',
+    });
   };
 
   return Account;
