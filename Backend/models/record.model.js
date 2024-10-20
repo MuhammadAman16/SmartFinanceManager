@@ -97,9 +97,9 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       type: {
-        type: DataTypes.ENUM("Income", "Expense"),
+        type: DataTypes.ENUM("INCOME", "EXPENSE"),
         allowNull: true,
-        defaultValue: "Expense",
+        defaultValue: "EXPENSE",
       },
       // Template toggle
       isTemplate: {
