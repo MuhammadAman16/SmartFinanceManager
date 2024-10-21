@@ -3,6 +3,7 @@ const express = require("express");
 const db = require("./models");
 const syncDatabase = require("./config/dbconfig"); // Import syncDatabase
 const routes = require("./routes");
+var cron = require("node-cron");
 
 const app = express();
 app.use(express.json());
@@ -61,4 +62,8 @@ app.use((err, req, res, next) => {
   const message = err.message || "Internal Server Error!";
 
   res.status(statusCode).json({ message });
+});
+
+cron.schedule("1,2,4,5 * * * *", () => {
+  console.log("running every minute 1, 2, 4 and 5");
 });

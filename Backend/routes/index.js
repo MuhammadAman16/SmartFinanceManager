@@ -16,6 +16,6 @@ router.use("/label", labelRoutes);
 router.use("/budget", budgetRoutes);
 router.use("/record", recordRoutes);
 router.use("/chatbot", chatbotRoutes);
-router.use("/accounts",accountRoutes)
+router.use("/accounts", accountRoutes);
 
 module.exports = router;
