@@ -13,3 +13,17 @@ export const CurrencyDropDownValues =[
     {label: 'USD', value: 'USD'},
     {label: 'EUR', value: 'EUR'}
 ]
+
+export const AccountTypeDropDownValues =[
+    {label: 'General', value: 'General'},
+    {label: 'Cash', value: 'Cash'},
+    {label: 'Current account', value: 'Current account'},
+    {label: 'Credit card', value: 'Credit card'},
+    {label: 'Saving account', value: 'Saving account'},
+    {label: 'Bonus', value: 'Bonus'},
+    {label: 'Insurance', value: 'Insurance'},
+    {label: 'Investment', value: 'Investment'},
+    {label: 'Loan', value: 'Loan'},
+    {label: 'Mortgage', value: 'Mortgage'},
+    {label: 'Account with overdraft', value: 'Account with overdraft'},
+]

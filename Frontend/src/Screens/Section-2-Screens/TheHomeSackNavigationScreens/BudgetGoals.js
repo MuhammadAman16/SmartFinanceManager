@@ -2,7 +2,7 @@ import { View, TouchableOpacity } from 'react-native'
 import React from 'react';
 import { Avatar, Card } from 'react-native-paper'
 import { useNavigation } from 'expo-router';
-import OngoingBudget from './OngoingBudget';
+
 
 const BudgetGoals = () => {
   const navigation = useNavigation();

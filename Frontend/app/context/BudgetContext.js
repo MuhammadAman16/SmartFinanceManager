@@ -16,7 +16,27 @@ export const BudgetProvider = ({ children }) => {
     const fetchAllBudget = async () => {
         try {
             const res = await user_api.get('api/budget');
+            const today = new Date();
+            const ongoing = res.data.filter((budget) => {
+                const start = new Date(budget.startDate);
+                const end = new Date(budget.endDate);
+                return end.getTime() >= today.getTime() && start.getTime() <= today.getTime();
+            })
+            const successful = res.data.filter((budget) => {
+                const end = new Date(budget.endDate);
+                return end.getTime() <= today.getTime() && budget.remainingAmount >= 0;
+            })
+            const unsuccessful = res.data.filter((budget) => {
+                const end = new Date(budget.endDate);
+                return end.getTime() <= today.getTime() && budget.remainingAmount < 0;
+            })
+            console.log(ongoing);
             setBudgets(res.data);
+            setBudgetCategories({
+                ongoingbudgets: ongoing,
+                successfulbudgets: successful,
+                unsuccessfulbudgets: unsuccessful
+            });
         } catch (error) {
             if (error.response) {
                 Alert.alert(`Error: ${error.response.data.error}`);

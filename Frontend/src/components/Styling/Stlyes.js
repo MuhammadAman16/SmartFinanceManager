@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
         marginLeft: 20
     },
     OnGoingBudgetContainer: {
-        flex: 1,
+        flexGrow: 1,
         padding: 16,
         backgroundColor: '#f5f5f5'
     },
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
         color: '#2196F3', // Blue for ongoing budgets
     },
     successfulCategory: {
-        color: '#4CAF50', // Green for successful budgets
+        color: 'rgba(56,142,60,255)', // Green for successful budgets
     },
     unsuccessfulCategory: {
         color: '#F44336', // Red for unsuccessful budgets
@@ -836,6 +836,93 @@ const styles = StyleSheet.create({
     BudgetDetailtooltipText: {
         fontSize: 12,
         color: '#333',
+    },
+    RenderBudgetCard: {
+        backgroundColor: '#ffffff',
+        borderRadius: 8,
+        padding: 16,
+        elevation: 3
+    },
+    successfulCard: {
+        backgroundColor: 'rgb(216,228,188)', // Light green for successful items
+    },
+    unsuccessfulCard: {
+        backgroundColor: 'rgb(208,240,192)', // Light red for unsuccessful rgb(216,228,188)
+    },
+    RenderBudgetCategory: {
+        fontSize: 16,
+        fontWeight: 'bold'
+    },
+    viewMore: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: 'red'
+    },
+    RenderBudgetAmount: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        marginTop: 8,
+        color: '#333',
+    },
+    amountSpent: {
+        fontSize: 14,
+        color: '#666',
+    },
+    remainingAmount: {
+        fontSize: 14,
+        fontWeight: 'bold',
+
+    },
+    separator: {
+        height: 1,
+        backgroundColor: '#e0e0e0',
+        marginTop: 8,
+    },
+    positiveIncomeMessage: {
+        fontSize: 14,
+        color: '#2e7d32', // Dark green for positive message
+        fontWeight: 'bold',
+        marginTop: 8,
+    },
+    itemHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    BudgetViewStyling: {
+        marginBottom: 20
+    },
+    BudgetTextStyling: {
+        fontWeight: 'bold',
+        fontSize: 17
+    },
+    BudgetButttonStyling: {
+        marginVertical: 5
+    },
+    AccTypeCompBtn: {
+        flex: 1,
+        backgroundColor: 'white',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 20,
+        boxShadow: 'black',
+        elevation: 5,
+        borderRadius: 10,
+        marginVertical: 10
+    },
+    AccountTypeTextView: {
+        flex: 1,
+        marginRight: 10
+    },
+    AccountTypeTitle: {
+        fontWeight: 'bold',
+        fontSize: 18
+    },
+    AccountTypeSubTitle: {
+        flexShrink: 1,
+        color: 'rgb(169,169,169)',
+        marginTop: 10
     }
 })
 
