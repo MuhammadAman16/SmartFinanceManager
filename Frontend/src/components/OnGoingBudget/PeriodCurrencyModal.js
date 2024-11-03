@@ -2,7 +2,7 @@ import { View, Text, Modal } from 'react-native'
 import React from 'react'
 import { RadioButton } from 'react-native-paper';
 import styles from '../Styling/Stlyes';
-import { PeriodDropDownValues, CurrencyDropDownValues } from '@/src/components/Data/Period_Currency/PeriodCurrencyArray';
+import { PeriodDropDownValues, CurrencyDropDownValues, AccountTypeDropDownValues } from '@/src/components/Data/Period_Currency/PeriodCurrencyArray';
 
 const PeriodCurrencyModal = ({
     isModalVisible,
@@ -19,7 +19,7 @@ const PeriodCurrencyModal = ({
         >
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                    <Text style={styles.textModal}>Select {modalName === 'Period' ? 'Period' : 'Currency'}</Text>
+                    <Text style={styles.textModal}>Select {modalName}</Text>
                     <RadioButton.Group
                         onValueChange={(selectedValue) => {
                             setInputField(selectedValue); // Update the Formik field directly
@@ -27,14 +27,22 @@ const PeriodCurrencyModal = ({
                         }}
                         value={value}
                     >
-                        {modalName === 'Period' ?
-                            (PeriodDropDownValues.map((item, index) =>
-                                <RadioButton.Item key={index} label={item.label} value={item.value} />)
-                            ) : 
-                            (CurrencyDropDownValues.map((item, index) =>
-                                <RadioButton.Item key={index} label={item.label} value={item.value} />
-                            ))
+                        {
+                            modalName === 'Period' ? (
+                                PeriodDropDownValues.map((item, index) =>
+                                    <RadioButton.Item key={index} label={item.label} value={item.value} />
+                                )
+                            ) : modalName === 'Currency' ? (
+                                CurrencyDropDownValues.map((item, index) =>
+                                    <RadioButton.Item key={index} label={item.label} value={item.value} />
+                                )
+                            ) : (
+                                AccountTypeDropDownValues.map((item, index) =>
+                                    <RadioButton.Item key={index} label={item.label} value={item.value} />
+                                )
+                            )
                         }
+
                     </RadioButton.Group>
                 </View>
             </View>

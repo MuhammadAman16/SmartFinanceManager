@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
   subHeading: {
     fontSize: 13,
-    color:'grey',
+    color:'rgb(169,169,169)',
     marginVertical: 5
   }
 });

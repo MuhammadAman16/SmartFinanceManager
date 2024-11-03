@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useBudget } from '@/app/context/BudgetContext';
-import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Dimensions, Alert, ActivityIndicator } from 'react-native';
 import { PieChart, BarChart, LineChart } from 'react-native-chart-kit';
 import HorizontalBarGraph from '@chartiful/react-native-horizontal-bar-graph';
 import {
@@ -11,6 +11,7 @@ import {
   Area,
 } from 'react-native-responsive-linechart';
 import styles from '@/src/components/Styling/Stlyes';
+import user_api from '@/app/api/user_api';
 
 const screenWidth = Dimensions.get('window').width;
 // Sample Budget Data
@@ -208,8 +209,16 @@ const CustomTooltip = ({ value, position }) => {
 };
 
 // Budget Page Component
-const BudgetDetail = () => {
-  const { budgets } = useBudget();
+const BudgetDetail = (props) => {
+  const formatDate = (rawDate) => {
+    const dateToBeFormat = new Date(rawDate);
+
+    return `${dateToBeFormat.getMonth() + 1}/${dateToBeFormat.getDate()}/${dateToBeFormat.getFullYear()}`
+  };
+
+  const { budgetId } = props.route.params;
+  const [loading, setLoading] = useState(true);
+  const [budgets, setBudget] = useState({});
   const { totalIncome, totalExpenses } = calculateAmountSpent();
   const [tooltip, setTooltip] = useState({
     visible: false,
@@ -217,9 +226,41 @@ const BudgetDetail = () => {
     position: { x: 0, y: 0 },
   });
 
+  const fetchBudgetById = async () => {
+    try {
+      const res = await user_api.get(`/api/budget/${budgetId}`)
+      setBudget(res.data);
+      // console.log(res.data);
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`);
+      } else if (error.request) {
+        console.log('No response from server');
+      } else {
+        console.log('Error: ', error.error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
-    console.warn(budgets);
+    // console.warn(budgetId)
+    fetchBudgetById()
   }, [])
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <ActivityIndicator size={'large'} color={'blue'} />
+      </View>
+    )
+  }
+
+  const start = budgets.startDate
+  const end = budgets.endDate
+  const startDate = formatDate(new Date(start))
+  const endDate = formatDate(new Date(end))
 
   const handleTooltip = (event) => {
     const { nativeEvent } = event;
@@ -251,7 +292,7 @@ const BudgetDetail = () => {
       legendFontSize: 12,
     },
   ];
-  const progress = totalExpenses / budget.totalAmount;
+  const progress = (budgets.amount - budgets.remainingAmount) / budgets.amount;
   const progressPercent = Math.round(progress * 100);
 
   const spendingData = getExpenseByCategory();
@@ -271,22 +312,26 @@ const BudgetDetail = () => {
     remainingAmountColor = '#4CAF50'; // Green color for within budget
   }
 
-  console.log(cashFlowData);
+  // console.log(cashFlowData);
   return (
     <ScrollView style={styles.BudgetDetailcontainer}>
       {/* Title */}
-      <Text style={styles.BudgetDetailheader}>Budget Details: {budget.category}</Text>
+      <Text style={styles.BudgetDetailheader}>Budget Details: {budgets.name}</Text>
       <Text style={styles.BudgetDetailsubheader}>
-        Period: {budget.startDate.toDateString()} -{' '}
-        {budget.endDate.toDateString()}
+        Period: {startDate} -{' '}
+        {endDate}
       </Text>
 
       {/* Amount Section */}
       <View style={styles.BudgetDetailamountContainer}>
         <View style={styles.BudgetDetailamountItem}>
           <Text style={styles.BudgetDetailtext}>Total Amount:</Text>
-          <Text style={styles.BudgetDetailamount}>${budget.totalAmount}</Text>
+          <Text style={styles.BudgetDetailamount}>${budgets.amount}</Text>
         </View>
+        {/* <View style={styles.BudgetDetailamountItem}>
+          <Text style={styles.BudgetDetailtext}>Total Spent:</Text>
+          <Text style={styles.BudgetDetailamount}>${budgets.amount - budgets.remainingAmount}</Text>
+        </View> */}
         <View style={styles.BudgetDetailamountItem}>
           <Text style={styles.BudgetDetailtext}>Total Income:</Text>
           <Text style={styles.BudgetDetailamount}>${totalIncome}</Text>
@@ -298,7 +343,7 @@ const BudgetDetail = () => {
         <View style={styles.BudgetDetailamountItem}>
           <Text style={styles.BudgetDetailtext}>Remaining Amount:</Text>
           <Text style={[styles.BudgetDetailamount, { color: remainingAmountColor }]}>
-            ${budget.remainingAmount}
+            ${budgets.remainingAmount}
           </Text>
         </View>
       </View>
@@ -372,7 +417,7 @@ const BudgetDetail = () => {
               height: 100,
             },
           }}
-          // onPressBar={(data, index, event) => handleBarPress(data[index].amount, expenseCategoryData[index].category, event)}
+        // onPressBar={(data, index, event) => handleBarPress(data[index].amount, expenseCategoryData[index].category, event)}
         />
       </View>
 

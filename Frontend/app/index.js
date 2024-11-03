@@ -1,7 +1,8 @@
 import React from "react";
-import { View, Text } from "react-native";
 import App from "@/App";
-import BudgetDetail from "@/BudgetDetail";
+import AccountForm from "@/src/Screens/Section-2-Screens/TheHomeSackNavigationScreens/AccountForm";
+import Record from "@/src/Screens/Section-2-Screens/TheHomeSackNavigationScreens/Record";
+// import PraC from "@/src/Screens/Section-2-Screens/TheHomeSackNavigationScreens/prac";
 
 export default function HomeScreen() {
   return (
