@@ -6,15 +6,12 @@ import {
     ScrollView,
     Keyboard,
     TouchableOpacity,
-    Alert,
-    TextInput,
-    Text
+    Alert
 } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup'
 import React, { useRef, useState, useEffect, useContext } from 'react';
 import BudgetInputFields from '@/src/components/OnGoingBudget/BudgetInputFields';
-import DatePickerModal from '@/src/components/OnGoingBudget/DatePickerModal';
 import user_api from '@/app/api/user_api';
 import styles from '@/src/components/Styling/Stlyes';
 import PeriodCurrencyModal from '@/src/components/OnGoingBudget/PeriodCurrencyModal';
@@ -22,29 +19,39 @@ import NotificationComponent from '@/src/components/OnGoingBudget/NotificationCo
 import FormSubmitButton from '@/src/components/Login&Signup/FormSubmitButton';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { AuthContext } from '@/app/context/AuthContext';
+import DateInputField from '@/src/components/OnGoingBudget/DateInputField';
+import moment from 'moment-timezone';
 
 const validationSchema = Yup.object({
     name: Yup.string().trim().min(3, 'Name must be 3 or more').required('Name field is required'),
     period: Yup.string().test('notNone', 'Please select a Period value', function (val) {
-        return val !== 'None'
+        return val !== 'None';
     }),
     amount: Yup.number()
         .required('Amount field is required')
         .positive('Amount should be positive')
         .integer('Amount should be an integer')
         .moreThan(0, 'Amount cannot be zero'),
-    endDate: Yup.string().when('period', {
-        is: (value) => value === 'One-time',
-        then: (endDate) => endDate.required('End Date is required for "One time" period')
-    })
+    startDate: Yup.date().required('Start date is required'),
+    endDate: Yup.date() // Change to Yup.date() for proper date handling
+        .when('period', {
+            is: (value) => value === 'One-time',
+            then: (schema) =>
+                schema
+                    .required('Required Field')
+                    .min(Yup.ref('startDate'), 'Incorrect End Date'),
+            otherwise: (schema) =>
+                schema.min(Yup.ref('startDate'), 'Incorrect End Date'),
+        }),
 });
+
 
 
 const BudgetCreation = (props) => {
     const formatDate = (rawDate) => {
         const dateToBeFormat = new Date(rawDate);
 
-        return `${dateToBeFormat.getMonth() + 1}/${dateToBeFormat.getDate()}/${dateToBeFormat.getFullYear()} ${dateToBeFormat.getHours()}:${dateToBeFormat.getMinutes()}:${dateToBeFormat.getSeconds()}`
+        return `${dateToBeFormat.getFullYear()}-${dateToBeFormat.getMonth() + 1}-${dateToBeFormat.getDate()}`
     };
 
     const todaysDate = new Date();
@@ -57,13 +64,14 @@ const BudgetCreation = (props) => {
     const [periodValue, setPeriodValue] = useState('None');
     const [currencyValue, setCurrencyValue] = useState('PKR');
     const [isModalVisible, setModalVisible] = useState({ value: false, modalName: '' });
+    const [selectedField, setSelectedField] = useState(null);
 
     const budgetInfo = {
         name: '',
         amount: '0',
         account: 'All',
         startDate: formatDate(todaysDate),
-        endDate: ''
+        endDate: 'Select Date'
     };
 
     const getCategoriesItems = (categ) => {
@@ -124,17 +132,25 @@ const BudgetCreation = (props) => {
 
     const scrollViewRef = useRef(null);
 
-    const handleFocus = (inputRef) => {
-        inputRef?.current?.measureLayout(scrollViewRef.current, (x, y, width, height) => {
-            scrollViewRef.current?.scrollTo({ y: y, animated: true });
-        });
-    };
+    // const handleFocus = (inputRef) => {
+    //     inputRef?.current?.measureLayout(scrollViewRef.current, (x, y, width, height) => {
+    //         scrollViewRef.current?.scrollTo({ y: y, animated: true });
+    //     });
+    // };
 
-    const handleConfirm = (date, setFieldValue) => {
-        const formattedDate = formatDate(date);
-        setFieldValue('endDate', formattedDate); // Update formik state
+    const handleConfirm = (date, setFieldValue, fieldValue) => {
+        // Check if the date is valid
+        if (!moment(date).isValid()) {
+            console.error('Invalid date:', date);
+            return; // Exit if the date is not valid
+        }
+
+        // Convert the date to Karachi timezone
+        const formattedDate = moment(date).tz('Asia/Karachi').format('YYYY-MM-DD'); // Format as needed
+        setFieldValue(fieldValue, formattedDate); // Update formik state
         setShowModal(false);
     };
+
 
 
     const saveBudget = async (values, formikActions) => {
@@ -260,9 +276,35 @@ const BudgetCreation = (props) => {
                                                     flexDirection: 'row',
                                                     alignItems: 'flex-start',
                                                     justifyContent: 'space-between',
-                                                    marginTop: 20
+                                                    marginTop: 20,
+                                                    marginHorizontal: 5
                                                 }}>
-                                                    <View style={{ flex: 1 }}>
+                                                    <TouchableOpacity
+                                                        onPress={() => {
+                                                            setSelectedField('startDate');
+                                                            setShowModal(true);
+                                                        }}
+                                                    >
+                                                        <DateInputField
+                                                            lable={'Start Date'}
+                                                            value={startDate}
+                                                            error={touched.startDate && errors.startDate}
+                                                        />
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity
+                                                        onPress={() => {
+                                                            setSelectedField('endDate');
+                                                            setShowModal(true);
+                                                        }}
+
+                                                    >
+                                                        <DateInputField
+                                                            lable={'End Date'}
+                                                            value={endDate}
+                                                            error={touched.endDate && errors.endDate}
+                                                        />
+                                                    </TouchableOpacity>
+                                                    {/* <View style={{ flex: 1 }}>
                                                         <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Start Date</Text>
                                                         <TextInput
                                                             style={{
@@ -297,7 +339,7 @@ const BudgetCreation = (props) => {
                                                                 value={endDate}
                                                             />
                                                         </View>
-                                                    </TouchableOpacity>
+                                                    </TouchableOpacity> */}
 
                                                 </View>
                                             )}
@@ -385,8 +427,7 @@ const BudgetCreation = (props) => {
                                                     isModalVisible={isModalVisible.value}
                                                     setInputField={(value) => {
                                                         setFieldValue(isModalVisible.modalName.toLowerCase(), value);
-                                                        if (isModalVisible.modalName === 'Period')
-                                                        {
+                                                        if (isModalVisible.modalName === 'Period') {
                                                             setPeriodValue(value);
                                                         } else { setCurrencyValue(value); }
                                                     }}
@@ -398,8 +439,8 @@ const BudgetCreation = (props) => {
                                             {showModal &&
                                                 <DateTimePickerModal
                                                     isVisible={true}
-                                                    mode="datetime"
-                                                    onConfirm={(date) => handleConfirm(date, setFieldValue)}
+                                                    mode="date"
+                                                    onConfirm={(date) => handleConfirm(date, setFieldValue, selectedField)}
                                                     onCancel={() => setShowModal(false)}
                                                 />}
                                         </>

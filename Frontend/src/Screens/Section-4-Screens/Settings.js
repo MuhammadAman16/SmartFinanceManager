@@ -1,68 +1,65 @@
 import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import Icon from "react-native-vector-icons/MaterialIcons";
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from "react-native";
+import { Feather, FontAwesome, FontAwesome5, MaterialCommunityIcons, MaterialIcons, AntDesign } from "@expo/vector-icons";
+import { settingsOptions } from "@/src/components/Data/SettingScreens/SettingsScreenData";
 
-// Define your settings options with icon names and colors
-const settingsOptions = [
-  { title: "Profile", iconName: "person-outline", color: "#1DA1F2" },
-  { title: "FAQ", iconName: "help-outline", color: "#1DA1F2" },
-  { title: "Follow", iconName: "share", color: "#1DA1F2" },
-  { title: "About", iconName: "info-outline", color: "#1DA1F2" },
-  { title: "Help", iconName: "help-outline", color: "#1DA1F2" },
-  { title: "Support", iconName: "support-agent", color: "#1DA1F2" }
-];
+const icons = {
+  Feather, FontAwesome, FontAwesome5, MaterialCommunityIcons, MaterialIcons, AntDesign
+}
 
 const Settings = ({ navigation }) => {
-
   return (
-    <View style={styles.container}>
-      <View style={styles.grid}>
-        {settingsOptions.map((option, index) => (
+    <ScrollView style={styles.container}>
+      {settingsOptions.map((option, index) => {
+        const IconComponent = icons[option.iconCommunity];
+        return (
           <TouchableOpacity
             key={index}
-            style={[styles.card, { backgroundColor: option.color }]}
-            onPress={() => navigation.navigate('Setting Stack', {screen: option.title})}  // Handle navigation
+            style={styles.touch}
+            onPress={() => navigation.navigate('Setting Stack', { screen: option.title })}
           >
-            <View style={styles.cardContent}>
-              <Icon name={option.iconName} size={48} color="#fff" />
-              <Text style={styles.text}>{option.title}</Text>
+            <IconComponent
+              name={option.iconName}
+              size={22}
+              color={'rgba(56,142,60,255)'}
+            />
+            <View style={styles.View}>
+              <Text style={styles.Heading}>{option.title}</Text>
+              <Text style={styles.subHeading}>{option.subTitle}</Text>
             </View>
           </TouchableOpacity>
-        ))}
-      </View>
-    </View>
+        );
+      })}
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: "#f5f5f5",
     padding: 16,
+    marginVertical: 0
   },
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+  touch: {
+    flexDirection: 'row',
+    marginHorizontal: 10,
+    marginBottom: 15,
+    alignItems: 'center'
   },
-  card: {
-    width: "48%", // Adjust to fit 2 cards per row with a small gap
-    borderRadius: 8,
-    elevation: 4,
-    marginBottom: 16,
-    overflow: "hidden",
+  View: {
+    marginHorizontal: 20,
+    justifyContent: 'flex-start'
   },
-  cardContent: {
-    alignItems: "center",
-    padding: 16,
-    flexDirection: "column",
-    justifyContent: "center",
-  },
-  text: {
+  Heading: {
     fontSize: 16,
-    color: "#fff",
-    textAlign: "center",
+    fontWeight: 'bold'
   },
+  subHeading: {
+    fontSize: 13,
+    color:'rgb(169,169,169)',
+    marginVertical: 5
+  }
 });
 
 export default Settings;
