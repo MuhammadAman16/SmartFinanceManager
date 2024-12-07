@@ -1,7 +1,8 @@
 const { Budget } = require("../models");
-const { BudgetCategory, BudgetLabel, Category, Label } = require("../models");
+const { BudgetCategory, BudgetLabel, Category, Label ,BudgetAccounts,Account,Record } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
 const { Op } = require('sequelize');
+const moment = require('moment');
 
 exports.getAllBudgets = async (req, res, next) => {
   try {
@@ -24,7 +25,7 @@ exports.getAllBudgets = async (req, res, next) => {
       };
     }
 
-    const budgets = await Budget.findAll({
+    const budgets = JSON.parse(JSON.stringify(await Budget.findAll({
       include: [
         {
           model: Category,
@@ -34,9 +35,64 @@ exports.getAllBudgets = async (req, res, next) => {
           model: Label,
           as: "Labels",
         },
+        {
+          model: Account,
+          as: "Accounts",
+        },
       ],
       where:whereClause
-    });
+    })));
+
+    await Promise.all(budgets.map(async budget => {
+
+      const whereClauseForRecord = {
+        userId:budget.userId,
+        isTemplate:'No',
+        accountId: {
+          [Op.in]:budget.Accounts.map(account => account.id)
+        },
+        categoryId:{
+          [Op.in]:budget.Categories.map(category => category.id)
+        },
+      }
+  
+      if(budget.period == 'One-time'){
+        whereClauseForRecord['datetime'] = {
+          [Op.between]:[budget.startDate,budget.endDate]
+        }
+      }else{
+        let startDate,endDate
+        if(budget.period == 'Week'){
+          startDate = moment(budget.createdAt).startOf('week').toDate(); 
+          endDate = moment(budget.createdAt).endOf('week').toDate();  
+        }else if (budget.period === 'Month') {
+          startDate = moment(budget.createdAt).startOf('month').toDate();
+          endDate = moment(budget.createdAt).endOf('month').toDate();
+        }else if (budget.period === 'Year') {
+          startDate = moment(budget.createdAt).startOf('year').toDate();
+          endDate = moment(budget.createdAt).endOf('year').toDate();
+        }
+        whereClauseForRecord['datetime'] = {
+            [Op.between]: [startDate, endDate], 
+        }
+        
+      }
+  
+      const records = await Record.findAll({
+        where:whereClauseForRecord,
+        raw:true
+      })
+      budget['remainingAmount'] = +budget.amount
+      for (const record of records) {
+        if(record.type == 'INCOME'){
+          budget['remainingAmount'] = (+budget['remainingAmount']) + (+record.amount)
+        }else if(record.type == 'EXPENSE'){
+          budget['remainingAmount'] = (+budget['remainingAmount']) - (+record.amount)
+        }
+      }
+      
+    }))
+
     return res.status(200).json(budgets);
   } catch (error) {
     console.log("Error fetching budgets:", error);
@@ -49,7 +105,7 @@ exports.getBudgetById = async (req, res, next) => {
 
   try {
     
-    const budget = await Budget.findByPk(id, {
+    const budget = JSON.parse(JSON.stringify(await Budget.findByPk(id, {
       include: [
         {
           model: Category,
@@ -59,11 +115,63 @@ exports.getBudgetById = async (req, res, next) => {
           model: Label,
           as: "Labels",
         },
+        {
+          model: Account,
+          as: "Accounts",
+        },
       ],
-    });
+    })));
     if (!budget) {
       return next(errorHandler(404, "Budget not found"));
     }
+
+    const whereClauseForRecord = {
+      userId:budget.userId,
+      isTemplate:'No',
+      accountId: {
+        [Op.in]:budget.Accounts.map(account => account.id)
+      },
+      categoryId:{
+        [Op.in]:budget.Categories.map(category => category.id)
+      },
+    }
+
+    if(budget.period == 'One-time'){
+      whereClauseForRecord['datetime'] = {
+        [Op.between]:[budget.startDate,budget.endDate]
+      }
+    }else{
+      let startDate,endDate
+      if(budget.period == 'Week'){
+        startDate = moment(budget.createdAt).startOf('week').toDate(); 
+        endDate = moment(budget.createdAt).endOf('week').toDate();  
+      }else if (budget.period === 'Month') {
+        startDate = moment(budget.createdAt).startOf('month').toDate();
+        endDate = moment(budget.createdAt).endOf('month').toDate();
+      }else if (budget.period === 'Year') {
+        startDate = moment(budget.createdAt).startOf('year').toDate();
+        endDate = moment(budget.createdAt).endOf('year').toDate();
+      }
+      whereClauseForRecord['datetime'] = {
+          [Op.between]: [startDate, endDate], 
+      }
+      console.log("budget.period",budget.period)
+      
+    }
+
+    const records = await Record.findAll({
+      where:whereClauseForRecord,
+      raw:true
+    })
+    budget['remainingAmount'] = +budget.amount
+    for (const record of records) {
+      if(record.type == 'INCOME'){
+        budget['remainingAmount'] = (+budget['remainingAmount']) + (+record.amount)
+      }else if(record.type == 'EXPENSE'){
+        budget['remainingAmount'] = (+budget['remainingAmount']) - (+record.amount)
+      }
+    }
+
     return res.status(200).json(budget);
   } catch (error) {
     console.log("Error fetching budget:", error);
@@ -78,7 +186,7 @@ exports.createBudget = async (req, res, next) => {
     period,
     amount,
     currency,
-    account,
+    accountIds,
     startDate,
     endDate,
     categoryIds,
@@ -86,11 +194,11 @@ exports.createBudget = async (req, res, next) => {
   } = req.body;
 
   // Validation
-  if (!name || !period || !amount || !currency || !account || !userId) {
+  if (!name || !period || !amount || !currency || !accountIds?.length || !userId) {
     return next(
       errorHandler(
         400,
-        "All fields are required: name, userId, period, amount, currency, account"
+        "All fields are required: name, userId, period, amount, currency, accounts"
       )
     );
   }
@@ -102,7 +210,6 @@ exports.createBudget = async (req, res, next) => {
       period,
       amount,
       currency,
-      account,
       startDate,
       endDate,
     });
@@ -121,6 +228,14 @@ exports.createBudget = async (req, res, next) => {
       });
 
       await BudgetLabel.bulkCreate(BudgetLabelPayload);
+    }
+
+    if(accountIds?.length){
+      const BudgetAccountsPayload = accountIds.map((id) => {
+        return { budgetId: newBudget.id, accountId: id };
+      });
+
+      await BudgetAccounts.bulkCreate(BudgetAccountsPayload);
     }
 
     return res.status(201).json(newBudget);

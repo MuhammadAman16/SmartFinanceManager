@@ -1,10 +1,10 @@
-const { Account } = require("../models");
+const { Account,Record } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
 const { Op } = require('sequelize');
 
 // Create a new Account
 exports.createAccount = async (req, res, next) => {
-  const { name, bankAccountNumber, type, initialValue, currency, color } = req.body;
+  const { name, bankAccountNumber, type, initialValue, currency, color,userId } = req.body;
 
   if (!name || !bankAccountNumber || !type || !initialValue || !currency) {
     return next(errorHandler(400, "All required fields must be provided."));
@@ -18,6 +18,7 @@ exports.createAccount = async (req, res, next) => {
       initialValue,
       currency,
       color,
+      userId
     });
 
     return res.status(201).json(newAccount);
@@ -52,7 +53,29 @@ exports.getAllAccounts = async (req, res, next) => {
     // Fetch accounts with optional filtering by createdAt
     const accounts = await Account.findAll({
       where: whereClause, // Apply the filter here
+      raw:true
     });
+
+    await Promise.all(accounts.map(async account => {
+      const whereClauseForRecord = {
+        userId:account.userId,
+        accountId: account.id
+      }
+  
+      const records = await Record.findAll({
+        where:whereClauseForRecord,
+        raw:true
+      })
+      account['currentValue'] = +account.initialValue
+      for (const record of records) {
+        if(record.type == 'INCOME'){
+          account['currentValue'] = (+account['currentValue']) + (+record.amount)
+        }else if(record.type == 'EXPENSE'){
+          account['currentValue'] = (+account['currentValue']) - (+record.amount)
+        }
+      }
+    }))
+
     return res.status(200).json(accounts);
   } catch (error) {
     console.log("Error fetching accounts:", error);
@@ -68,6 +91,24 @@ exports.getAccountById = async (req, res, next) => {
     const account = await Account.findByPk(id);
     if (!account) {
       return next(errorHandler(404, "Account not found"));
+    }
+
+    const whereClauseForRecord = {
+      userId:account.userId,
+      accountId: account.id
+    }
+
+    const records = await Record.findAll({
+      where:whereClauseForRecord,
+      raw:true
+    })
+    account['currentValue'] = +account.initialValue
+    for (const record of records) {
+      if(record.type == 'INCOME'){
+        account['currentValue'] = (+account['currentValue']) + (+record.amount)
+      }else if(record.type == 'EXPENSE'){
+        account['currentValue'] = (+account['currentValue']) - (+record.amount)
+      }
     }
 
     return res.status(200).json(account);
