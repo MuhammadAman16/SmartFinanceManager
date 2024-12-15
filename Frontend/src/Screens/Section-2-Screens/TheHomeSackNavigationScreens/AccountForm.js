@@ -25,7 +25,7 @@ const AccountForm = ({ handleSubmitRef, navigation }) => {
 
   const saveaccount = async (values, formikActions) => {
     try {
-      await user_api.post('/api/accounts', {
+      await user_api.post('accounts', {
         ...values,
         userId: user.id
       });

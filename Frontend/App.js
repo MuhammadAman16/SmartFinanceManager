@@ -8,6 +8,7 @@ import Home from './src/Screens/Home';
 import BudgetScreen from './src/Screens/Section-2-Screens/TheHomeSackNavigationScreens/BudgetScreen';
 import AccountScreen from './src/Screens/Section-2-Screens/TheHomeSackNavigationScreens/AccountScreen';
 import { ActivityIndicator, StatusBar, SafeAreaView, View } from 'react-native';
+// import ChatScreen from './src/Screens/Chatbot';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,6 +39,7 @@ const App = () => {
                 }
                 <Stack.Screen name='BudgetScreen' component={BudgetScreen} />
                 <Stack.Screen name='AccountScreen' component={AccountScreen} />
+                {/* <Stack.Screen name='ChatScreen' component={ChatScreen} /> */}
             </Stack.Navigator>
         </SafeAreaView>
     );

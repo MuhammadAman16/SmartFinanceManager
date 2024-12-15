@@ -22,7 +22,7 @@ const LoginForm = () => {
 
     const loginsubmit = async (values, formikActions) => {
         try{
-            const res = await user_api.post('/api/auth/login', {
+            const res = await user_api.post('auth/login', {
                 ...values
             });
             formikActions.resetForm();

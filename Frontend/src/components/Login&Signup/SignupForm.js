@@ -10,7 +10,7 @@ import { useNavigation } from '@react-navigation/native'
 import { AuthContext } from '@/app/context/AuthContext'
 
 const validationSchema = Yup.object({
-    fullName: Yup.string().trim().required('Full Name Field is required'),
+    fullName: Yup.string().trim().required('Full Name is required'),
     email: Yup.string().email('Invalid Email').required('Email is required'),
     password: Yup.string().trim().min(8, 'Password must be 8 or more').required('Password is required'),
     confirm: Yup.string().equals([Yup.ref('password'), null], 'Password doesnt match')
@@ -28,14 +28,14 @@ const SignupForm = () => {
 
     const signUpSubmit = async (values, formikActions) => {
         try {
-            const res = await user_api.post('/api/auth/signup', {
+            const res = await user_api.post('auth/signup', {
                 fullName: values.fullName,
                 email: values.email,
                 password: values.password
             });
             formikActions.resetForm();
             Alert.alert(res.data.message);
-            signup(res.data.user);
+            signup(res.data.token);
         } catch(error){
             if (error.response) {
                 Alert.alert(`Error : ${error.response.data.message}`);
