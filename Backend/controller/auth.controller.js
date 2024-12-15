@@ -30,6 +30,8 @@ exports.signup = async (req, res, next) => {
             email,
             password: hashedPassword,
         });
+        const token = jwt.sign({ id: newUser.id, email: newUser.email,fullName:newUser.fullName }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
 
         return res.status(201).json({
             message: 'User created successfully',
@@ -38,6 +40,7 @@ exports.signup = async (req, res, next) => {
                 fullName: newUser.fullName,
                 email: newUser.email,
             },
+            token
         });
     } catch (error) {
         console.log("error", error)
