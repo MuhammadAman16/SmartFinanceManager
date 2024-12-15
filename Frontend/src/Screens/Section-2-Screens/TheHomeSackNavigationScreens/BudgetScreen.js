@@ -20,27 +20,39 @@ const BudgetScreen = () => {
             }}>
             <Stack.Screen name='Your Budgets' component={OngoingBudget} />
             <Stack.Screen name='Budget Detail' component={BudgetDetail} />
-            <Stack.Screen name='New Budget' component={BudgetCreation}/>
-            <Stack.Screen name='Select Categories' component={CategoriesScreen}
+            <Stack.Screen name='New Budget' component={BudgetCreation} />
+            <Stack.Screen
+                name="Select Categories"
+                component={CategoriesScreen}
                 options={({ route, navigation }) => ({
                     title: route.params?.title || 'Select Categories',
                     headerRight: () => (
                         <Feather
-                            name='check'
+                            name="check"
                             size={30}
-                            color={'white'}
+                            color="white"
                             onPress={() => {
+                                // Handle selected items conditionally
                                 const selectedCategories = route.params?.selectedCategories || [];
-                                route.params?.onCategoriesSelected(selectedCategories);
+                                const selectedAccounts = route.params?.selectedAccounts || [];
+
+                                // Call the appropriate callback if defined
+                                if (route.params?.onCategoriesSelected) {
+                                    route.params.onCategoriesSelected(selectedCategories);
+                                }
+                                if (route.params?.onAccountsSelected) {
+                                    route.params.onAccountsSelected(selectedAccounts);
+                                }
+
                                 navigation.goBack();
                             }}
                         />
-                    )
-                })
-                }
+                    ),
+                })}
             />
+
             <Stack.Screen name='Select Labels' component={LabelScreen}
-                options={({route, navigation}) => ({
+                options={({ route, navigation }) => ({
                     headerRight: () => (
                         <Feather
                             name='check'

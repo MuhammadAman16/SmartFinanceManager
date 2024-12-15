@@ -5,22 +5,17 @@ import styles from '@/src/components/Styling/Stlyes'
 import { Checkbox } from 'react-native-paper'
 import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
 
-const AccountsArray = [
-  { label: 'Cash', type: 'Cash', value: 'Cash', checked: false },
-  { label: 'Account', type: 'Account', value: 'Account', checked: false },
-  { label: 'Test', type: 'Test', value: 'Test', checked: false },
-]
 
 const CategoriesScreen = ({ navigation, route }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [allChecked, setAllChecked] = useState(true); // State for "All" checkbox
   const [accounts, setAccounts] = useState([]);
-  const { selectedCategories, fieldName } = route.params;
+  const { selectedCategories, fieldName, selectedAccounts } = route.params;
 
   const loadCategories = async () => {
     try {
-      let res = await user_api.get('/api/category');
+      let res = await user_api.get('category');
       const updatedCategoriesList = res.data.data.map((category) => ({
         ...category,
         checked: selectedCategories.includes(category.id)
@@ -39,11 +34,34 @@ const CategoriesScreen = ({ navigation, route }) => {
     }
   };
 
+  const loadAccounts = async () => {
+    try {
+      let res = await user_api.get('accounts');
+      const updatedAccountsList = res.data.map((account) => ({
+        ...account,
+        checked: selectedAccounts.includes(account.id)
+      }));
+      setAccounts(updatedAccountsList)
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`);
+      } else if (error.request) {
+        console.log('No response from server');
+      } else {
+        console.log('Error: ', error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (fieldName === 'Category') {
       loadCategories();
     }
-    else {
+    else if (fieldName === 'Account') {
+      loadAccounts();
+    } else {
       setLoading(false);
     }
   }, []);
@@ -59,7 +77,7 @@ const CategoriesScreen = ({ navigation, route }) => {
       setCategories(updatedCategories);
     }
     else {
-      const updatedAccounts = AccountsArray.map((account, accIndex) => {
+      const updatedAccounts = accounts.map((account, accIndex) => {
         if (accIndex === index) {
           return { ...account, checked: !account.checked };
         }
@@ -78,6 +96,15 @@ const CategoriesScreen = ({ navigation, route }) => {
     setAllChecked(!allChecked); // Update the "All" checkbox state
   };
 
+  const toggleAllAccounts = () => {
+    const updatedAccounts = accounts.map((account) => ({
+      ...account,
+      checked: !allChecked // Toggle the checked state
+    }));
+    setAccounts(updatedAccounts);
+    setAllChecked(!allChecked); // Update the "All" checkbox state
+  };
+
   useEffect(() => {
     const checkedCategories = categories.filter(category => category.checked);
     const selectedCategoryIds = checkedCategories.map((category) => ({
@@ -88,6 +115,17 @@ const CategoriesScreen = ({ navigation, route }) => {
     // Update the navigation params with selected categories
     navigation.setParams({ selectedCategories: selectedCategoryIds });
   }, [categories]);
+  
+  useEffect(() => {
+    const checkedAccounts = accounts.filter(account => account.checked);
+    const selectedAccountIds = checkedAccounts.map((account) => ({
+      id: account.id,
+      name: account.name
+    }));
+
+    // Update the navigation params with selected categories
+    navigation.setParams({ selectedAccounts: selectedAccountIds });
+  }, [accounts]);
 
   if (loading) {
     return (
@@ -124,7 +162,7 @@ const CategoriesScreen = ({ navigation, route }) => {
         </View>
         <Checkbox.Item
           status={allChecked ? "checked" : "unchecked"}
-          onPress={toggleAllCategories} // Toggle all categories
+          onPress={fieldName === 'Category' ? toggleAllCategories : toggleAllAccounts} // Toggle all categories
         />
       </View>
       <View>
@@ -146,13 +184,13 @@ const CategoriesScreen = ({ navigation, route }) => {
             />
           </View>
         ))) :
-          (AccountsArray.map((item, index) => (
+          (accounts.map((item, index) => (
             <View key={index} style={styles.CategoriesScreenViewStyling}>
               <View style={styles.CategoriesScreenAllCategoryViewStyling}>
                 <View style={styles.CategoriesScreenAllCategoryTextFeatherViewStyling}>
                   <MaterialCommunityIcons name={'cash'} size={30} color={'white'} />
                 </View>
-                <Text style={styles.CategoriesScreenAllCategoryTextStyling}>{item.value}</Text>
+                <Text style={styles.CategoriesScreenAllCategoryTextStyling}>{item.name}</Text>
               </View>
               <Checkbox.Item
                 status={item.checked ? "checked" : "unchecked"}

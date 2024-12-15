@@ -15,7 +15,7 @@ export const BudgetProvider = ({ children }) => {
 
     const fetchAllBudget = async () => {
         try {
-            const res = await user_api.get('api/budget');
+            const res = await user_api.get('budget');
             const today = new Date();
             const ongoing = res.data.filter((budget) => {
                 const start = new Date(budget.startDate);

@@ -44,10 +44,17 @@ export const AuthProvider = ({children}) => {
         );
     }
 
-    const signup = async(user) => {
+    const signup = async(token) => {
         try {
-            await SecureStore.setItemAsync('user', JSON.stringify(user));
-            setUser({fulName: user.fulName});
+            await SecureStore.setItemAsync('jwtToken', token);
+            const decodedToken = jwtDecode(token);
+            setUser(
+                {
+                    fullName: decodedToken.fullName,
+                    id: decodedToken.id,
+                    email: decodedToken.email
+                }
+            );
         } catch(error) {
             console.error("Error while storing user : ", error);
         }

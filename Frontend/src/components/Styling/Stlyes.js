@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     addButton: {
-        backgroundColor: 'rgb(174,198,207)',
+        backgroundColor: 'rgba(56,142,60,255)',
         padding: 8,
         flexDirection: 'row',
         alignItems: 'center',
@@ -923,6 +923,24 @@ const styles = StyleSheet.create({
         flexShrink: 1,
         color: 'rgb(169,169,169)',
         marginTop: 10
+    },
+    ChatBotView: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        width: 100,
+        height: 100,
+        borderRadius: 25,
+        // backgroundColor: '#dcdcdc',
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+        zIndex: 2,
+    },
+    DrawerView: {
+        flex: 1,
+        backgroundColor: 'white',
+        zIndex: 2,
+        position: 'relative'
     }
 })
 

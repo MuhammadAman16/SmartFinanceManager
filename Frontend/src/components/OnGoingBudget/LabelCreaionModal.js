@@ -23,7 +23,7 @@ const LabelCreationModal = ({ setModalOpen, addNewLabel }) => {
 
     const labelsubmit = async (values, formikActions) => {
         try {
-            const res = await user_api.post('/api/label', {
+            const res = await user_api.post('label', {
                 ...values
             });
             formikActions.resetForm();

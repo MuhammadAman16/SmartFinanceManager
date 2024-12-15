@@ -228,7 +228,7 @@ const BudgetDetail = (props) => {
 
   const fetchBudgetById = async () => {
     try {
-      const res = await user_api.get(`/api/budget/${budgetId}`)
+      const res = await user_api.get(`budget/${budgetId}`)
       setBudget(res.data);
       // console.log(res.data);
     } catch (error) {

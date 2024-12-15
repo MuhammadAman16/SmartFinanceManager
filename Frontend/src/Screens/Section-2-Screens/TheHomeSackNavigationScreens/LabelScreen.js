@@ -14,7 +14,7 @@ const LabelScreen = ({navigation, route}) => {
 
     const loadLabels = async () => {
         try {
-            const res = await user_api.get('/api/label');
+            const res = await user_api.get('label');
             const updatedLabel = res.data.labels.map((label) => ({
                 ...label,
                 checked: selectedLabels.includes(label.id)

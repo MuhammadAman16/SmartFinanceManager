@@ -33,15 +33,15 @@ const validationSchema = Yup.object({
         .integer('Amount should be an integer')
         .moreThan(0, 'Amount cannot be zero'),
     startDate: Yup.date().required('Start date is required'),
-    endDate: Yup.date() // Change to Yup.date() for proper date handling
+    endDate: Yup.date()
+        .nullable() // Allow null values
+        .typeError('Invalid date selected') // Custom error for invalid dates
         .when('period', {
-            is: (value) => value === 'One-time',
-            then: (schema) =>
-                schema
-                    .required('Required Field')
-                    .min(Yup.ref('startDate'), 'Incorrect End Date'),
-            otherwise: (schema) =>
-                schema.min(Yup.ref('startDate'), 'Incorrect End Date'),
+            is: 'One-time',
+            then: schema => schema
+                .required('End date is required for One-time period')
+                .min(Yup.ref('startDate'), 'End date cannot be before the start date'),
+            otherwise: schema => schema.notRequired(),
         }),
 });
 
@@ -58,9 +58,10 @@ const BudgetCreation = (props) => {
     const { user } = useContext(AuthContext);
     const [showModal, setShowModal] = useState(false);
     const [categories, setCategories] = useState([]);
+    const [accounts, setAccounts] = useState([]);
     const [labels, setLabels] = useState();
     const [loading, setLoading] = useState(true);
-    const { selectedCategories, selectedLabels } = props.route.params || [];
+    const { selectedCategories, selectedLabels, selectedAccounts } = props.route.params || [];
     const [periodValue, setPeriodValue] = useState('None');
     const [currencyValue, setCurrencyValue] = useState('PKR');
     const [isModalVisible, setModalVisible] = useState({ value: false, modalName: '' });
@@ -68,10 +69,8 @@ const BudgetCreation = (props) => {
 
     const budgetInfo = {
         name: '',
-        amount: '0',
-        account: 'All',
         startDate: formatDate(todaysDate),
-        endDate: 'Select Date'
+        endDate: null
     };
 
     const getCategoriesItems = (categ) => {
@@ -80,6 +79,15 @@ const BudgetCreation = (props) => {
                 return 'All';
             }
             return categ.map(cat => cat.name).join(', ')
+        }
+    };
+    const getAccountItems = (account) => {
+        // console.log("Accounts : ", account);
+        if (account !== undefined) {
+            if (account.length >= 16) {
+                return 'All';
+            }
+            return account.map(acc => acc.name).join(', ')
         }
     };
 
@@ -94,7 +102,7 @@ const BudgetCreation = (props) => {
 
     const fetchCategories = async () => {
         try {
-            let res = await user_api.get('/api/category');
+            let res = await user_api.get('category');
             const dataArray = res.data.data;
             const categ = dataArray.map(item => ({
                 id: item.id,
@@ -114,9 +122,34 @@ const BudgetCreation = (props) => {
         }
     };
 
+    const fetchAccounts = async () => {
+        try {
+            let res = await user_api.get('accounts');
+            const dataArray = res.data;
+            // console.log(res.data);
+            const account = dataArray.map(item => ({
+                id: item.id,
+                name: item.name
+            }));
+            setAccounts(account);
+            // console.log("Accounts : ", accounts);
+        } catch (error) {
+            if (error.response) {
+                Alert.alert(`Error: ${error.response.data.error}`);
+            } else if (error.request) {
+                console.log('No response from server');
+            } else {
+                console.log('Error in Account: ', error.error);
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         if (selectedCategories === undefined) {
             fetchCategories();
+            fetchAccounts();
         }
     }, []);
 
@@ -125,6 +158,12 @@ const BudgetCreation = (props) => {
             setCategories(selectedCategories);
         }
     }, [selectedCategories])
+
+    useEffect(() => {
+        if (selectedAccounts) {
+            setAccounts(selectedAccounts);
+        }
+    }, [selectedAccounts])
 
     useEffect(() => {
         setLabels(selectedLabels);
@@ -162,6 +201,7 @@ const BudgetCreation = (props) => {
         try {
             const categ = values.categoryIds.map(cat => cat.id);
             const labels = values.labelIds.map(lab => lab.id);
+            const acc = values.accountIds.map(acc => acc.id);
             let endDate = values.endDate;
 
             switch (values.period) {
@@ -188,12 +228,12 @@ const BudgetCreation = (props) => {
                     break;
             }
 
-            await user_api.post('/api/budget', {
+            await user_api.post('budget', {
                 name: values.name,
                 period: values.period,
                 currency: values.currency,
                 amount: values.amount,
-                account: values.account,
+                accountIds: acc,
                 labelIds: labels,
                 categoryIds: categ,
                 startDate: values.startDate,
@@ -240,15 +280,20 @@ const BudgetCreation = (props) => {
                                     categoryIds: categories,
                                     period: periodValue,
                                     currency: currencyValue,
-                                    labelIds: labels || []
+                                    labelIds: labels || [],
+                                    accountIds: accounts,
                                 }}
                                 validationSchema={validationSchema}
                                 onSubmit={saveBudget}
+                                enableReinitialize
                             >
                                 {({ handleChange, handleBlur, values, errors, touched, handleSubmit, setFieldValue }) => {
-                                    const { name, period, amount, account, categoryIds, currency, labelIds, startDate, endDate } = values;
+                                    const { name, period, amount, accountIds, categoryIds, currency, labelIds, startDate, endDate } = values;
+                                    // console.log("accountIds : ", accountIds);
                                     const displayCategories = getCategoriesItems(categoryIds);
+                                    const displayAccounts = getAccountItems(accountIds);
                                     const displayLabels = getLabelItesm(labelIds);
+                                    console.log("Error in Formik : ", errors);
                                     return (
                                         <>
                                             <BudgetInputFields
@@ -356,12 +401,25 @@ const BudgetCreation = (props) => {
                                             <TouchableOpacity
                                                 onPress={() => {
                                                     Keyboard.dismiss();
-                                                    props.navigation.navigate('Select Categories', { fieldName: 'Account', title: 'Select Accounts' })
+                                                    props.navigation.navigate('Select Categories', {
+                                                        fieldName: 'Account', title: 'Select Accounts',
+                                                        selectedAccounts: values.accountIds,
+                                                        onAccountsSelected: (selectedAccounts) => {
+                                                            setFieldValue('accountIds', selectedAccounts);
+                                                        }
+                                                    })
                                                 }}
+                                            // props.navigation.navigate('Select Categories', {
+                                            //     fieldName: 'Category',
+                                            //     selectedCategories: values.categoryIds,
+                                            //     onCategoriesSelected: (selectedCategories) => {
+                                            //         setFieldValue('categoryIds', selectedCategories)
+                                            //     }
+                                            // })
                                             >
                                                 <BudgetInputFields
                                                     label={'Account'}
-                                                    value={account}
+                                                    value={displayAccounts}
                                                     editable={false}
                                                     iconName={'down'}
                                                     color={'black'}
