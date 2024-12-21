@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  StyleSheet,
   Animated,
   Platform,
   KeyboardAvoidingView
@@ -47,7 +48,7 @@ const TypingIndicator = () => {
   );
 };
 
-const ChatScreen = (props) => {
+const ChatScreen = () => {
   const [messages, setMessages] = useState([
     { id: '1', text: 'Hello! How can I help you today?', sender: 'bot' },
   ]);
@@ -80,12 +81,6 @@ const ChatScreen = (props) => {
     }
   }, [isListening]);
 
-  useEffect(() => {
-    if (FlatListRef.current) {
-      FlatListRef.current.scrollToEnd({ animated: true })
-    }
-  }, [messages])
-
 
   useEffect(() => {
     Voice.onSpeechStart = onSpeechStart;
@@ -97,6 +92,12 @@ const ChatScreen = (props) => {
       Voice.destroy().then(Voice.removeAllListeners);
     }
   }, [isListening]);
+
+  useEffect(() => {
+    if (FlatListRef.current) {
+      FlatListRef.current.scrollToEnd({ animated: true })
+    }
+  }, [messages])
 
   const onSpeechStart = event => {
     console.log('recording start', event)
@@ -145,7 +146,6 @@ const ChatScreen = (props) => {
     setIsTyping(true);
 
     const token = await SecureStore.getItemAsync('jwtToken');
-    // console.log("Token is : ", token);
     await user_api.post('chatbot', {
       query: inputMessage,
       headers: {
