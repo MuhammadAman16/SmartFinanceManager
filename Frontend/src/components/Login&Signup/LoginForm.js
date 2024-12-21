@@ -30,7 +30,7 @@ const LoginForm = () => {
             login(res.data.token) 
         } catch(error) {
             if (error.response){
-                Alert.alert(`Error: ${error.response.data.error}`)
+                console.log(`Error: ${error.response.data.error}`)
             } else if (error.request) {
                 console.log(`No response from server`);
             } else {
