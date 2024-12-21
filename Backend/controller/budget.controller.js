@@ -8,7 +8,7 @@ const moment = require('moment');
 
 exports.getAllBudgets = async (req, res, next) => {
   try {
-    const { startDate, endDate, createdAt, to, from, userId, categoryId,amount,period } = req.query;
+    const { startDate, endDate, createdAt, to, from, userId, category,amount,period } = req.query;
 
     let whereClause = {};
 
@@ -47,8 +47,8 @@ exports.getAllBudgets = async (req, res, next) => {
       whereClause.period = period; // Filter by userId
     }
 
-    if (categoryId) {
-      whereClause['$Categories.id$'] = categoryId; // Filter budgets associated with the categoryId
+    if (category) {
+      whereClause['$Categories.name$'] = category; // Filter budgets associated with the categoryId
     }
 
     const budgets = JSON.parse(JSON.stringify(await Budget.findAll({
