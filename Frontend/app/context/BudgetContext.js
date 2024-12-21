@@ -30,7 +30,7 @@ export const BudgetProvider = ({ children }) => {
                 const end = new Date(budget.endDate);
                 return end.getTime() <= today.getTime() && budget.remainingAmount < 0;
             })
-            console.log(ongoing);
+            // console.log(ongoing);
             setBudgets(res.data);
             setBudgetCategories({
                 ongoingbudgets: ongoing,

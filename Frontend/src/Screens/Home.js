@@ -4,7 +4,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import styles from '../components/Styling/Stlyes';
 
-const Home = () => {
+const Home = (props) => {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.DrawerView}>
@@ -12,7 +12,7 @@ const Home = () => {
       </View>
       <View style={styles.ChatBotView}>
         <TouchableOpacity
-          onPress={() => setModalOpen(true)}
+          onPress={() => props.navigation.navigate('ChatScreen')}
           style={styles.LabelScreenAddLabelButtonStyling}
         >
           <MaterialCommunityIcons
