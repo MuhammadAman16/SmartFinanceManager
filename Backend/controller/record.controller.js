@@ -1,6 +1,7 @@
 const { Record, Account, Category, Label } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
 const { Op } = require("sequelize");
+const {sequelize} = require("../models")
 const constants = require('./../utils/constants');
 const s3 =  require('./../utils/bucket');
 exports.createRecord = async (req, res, next) => {
@@ -200,40 +201,104 @@ exports.deleteRecord = async (req, res, next) => {
   }
 };
 
-exports.getAllRecords = async (req, res, next) => {
-  const { createdAt } = req.query; // Extract the createdAt query param
+// exports.getAllRecords = async (req, res, next) => {
+//   const { createdAt } = req.query; // Extract the createdAt query param
 
+//   try {
+//     // Build the where clause for filtering by createdAt
+//     let whereClause = {};
+
+//     if (createdAt) {
+
+//       const startOfDay = new Date(createdAt);
+//     startOfDay.setUTCHours(0, 0, 0, 0); // Set to the start of the day (00:00:00)
+
+//     const endOfDay = new Date(createdAt);
+//     endOfDay.setUTCHours(23, 59, 59, 999); // Set to the end of the day (23:59:59)
+
+//     whereClause.createdAt = {
+//       [Op.between]: [startOfDay, endOfDay], 
+//     };
+//   }
+
+//     const records = await Record.findAll({
+//       where: whereClause,
+//       include: [
+//         {
+//           model: Account,
+//           as: "Account", // Include associated account
+//         },
+//         {
+//           model: Category,
+//           as: "Category", // Include associated category
+//         },
+//         {
+//           model: Label,
+//           as: "Labels", // Include associated labels
+//         },
+//       ],
+//     });
+
+//     return res.status(200).json(records);
+//   } catch (error) {
+//     console.log("Error fetching records:", error);
+//     next(error);
+//   }
+// };
+
+
+exports.getAllRecords = async (req, res, next) => {
   try {
-    // Build the where clause for filtering by createdAt
+    const { userId, amount, category, type, isTemplate, createdAt, paymentType } = req.query;
+
     let whereClause = {};
 
+    // Check if `isTemplate` is provided in the query
+    if (isTemplate) {
+      whereClause.isTemplate = isTemplate;
+    }
+
+    // Apply filters based on other query parameters
+    if (userId) {
+      whereClause.userId = userId;
+    }
+
+    if (amount) {
+      whereClause.amount = amount;
+    }
+
+    if (type) {
+      whereClause.type = type; // Filter by record type (INCOME or EXPENSE)
+    }
+
+    if (paymentType) {
+      whereClause.paymentType = paymentType; // Filter by payment type
+    }
+
+    // Apply filtering based on createdAt
     if (createdAt) {
+      whereClause["createdAt"] = sequelize.literal(`CAST("Record"."createdAt" AS DATE) = '${createdAt}'`);
+    }
 
-      const startOfDay = new Date(createdAt);
-    startOfDay.setUTCHours(0, 0, 0, 0); // Set to the start of the day (00:00:00)
+    if (category) {
+      whereClause["$Category.name$"] = category; // Filter by associated category name
+    }
 
-    const endOfDay = new Date(createdAt);
-    endOfDay.setUTCHours(23, 59, 59, 999); // Set to the end of the day (23:59:59)
-
-    whereClause.createdAt = {
-      [Op.between]: [startOfDay, endOfDay], 
-    };
-  }
-
+    // Fetch records with filters and include associated models
     const records = await Record.findAll({
       where: whereClause,
       include: [
         {
           model: Account,
-          as: "Account", // Include associated account
+          as: "Account",
         },
         {
           model: Category,
-          as: "Category", // Include associated category
+          as: "Category",
         },
         {
           model: Label,
-          as: "Labels", // Include associated labels
+          as: "Labels",
         },
       ],
     });
@@ -244,6 +309,8 @@ exports.getAllRecords = async (req, res, next) => {
     next(error);
   }
 };
+
+
 
 exports.getRecordById = async (req, res, next) => {
   const { id } = req.params;
