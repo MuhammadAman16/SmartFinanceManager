@@ -201,50 +201,7 @@ exports.deleteRecord = async (req, res, next) => {
   }
 };
 
-// exports.getAllRecords = async (req, res, next) => {
-//   const { createdAt } = req.query; // Extract the createdAt query param
 
-//   try {
-//     // Build the where clause for filtering by createdAt
-//     let whereClause = {};
-
-//     if (createdAt) {
-
-//       const startOfDay = new Date(createdAt);
-//     startOfDay.setUTCHours(0, 0, 0, 0); // Set to the start of the day (00:00:00)
-
-//     const endOfDay = new Date(createdAt);
-//     endOfDay.setUTCHours(23, 59, 59, 999); // Set to the end of the day (23:59:59)
-
-//     whereClause.createdAt = {
-//       [Op.between]: [startOfDay, endOfDay], 
-//     };
-//   }
-
-//     const records = await Record.findAll({
-//       where: whereClause,
-//       include: [
-//         {
-//           model: Account,
-//           as: "Account", // Include associated account
-//         },
-//         {
-//           model: Category,
-//           as: "Category", // Include associated category
-//         },
-//         {
-//           model: Label,
-//           as: "Labels", // Include associated labels
-//         },
-//       ],
-//     });
-
-//     return res.status(200).json(records);
-//   } catch (error) {
-//     console.log("Error fetching records:", error);
-//     next(error);
-//   }
-// };
 
 
 exports.getAllRecords = async (req, res, next) => {
