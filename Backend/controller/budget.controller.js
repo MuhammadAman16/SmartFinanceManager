@@ -6,7 +6,7 @@ const moment = require('moment');
 
 exports.getAllBudgets = async (req, res, next) => {
   try {
-    const { startDate, endDate, createdAt } = req.query;
+    const { startDate, endDate, createdAt, to, from, userId, category,amount,period } = req.query;
 
     let whereClause = {};
 
@@ -21,8 +21,22 @@ exports.getAllBudgets = async (req, res, next) => {
     // Apply filtering based on createdAt
     if (createdAt) {
       whereClause.createdAt = {
-        [Op.gte]: new Date(createdAt), // Only budgets created after the given createdAt
+        [Op.between]: [fromDate, toDate], // Only budgets created between from and to
       };
+    }
+
+    if(userId){
+      whereClause.userId = userId; // Filter by userId
+    }
+    if(amount){
+      whereClause.amount = amount; // Filter by userId
+    }
+    if(period){
+      whereClause.period = period; // Filter by userId
+    }
+
+    if (category) {
+      whereClause['$Categories.name$'] = category; // Filter budgets associated with the categoryId
     }
 
     const budgets = JSON.parse(JSON.stringify(await Budget.findAll({
