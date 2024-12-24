@@ -1,8 +1,6 @@
 const { Budget } = require("../models");
 const { BudgetCategory, BudgetLabel, Category, Label ,BudgetAccounts,Account,Record } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
-const models = require('sequelize');
-const {sequelize} = require("../models")
 const { Op } = require('sequelize');
 const moment = require('moment');
 
@@ -13,25 +11,15 @@ exports.getAllBudgets = async (req, res, next) => {
     let whereClause = {};
 
     // Apply filtering based on startDate and endDate (budget period)
-    if (startDate) {
+    if (startDate || endDate) {
       whereClause.startDate = {
         ...(startDate && { [Op.gte]: new Date(startDate) }), // Greater than or equal to startDate
-      };
-    }
-    if (endDate) {
-      whereClause.endDate = {
         ...(endDate && { [Op.lte]: new Date(endDate) }), // Less than or equal to endDate
       };
     }
 
     // Apply filtering based on createdAt
     if (createdAt) {
-      whereClause["createdAt"] = sequelize.literal(`CAST("Budget"."createdAt" as DATE) = '${createdAt}'`);
-    }
-
-    if (to && from) {
-      const fromDate = moment(new Date(from)).set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).format('YYYY-MM-DD');
-      const toDate = moment(new Date(to)).set({ hour: 23, minute: 59, second: 59, millisecond: 9999 }).format('YYYY-MM-DD');
       whereClause.createdAt = {
         [Op.between]: [fromDate, toDate], // Only budgets created between from and to
       };
@@ -181,6 +169,7 @@ exports.getBudgetById = async (req, res, next) => {
       whereClauseForRecord['datetime'] = {
           [Op.between]: [startDate, endDate], 
       }
+      console.log("budget.period",budget.period)
       
     }
 

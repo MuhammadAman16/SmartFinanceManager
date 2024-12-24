@@ -941,6 +941,94 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         zIndex: 2,
         position: 'relative'
+    },
+    Botcontainer: {
+        flex: 1,
+        backgroundColor: '#f1f1f1',
+    },
+    Botheader: {
+        height: 80,
+        paddingRight: '35%',
+        backgroundColor: 'rgba(56,142,60,255)',
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        justifyContent: 'space-between',
+        paddingBottom: 10
+    },
+    botIcon: {
+        right: 5,
+    },
+    BotheaderText: {
+        fontSize: 20,
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    chatContainer: {
+        flex: 1,
+        paddingHorizontal: 15,
+    },
+    messageBubble: {
+        maxWidth: '75%',
+        padding: 10,
+        marginVertical: 5,
+        borderRadius: 15,
+    },
+    userBubble: {
+        alignSelf: 'flex-end',
+        backgroundColor: 'rgba(56,142,60,255)',
+        borderBottomRightRadius: 0,
+    },
+    botBubble: {
+        alignSelf: 'flex-start',
+        backgroundColor: '#e0e0e0',
+        borderBottomLeftRadius: 0,
+    },
+    BotmessageText: {
+        fontSize: 16,
+    },
+    BotinputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        backgroundColor: '#fff',
+        borderRadius: 25,
+        margin: 10,
+    },
+    Botinput: {
+        flex: 1,
+        fontSize: 16,
+        paddingHorizontal: 10,
+        height: 40,
+    },
+    audioButton: {
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginHorizontal: 5,
+    },
+    sendButton: {
+        width: 40,
+        height: 30,
+        backgroundColor: 'rgba(56,142,60,255)',
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    typingContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 15,
+        paddingBottom: 10,
+    },
+    typingDot: {
+        fontSize: 26,
+        color: 'rgba(56,142,60,255)',
+        marginHorizontal: 2,
+    },
+    voiceButtonText: {
+        fontSize: 18,
+        color: 'rgba(56,142,60,255)',
     }
 })
 

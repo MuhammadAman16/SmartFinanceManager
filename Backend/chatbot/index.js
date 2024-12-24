@@ -277,19 +277,19 @@ async function addDataToPinecone() {
       metadata: { class: "get_budget" },
     },
     {
-      pageContent: "How much is allocated for personal care?",
+      pageContent: "which is my max budgt?",
       metadata: { class: "get_budget" },
     },
     {
-      pageContent: "Retrieve my budget for household supplies.",
+      pageContent: "Retrieve my budget for last week.",
       metadata: { class: "get_budget" },
     },
     {
-      pageContent: "What is my budget for pets?",
+      pageContent: "What is my budget for last month?",
       metadata: { class: "get_budget" },
     },
     {
-      pageContent: "Show me my budget for subscriptions.",
+      pageContent: "Show me my budget for last year.",
       metadata: { class: "get_budget" },
     },
     {
@@ -820,6 +820,7 @@ exports.getClass = async (query) => {
         `* ${doc.pageContent} [${JSON.stringify(doc.metadata, null, 2)}]`
       );
       response = `${JSON.stringify(doc.metadata.class)}`;
+      console.log(response);
     }
     return response;
   } catch (error) {
