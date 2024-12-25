@@ -1,22 +1,20 @@
 const { initializeModel } = require("../config/chatbot.config");
 const { getClass } = require("../chatbot/index");
-const { getBudgetById, getAllBudgets } = require("./budget.controller");
-const { getAllAccounts } = require("./account.controller");
-const e = require("express");
+const { getAllBudgets } = require("./budget.controller");
 const { getAllRecords, createRecord } = require("./record.controller");
 
 let model = null;
-exports.initiateChatbot = async (req, res, next) => {
-  const prompt = "Ask me a question.";
-  model = await initializeModel();
-  try {
-    const result = await model.generateContent(prompt);
-    res.json({ response: "Hi, How can I help you today?" });
-  } catch (error) {
-    console.error("Error connecting to chatbot:", error);
-    res.status(500).json({ error: "Failed connecting to chatbot" });
-  }
-};
+// exports.initiateChatbot = async (req, res, next) => {
+//   const prompt = "Ask me a question.";
+//   model = await initializeModel();
+//   try {
+//     const result = await model.generateContent(prompt);
+//     res.json({ response: "Hi, How can I help you today?" });
+//   } catch (error) {
+//     console.error("Error connecting to chatbot:", error);
+//     res.status(500).json({ error: "Failed connecting to chatbot" });
+//   }
+// };
 
 // exports.generateResponse = async (req, res, next) => {
 //   const prompt = req.body.prompt;
@@ -31,20 +29,6 @@ exports.initiateChatbot = async (req, res, next) => {
 //     res.status(500).json({ error: "Failed connecting to chatbot" });
 //   }
 // };
-const PARAM_MAPPING = ["param1", "param2", "param3"];
-
-function mapParamsToQuery(params) {
-  const query = {};
-
-  // Dynamically assign parameters to predefined keys
-  PARAM_MAPPING.forEach((key, index) => {
-    if (params[index] !== undefined) {
-      query[key] = params[index];
-    }
-  });
-
-  return query;
-}
 
 exports.getResponse = async (req, res, next) => {
   let params = "";
@@ -109,8 +93,7 @@ exports.getResponse = async (req, res, next) => {
 
     Query:
     ${query}`;
-
-    const createTransPrompt = `
+    const createRecPrompt = `
 Extract the relevant parameters for creating an expense or income from the given user query. If no parameters exist, return an empty JSON object {}. The response must be a JSON object where keys are in camelCase and the values are the corresponding extracted parameters. For example:
 {
   "type": "Expense",
@@ -171,12 +154,13 @@ ${query}`;
         const { email, fullName } = req.user;
         data = { response: `your email is ${email} and name is ${fullName}` };
       }
-    } else if (trimmedResult == "create_exp") {
-      await getParams(createTransPrompt);
+    } else if (trimmedResult == "create_record") {
+      await getParams(createRecPrompt);
       req.body = { userId: req.user.id, isTemplate: "No", ...params };
       data = await createRecord(req, res, next);
     } else {
-      data = { response: "I'm sorry, I don't understand." };
+      const result = await model.generateContent(query);
+      data = res.json({ response: result.response.text() });
     }
 
     return res.status(200).send(data);

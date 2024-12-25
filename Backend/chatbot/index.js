@@ -24,595 +24,216 @@ async function addDataToPinecone() {
     pineconeIndex,
     maxConcurrency: 5,
   });
-  const documents = [
-    {
-      pageContent: "What is my total expenditure for this month?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "Can you show me my expenses from last month?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "How much did I spend overall this week?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "List my expanses for the past year.",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "What were my total expenses last year?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "Can you summarize my expenditures for this month?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "What is my spending for this quarter?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "Show me my overall expenses for the last two weeks.",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "How much have I spent on entertainment recently?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "What is my total spending on groceries?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "Can you provide a summary of my travel expenses?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "How much did I spend on utilities last month?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "List my expenses for food and dining.",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "What are my total expenditures on shopping?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent:
-        "How much did I spend on health-related expenses this month?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "Can you summarize my monthly expenses?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "What was my overall spending last year?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "Show me my spending on subscriptions.",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "What is my total expenditure on household supplies?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "How much did I spend on entertainment last month?",
-      metadata: { class: "get_exp" },
-    },
-    {
-      pageContent: "What are my total expenses categorized by type?",
-      metadata: { class: "get_exp" },
-    },
-    { pageContent: "What is my total income?", metadata: { class: "get_inc" } },
-    {
-      pageContent: "Show me my income sources.",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "How much did I earn this month?",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "Retrieve my salary details.",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "What are my monthly income reports?",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "List my total earnings for the year.",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "How much income did I generate last month?",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "What is my annual income?",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "Show me my income for freelance work.",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "How much have I earned from investments?",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "Retrieve my rental income details.",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "What was my total income last year?",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "How much did I earn from bonuses?",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "List my income for side jobs.",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "What is my total passive income?",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "Show me my income summary for this month.",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "How much do I earn from my primary job?",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "Retrieve my overall income history.",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "What are my income projections for the next month?",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "How much income do I have from royalties?",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "Show me my total income breakdown.",
-      metadata: { class: "get_inc" },
-    },
-    {
-      pageContent: "What is my budget for food?",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "Show me my entertainment budget.",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "How much have I budgeted for transportation?",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "Retrieve my budget for housing.",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "What is my allocated budget for utilities?",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "List my budget for healthcare expenses.",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "Show me my budget for education.",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "What is my budget for clothing?",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "How much is allocated for savings?",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "Retrieve my budget for travel.",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "What is my entertainment budget for this month?",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "Show me my food budget for the week.",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "How much have I budgeted for miscellaneous expenses?",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "What is my budget for dining out?",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "List my budget for hobbies.",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "What is my budget for gifts?",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "which is my max budgt?",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "Retrieve my budget for last week.",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "What is my budget for last month?",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "Show me my budget for last year.",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "How much have I budgeted for emergency fund?",
-      metadata: { class: "get_budget" },
-    },
-    {
-      pageContent: "What is my registered name?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "Can you tell me my name associated with the account?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "What's the name I used to sign up?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "Retrieve my account name, please.",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "What name did I register with?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "Can you find my name linked to the account?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "What is the name on file for my account?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "Please tell me the name I registered with.",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "What name is associated with my profile?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "Can you check my registered name?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "What's the name I provided during signup?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "Find out my account's name.",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "Retrieve the name linked to my account.",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "What name do I use for logging in?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "Tell me my registered name, please.",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "What is the name associated with my user profile?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "Can you remind me of my name?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "What name did I use for my account?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "What's the name linked to my account?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "Can you provide my account's name?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "What's the name associated with my registration?",
-      metadata: { class: "get_u_name" },
-    },
-    {
-      pageContent: "Show me my recent transactions.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "List all my transactions for this month.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "What transactions did I make last week?",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "Retrieve my transaction history.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "I want to see my transfers from last month.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "Show all transactions over Rs 1000.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "List my transactions from the last two weeks.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "What were my transfers this week?",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "Get my transaction details for October.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "Show my recent transaction activities.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "List all my transfers for this year.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "What transactions did I have in the last month?",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "Retrieve all my transfers since the beginning of the year.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "Show me my transactions categorized by date.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "List my transactions for the last 30 days.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "I want to see all my transaction details.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "Show me my transaction summary.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "List my recent transactions in the last month.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "What were my transactions for the current month?",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "Retrieve my financial transactions.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "List my operations for the past week.",
-      metadata: { class: "get_trans" },
-    },
-    {
-      pageContent: "I just spent Rs 1500 on groceries.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "Add an expense for dining out: Rs 2000.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "Record my shopping expense of Rs 750 for clothes.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "I paid Rs 3000 for my gym membership.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "Just spent Rs 1200 on a new book.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "Add Rs 500 for a coffee shop visit.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "I spent Rs 1800 on a birthday gift.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "Record Rs 600 for transportation costs.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "I paid Rs 900 for a restaurant meal.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "Add my expense of Rs 4000 for car maintenance.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "I spent Rs 2500 on my monthly utility bill.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "Add Rs 300 for snacks.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "Record my expense of Rs 2000 for a movie night.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "I just spent Rs 1000 on pet food.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "Add Rs 1500 for online courses.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "Record my expense of Rs 1200 for a family outing.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "I paid Rs 800 for personal care products.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "Add Rs 3000 for home improvement supplies.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "I spent Rs 500 on sports equipment.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "Record an expense of Rs 400 for a charity donation.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "I paid Rs 600 for my monthly subscription service.",
-      metadata: { class: "create_exp" },
-    },
-    {
-      pageContent: "What is my registered email address?",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "Can you tell me my email associated with the account?",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "What's the email I used to sign up?",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "Retrieve my account email, please.",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "What email did I register with?",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "Can you find my email address linked to the account?",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "What is the email on file for my account?",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "Please tell me the email I registered with.",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "What email address is associated with my profile?",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "Can you check my registered email address?",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "What's the email I provided during signup?",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "Find out my account's email address.",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "Retrieve the email linked to my account.",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "What email do I use for logging in?",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "Tell me my registered email, please.",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "What is the email associated with my user profile?",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "Can you remind me of my email address?",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "What email did I use for my account?",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "What's the email linked to my account?",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "Can you provide my account's email address?",
-      metadata: { class: "get_u_email" },
-    },
-    {
-      pageContent: "What's the email associated with my registration?",
-      metadata: { class: "get_u_email" },
-    },
-  ];
+  const documentClasses = {
+    get_exp: [
+      "What is my total expenditure for this month?",
+      "Can you show me my expenses from last month?",
+      "How much did I spend overall this week?",
+      "List my expanses for the past year.",
+      "What were my total expenses last year?",
+      "Can you summarize my expenditures for this month?",
+      "What is my spending for this quarter?",
+      "Show me my overall expenses for the last two weeks.",
+      "How much have I spent on entertainment recently?",
+      "What is my total spending on groceries?",
+      "Can you provide a summary of my travel expenses?",
+      "How much did I spend on utilities last month?",
+      "List my expenses for food and dining.",
+      "What are my total expenditures on shopping?",
+      "How much did I spend on health-related expenses this month?",
+      "Can you summarize my monthly expenses?",
+      "What was my overall spending last year?",
+      "Show me my spending on subscriptions.",
+      "What is my total expenditure on household supplies?",
+      "How much did I spend on entertainment last month?",
+      "What are my total expenses categorized by type?",
+      "Can you show me my spending on transportation this month?",
+      "How much did I spend on leisure activities last week?",
+      "Give me a breakdown of my expenses for this quarter.",
+      "What is my total spending on dining out this month?",
+      "Can you provide a summary of my spending on personal care?",
+      "What are my monthly expenses on internet and phone services?",
+    ],
+    get_inc: [
+      "What is my total income?",
+      "Show me my income sources.",
+      "How much did I earn this month?",
+      "Retrieve my salary details.",
+      "What are my monthly income reports?",
+      "List my total earnings for the year.",
+      "How much income did I generate last month?",
+      "What is my annual income?",
+      "Show me my income for freelance work.",
+      "How much have I earned from investments?",
+      "Retrieve my rental income details.",
+      "What was my total income last year?",
+      "How much did I earn from bonuses?",
+      "List my income for side jobs.",
+      "What is my total passive income?",
+      "Show me my income summary for this month.",
+      "How much do I earn from my primary job?",
+      "Retrieve my overall income history.",
+      "What are my income projections for the next month?",
+      "How much income do I have from royalties?",
+      "Show me my total income breakdown.",
+      "Can you show me my income from part-time jobs?",
+      "What is my total income from freelance gigs this quarter?",
+      "How much did I earn from investments this month?",
+      "Show me my salary details for this year.",
+      "What is my monthly income from dividends?",
+      "Can you provide a summary of my total earnings from last year?",
+    ],
+    get_budget: [
+      "What is my budget for food?",
+      "Show me my entertainment budget.",
+      "How much have I budgeted for transportation?",
+      "Retrieve my budget for housing.",
+      "What is my allocated budget for utilities?",
+      "List my budget for healthcare expenses.",
+      "Show me my budget for education.",
+      "What is my budget for clothing?",
+      "How much is allocated for savings?",
+      "Retrieve my budget for travel.",
+      "What is my entertainment budget for this month?",
+      "Show me my food budget for the week.",
+      "How much have I budgeted for miscellaneous expenses?",
+      "What is my budget for dining out?",
+      "List my budget for hobbies.",
+      "What is my budget for gifts?",
+      "Which is my max budget?",
+      "Retrieve my budget for last week.",
+      "What is my budget for last month?",
+      "Show me my budget for last year.",
+      "How much have I budgeted for emergency fund?",
+      "What is my budget for personal care?",
+      "Show me my budget for fitness expenses.",
+      "How much have I budgeted for home improvement?",
+      "What is my allocated budget for transportation this month?",
+      "Retrieve my budget for subscription services.",
+      "How much is allocated for charitable donations?",
+    ],
+    get_u_name: [
+      "What is my registered name?",
+      "Can you tell me my name associated with the account?",
+      "What's the name I used to sign up?",
+      "Retrieve my account name, please.",
+      "What name did I register with?",
+      "Can you find my name linked to the account?",
+      "What is the name on file for my account?",
+      "Please tell me the name I registered with.",
+      "What name is associated with my profile?",
+      "Can you check my registered name?",
+      "What's the name I provided during signup?",
+      "Find out my account's name.",
+      "Retrieve the name linked to my account.",
+      "What name do I use for logging in?",
+      "Tell me my registered name, please.",
+      "What is the name associated with my user profile?",
+      "Can you remind me of my name?",
+      "What name did I use for my account?",
+      "What's the name linked to my account?",
+      "Can you provide my account's name?",
+      "What's the name associated with my registration?",
+      "What is the name attached to my account?",
+      "Can you provide the name I used during registration?",
+      "What name is linked to my user profile?",
+      "Tell me the name associated with my account.",
+      "What name did I choose for my account?",
+      "Can you verify the name I registered with?",
+    ],
+    get_trans: [
+      "Show me my recent transactions.",
+      "List all my transactions for this month.",
+      "What transactions did I make last week?",
+      "Retrieve my transaction history.",
+      "I want to see my transfers from last month.",
+      "Show all transactions over Rs 1000.",
+      "List my transactions from the last two weeks.",
+      "What were my transfers this week?",
+      "Get my transaction details for October.",
+      "Show my recent transaction activities.",
+      "List all my transfers for this year.",
+      "What transactions did I have in the last month?",
+      "Retrieve all my transfers since the beginning of the year.",
+      "Show me my transactions categorized by date.",
+      "List my transactions for the last 30 days.",
+      "I want to see all my transaction details.",
+      "Show me my transaction summary.",
+      "List my recent transactions in the last month.",
+      "What were my transactions for the current month?",
+      "Retrieve my financial transactions.",
+      "List my operations for the past week.",
+      "Can you show me all my transactions for this quarter?",
+      "What were my transfers from last year?",
+      "Show me my transactions above Rs 5000.",
+      "Retrieve my transaction history for the past 6 months.",
+      "List my transactions from the past 7 days.",
+      "What were my recent financial transfers?",
+    ],
+    create_record: [
+      "I just spent Rs 1500 on groceries.",
+      "Add an expense for dining out: Rs 2000.",
+      "Record my shopping expense of Rs 750 for clothes.",
+      "I paid Rs 3k for my gym membership.",
+      "Just spent Rs 1200 on a new book.",
+      "Add Rs 500 for a coffee shop visit.",
+      "I spent Rs 1800 on a birthday gift.",
+      "Record Rs 600 for transportation costs.",
+      "I just spent Rs 1000 on a new phone.",
+      "Add an expense of Rs 200 for movie tickets.",
+      "Record my Rs 3000 expense for a new laptop.",
+      "I borrowed Rs 600 from a friend.",
+      "I earned Rs 26000 against my invoices.",
+      "My salary deposited for Rs 50k.",
+      "I loaned Rs 50k.",
+      "I got Rs 26000 rent from my property",
+      "I earned Rs 500k from my freelance work.",
+      "I managed to get Rs 1000 from my side job.",
+      "Add Rs 1000 as income from my investments.",
+      "I got paid Rs 10k as my tutoring fee.",
+      "I received Rs 5000 as my bonus.",
+      "I earned Rs 1000 from my part-time job.",
+      "I got Rs 500 from my royalties.",
+    ],
+    general: [
+      "What is the meaning of life?",
+      "who are you?",
+      "What is the best way to learn something new?",
+      "what is your name?",
+      "What are the benefits of exercise?",
+      "How can I improve my productivity?",
+      "who is the current president of USA?",
+      "who is Imran khan?",
+      "What is your favorite book?",
+      "How do you handle stress?",
+      "What are the most important qualities of a good leader?",
+      "What is the difference between knowledge and wisdom?",
+      "How do you stay creative?",
+      "What are the biggest challenges in the world today?",
+      "What are some good habits to cultivate?",
+      "How do you achieve work-life balance?",
+      "What is the role of technology in society?",
+      "How can I improve my mental health?",
+      "What are the best ways to save money?",
+      "Whats the meaning of happiness?",
+      "How do you overcome obstacles?",
+      "What are the benefits of reading?",
+      "How do you make important decisions?",
+      "What is the best way to learn from your mistakes?",
+      "How do you define love?",
+      "What are the most important values to have?",
+    ],
+  };
 
+  const documents = Object.entries(documentClasses).flatMap(
+    ([className, questions]) =>
+      questions.map((pageContent) => ({
+        pageContent,
+        metadata: { class: className },
+      }))
+  );
+
+  console.log(documents.length);
   await vectorStore.addDocuments(documents, {
     ids: [
       "1",
@@ -764,6 +385,42 @@ async function addDataToPinecone() {
       "147",
       "148",
       "149",
+      "150",
+      "151",
+      "152",
+      "153",
+      "154",
+      "155",
+      "156",
+      "157",
+      "158",
+      "159",
+      "160",
+      "161",
+      "162",
+      "163",
+      "164",
+      "165",
+      "166",
+      "167",
+      "168",
+      "169",
+      "170",
+      "171",
+      "172",
+      "173",
+      "174",
+      "175",
+      "176",
+      "177",
+      "178",
+      "179",
+      "180",
+      "181",
+      "182",
+      "183",
+      "184",
+      "185",
     ],
   });
 }
