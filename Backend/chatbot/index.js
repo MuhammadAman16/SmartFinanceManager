@@ -24,27 +24,6 @@ async function addDataToPinecone() {
     pineconeIndex,
     maxConcurrency: 5,
   });
-
-  //   const vectors = await Promise.all(
-  //     data.map(async (item, i) => {
-  //       // Use embedDocuments instead of embedText for batch processing or correct function
-  //       const vector = await embeddings.embedQuery(item.prompt); // Check if you need embedQuery or embedDocuments
-  //       return {
-  //         id: `entry-${i + 1}`, // Unique ID for each item
-  //         values: vector, // The embedding vector for the prompt
-  //         metadata: {
-  //           class: item.class, // Storing class in metadata
-  //           prompt: item.prompt, // Storing prompt in metadata
-  //         },
-  //       };
-  //     })
-  //   );
-  //   console.log(vectors);
-
-  //   await pineconeIndex.upsert({
-  //     vectors: vectors,
-  //   });
-
   const documents = [
     {
       pageContent: "What is my total expenditure for this month?",
@@ -59,7 +38,7 @@ async function addDataToPinecone() {
       metadata: { class: "get_exp" },
     },
     {
-      pageContent: "List my expenses for the past year.",
+      pageContent: "List my expanses for the past year.",
       metadata: { class: "get_exp" },
     },
     {
@@ -397,7 +376,7 @@ async function addDataToPinecone() {
       metadata: { class: "get_trans" },
     },
     {
-      pageContent: "I want to see my transactions from last month.",
+      pageContent: "I want to see my transfers from last month.",
       metadata: { class: "get_trans" },
     },
     {
@@ -405,11 +384,11 @@ async function addDataToPinecone() {
       metadata: { class: "get_trans" },
     },
     {
-      pageContent: "List my expenses from the last two weeks.",
+      pageContent: "List my transactions from the last two weeks.",
       metadata: { class: "get_trans" },
     },
     {
-      pageContent: "What were my purchases this week?",
+      pageContent: "What were my transfers this week?",
       metadata: { class: "get_trans" },
     },
     {
@@ -417,11 +396,11 @@ async function addDataToPinecone() {
       metadata: { class: "get_trans" },
     },
     {
-      pageContent: "Show my recent spending activities.",
+      pageContent: "Show my recent transaction activities.",
       metadata: { class: "get_trans" },
     },
     {
-      pageContent: "List all my transactions for this year.",
+      pageContent: "List all my transfers for this year.",
       metadata: { class: "get_trans" },
     },
     {
@@ -429,11 +408,11 @@ async function addDataToPinecone() {
       metadata: { class: "get_trans" },
     },
     {
-      pageContent: "Retrieve all my purchases since the beginning of the year.",
+      pageContent: "Retrieve all my transfers since the beginning of the year.",
       metadata: { class: "get_trans" },
     },
     {
-      pageContent: "Show me my expenses categorized by date.",
+      pageContent: "Show me my transactions categorized by date.",
       metadata: { class: "get_trans" },
     },
     {
@@ -441,7 +420,7 @@ async function addDataToPinecone() {
       metadata: { class: "get_trans" },
     },
     {
-      pageContent: "I want to see all my spending details.",
+      pageContent: "I want to see all my transaction details.",
       metadata: { class: "get_trans" },
     },
     {
@@ -449,7 +428,7 @@ async function addDataToPinecone() {
       metadata: { class: "get_trans" },
     },
     {
-      pageContent: "List my recent expenses in the last month.",
+      pageContent: "List my recent transactions in the last month.",
       metadata: { class: "get_trans" },
     },
     {
@@ -461,7 +440,7 @@ async function addDataToPinecone() {
       metadata: { class: "get_trans" },
     },
     {
-      pageContent: "List my expenses for the past week.",
+      pageContent: "List my operations for the past week.",
       metadata: { class: "get_trans" },
     },
     {
