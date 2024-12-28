@@ -83,3 +83,36 @@ exports.updatePassword = async (req, res, next) => {
     return next(error);
   }
 };
+
+exports.sendMessage = async (req, res, next) => {
+  try {
+
+    const accountSid = 'ACa8f41f9830e890f8260be0c610577d03';
+    const authToken = 'd899d987d2ca0ffe7fa8bd0b1b48b531';
+
+    const client = require('twilio')(accountSid, authToken);
+
+    client.messages
+      .create({
+        to: '+923343696707',
+        from: '+12314034142',
+        body: 'Ahoy!',
+      })
+      .then(() => {
+        // Access details about the last request
+        console.log(client.lastRequest.method);
+        console.log(client.lastRequest.url);
+        console.log(client.lastRequest.auth);
+        console.log(client.lastRequest.params);
+        console.log(client.lastRequest.headers);
+        console.log(client.lastRequest.data);
+
+        // Access details about the last response
+        console.log(client.httpClient.lastResponse.statusCode);
+        console.log(client.httpClient.lastResponse.body);
+      });
+
+  } catch (error) {
+    console.log(" error:", error);
+  }
+}
