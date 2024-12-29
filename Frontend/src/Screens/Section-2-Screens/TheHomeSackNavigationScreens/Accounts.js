@@ -1,17 +1,19 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Ionicons, AntDesign } from '@expo/vector-icons'
 import { useNavigation } from 'expo-router'
 import user_api from '@/app/api/user_api'
+import { AuthContext } from '@/app/context/AuthContext'
 // import CashFlowChart from './CashFlow'
 
 const Accounts = () => {
+  const { user } = useContext(AuthContext);
   const navigation = useNavigation();
   const [accounts, setAccounts] = useState([]);
 
   const fetchAccounts = async () => {
     try {
-      let res = await user_api.get('accounts');
+      let res = await user_api.get(`accounts?userId=${user.id}`);
       const dataArray = res.data;
       // console.log(res.data);
       const account = dataArray.map(item => ({

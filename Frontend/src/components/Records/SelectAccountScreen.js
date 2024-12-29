@@ -6,14 +6,14 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '@/app/context/AuthContext';
 
-const SelectAccountScreen = () => {
+const SelectAccountScreen = ( income ) => {
     const { user } = useContext(AuthContext);
     const navigation = useNavigation();
     const [loading, setLoading] = useState(true);
     const [accounts, setaccounts] = useState(null);
     const fetchAllAccounts = async () => {
         try {
-            const result = await user_api.get('accounts');
+            const result = await user_api.get(`accounts?userId=${user.id}`);
             setaccounts(result.data);
         } catch (error) {
             if (error.response) {
@@ -30,6 +30,7 @@ const SelectAccountScreen = () => {
 
     useEffect(() => {
         fetchAllAccounts();
+        // console.log("income is ", income.route.params.income);
     }, [])
 
     if (loading) {
@@ -42,6 +43,20 @@ const SelectAccountScreen = () => {
 
     return (
         <ScrollView>
+            <View
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+            >
+                <Text
+                    style={{
+                        fontSize: 24,
+                        fontStyle: 'italic'
+                    }}
+                >Select Account</Text>
+            </View>
             <View>
                 {accounts.map((account, index) => (
                     <TouchableOpacity
@@ -55,8 +70,12 @@ const SelectAccountScreen = () => {
                             alignItems: 'center'
                         }}
                         onPress={() => {
-                            const { id, name } = account;
-                            navigation.navigate('Income Form', { selectedAccount: { id, name } });
+                            const { id, name, currency } = account;
+                            {
+                                income.route.params.income === true ?
+                                navigation.navigate('Income Form', { selectedAccount: { id, name, currency } })
+                                : navigation.navigate('Expense Form', { selectedAccount: { id, name, currency } })
+                            }
                         }}
                     >
                         <FontAwesome5

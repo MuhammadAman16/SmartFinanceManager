@@ -5,6 +5,7 @@ import SelectAccountScreen from './SelectAccountScreen';
 import SelectCategoryScreen from './SelectCategoryScreen';
 import LabelScreen from '@/src/Screens/Section-2-Screens/TheHomeSackNavigationScreens/LabelScreen';
 import { Feather } from '@expo/vector-icons';
+import ExpenseForm from './ExpenseForm';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,12 +16,15 @@ const IncomeFormStackFile = () => {
                 headerStyle: {
                     backgroundColor: 'rgba(56,142,60,255)',
                 },
-                headerTintColor: 'white',
+                headerTintColor: 'white'
             }}
             initialRouteName='Income Form'
         >
             <Stack.Screen name='Income Form' component={IncomeForm} />
-            <Stack.Screen name='Select Account' component={SelectAccountScreen} />
+            <Stack.Screen
+                name='Select Account'
+                component={SelectAccountScreen}
+            />
             <Stack.Screen name='Select Category' component={SelectCategoryScreen} />
             <Stack.Screen name='Select Labels' component={LabelScreen}
                 options={({ route, navigation }) => ({
@@ -38,6 +42,10 @@ const IncomeFormStackFile = () => {
                     )
                 })}
             />
+            {/* <Stack.Screen
+                name='Expense Form'
+                component={ExpenseForm}
+            /> */}
         </Stack.Navigator>
     )
 }
