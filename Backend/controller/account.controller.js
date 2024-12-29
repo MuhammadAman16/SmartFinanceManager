@@ -29,59 +29,143 @@ exports.createAccount = async (req, res, next) => {
 };
 
 // Get all Accounts
+// exports.getAllAccounts = async (req, res, next) => {
+//     const { createdAt } = req.query; // Extract the createdAt query param
+
+//   try {
+
+//     let whereClause = {};
+
+//     // Apply filtering based on createdAt (if provided in query params)
+//     if (createdAt) {
+
+//         const startOfDay = new Date(createdAt);
+//       startOfDay.setUTCHours(0, 0, 0, 0); // Set to the start of the day (00:00:00)
+
+//       const endOfDay = new Date(createdAt);
+//       endOfDay.setUTCHours(23, 59, 59, 999); // Set to the end of the day (23:59:59)
+
+//       whereClause.createdAt = {
+//         [Op.between]: [startOfDay, endOfDay], 
+//       };
+//     }
+
+//     // Fetch accounts with optional filtering by createdAt
+//     const accounts = await Account.findAll({
+//       where: whereClause, // Apply the filter here
+//       raw:true
+//     });
+
+//     await Promise.all(accounts.map(async account => {
+//       const whereClauseForRecord = {
+//         userId:account.userId,
+//         accountId: account.id
+//       }
+  
+//       const records = await Record.findAll({
+//         where:whereClauseForRecord,
+//         raw:true
+//       })
+//       account['currentValue'] = +account.initialValue
+//       for (const record of records) {
+//         if(record.type == 'INCOME'){
+//           account['currentValue'] = (+account['currentValue']) + (+record.amount)
+//         }else if(record.type == 'EXPENSE'){
+//           account['currentValue'] = (+account['currentValue']) - (+record.amount)
+//         }
+//       }
+//     }))
+
+//     return res.status(200).json(accounts);
+//   } catch (error) {
+//     console.log("Error fetching accounts:", error);
+//     next(error);
+//   }
+// };
+
+// Get all Accounts
 exports.getAllAccounts = async (req, res, next) => {
-    const { createdAt } = req.query; // Extract the createdAt query param
+  const { createdAt, bankAccountNumber, type, userId, name } = req.query; // Extract query params
 
   try {
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required." });
+    }
 
-    let whereClause = {};
+    let whereClause = { userId }; // Start with userId since it's compulsory
 
-    // Apply filtering based on createdAt (if provided in query params)
+    // Apply filtering based on createdAt
     if (createdAt) {
-
-        const startOfDay = new Date(createdAt);
-      startOfDay.setUTCHours(0, 0, 0, 0); // Set to the start of the day (00:00:00)
+      const startOfDay = new Date(createdAt);
+      startOfDay.setUTCHours(0, 0, 0, 0); // Start of the day
 
       const endOfDay = new Date(createdAt);
-      endOfDay.setUTCHours(23, 59, 59, 999); // Set to the end of the day (23:59:59)
+      endOfDay.setUTCHours(23, 59, 59, 999); // End of the day
 
       whereClause.createdAt = {
-        [Op.between]: [startOfDay, endOfDay], 
+        [Op.between]: [startOfDay, endOfDay],
       };
     }
 
-    // Fetch accounts with optional filtering by createdAt
+    // Filter by bankAccountNumber
+    if (bankAccountNumber) {
+      whereClause.bankAccountNumber = bankAccountNumber;
+    }
+
+    // Filter by type
+    if (type) {
+      whereClause.type = type;
+    }
+
+    // Filter by name
+    if (name) {
+      whereClause.name = {
+        [Op.iLike]: `%${name}%`, // Case-insensitive search for partial matches
+      };
+    }
+
+    // Fetch accounts with optional filtering
     const accounts = await Account.findAll({
-      where: whereClause, // Apply the filter here
-      raw:true
+      where: whereClause,
+      raw: true,
     });
 
-    await Promise.all(accounts.map(async account => {
-      const whereClauseForRecord = {
-        userId:account.userId,
-        accountId: account.id
-      }
-  
-      const records = await Record.findAll({
-        where:whereClauseForRecord,
-        raw:true
-      })
-      account['currentValue'] = +account.initialValue
-      for (const record of records) {
-        if(record.type == 'INCOME'){
-          account['currentValue'] = (+account['currentValue']) + (+record.amount)
-        }else if(record.type == 'EXPENSE'){
-          account['currentValue'] = (+account['currentValue']) - (+record.amount)
-        }
-      }
-    }))
+    // Calculate currentValue for each account based on associated records
+    await Promise.all(
+      accounts.map(async (account) => {
+        const whereClauseForRecord = {
+          userId: account.userId,
+          accountId: account.id,
+        };
 
+        const records = await Record.findAll({
+          where: whereClauseForRecord,
+          raw: true,
+        });
+
+        // Initialize currentValue with the account's initialValue
+        account["currentValue"] = +account.initialValue;
+
+        // Adjust currentValue based on record type and amounts
+        for (const record of records) {
+          if (record.type === "INCOME") {
+            account["currentValue"] += +record.amount;
+          } else if (record.type === "EXPENSE") {
+            account["currentValue"] -= +record.amount;
+          }
+        }
+      })
+    );
+
+    // Return the filtered accounts
     return res.status(200).json(accounts);
   } catch (error) {
     console.log("Error fetching accounts:", error);
     next(error);
   }
 };
+
+
 
 // Get an Account by ID
 exports.getAccountById = async (req, res, next) => {
