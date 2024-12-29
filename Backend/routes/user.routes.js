@@ -8,6 +8,8 @@ const userController = require("../controller/user.controller");
 router.put("/updateFullName", userController.updateFullName);
 
 // Route to update user's password
-router.put("/updatePassword",  userController.updatePassword);
+router.put("/updatePassword", userController.updatePassword);
+
+router.post("/message", userController.sendMessage)
 
 module.exports = router;
