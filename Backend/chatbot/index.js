@@ -3,7 +3,6 @@ const { PineconeStore } = require("@langchain/pinecone");
 const { Pinecone: PineconeClient } = require("@pinecone-database/pinecone");
 const { Document } = require("@langchain/core/documents");
 
-console.log(process.env.OPENAI_API_KEY);
 async function addDataToPinecone() {
   const embeddings = new OpenAIEmbeddings({
     apiKey: process.env.OPENAI_API_KEY,
@@ -219,6 +218,26 @@ async function addDataToPinecone() {
       "What is the best way to learn from your mistakes?",
       "How do you define love?",
       "What are the most important values to have?",
+      "How can I create a monthly budget that works for me?",
+      "What are the best ways to save money effectively?",
+      "How do I start investing with a small amount of money?",
+      "What is the difference between a credit score and a credit report?",
+      "How can I reduce my debt faster?",
+      "What are some strategies to build an emergency fund?",
+      "How do I track my expenses efficiently?",
+      "What are the most common types of financial fraud and how can I avoid them?",
+      "How do interest rates affect my loans and savings?",
+      "What is the importance of diversifying my investments?",
+      "How do I calculate my income tax?",
+      "What deductions can I claim to reduce my taxable income?",
+      "What are the different types of taxes I need to pay?",
+      "How do I file my taxes online?",
+      "What are the penalties for filing taxes late?",
+      "What is the difference between gross income and taxable income?",
+      "How can I maximize my tax refunds?",
+      "What documents do I need to keep for tax purposes?",
+      "Are there any tax benefits for investing in mutual funds?",
+      "How does tax-free income work, and what qualifies for it?",
     ],
   };
 
@@ -418,6 +437,26 @@ async function addDataToPinecone() {
       "183",
       "184",
       "185",
+      "186",
+      "187",
+      "188",
+      "189",
+      "190",
+      "191",
+      "192",
+      "193",
+      "194",
+      "195",
+      "196",
+      "197",
+      "198",
+      "199",
+      "200",
+      "201",
+      "202",
+      "203",
+      "204",
+      "205",
     ],
   });
 }
