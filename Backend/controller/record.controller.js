@@ -1,4 +1,4 @@
-const { Record, Account, Category, Label } = require("../models");
+const { Record, Account, Category, Label, RecordLabel } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
 const { Op } = require("sequelize");
 const {sequelize} = require("../models")
@@ -37,9 +37,9 @@ exports.createRecord = async (req, res, next) => {
     );
   }
 
-  if (isTemplate === "No" && (!amount || !currency || !type)) {
+  if (isTemplate === "No" && (!amount || !type)) {
     return next(
-      errorHandler(400, "Required fields for record: amount, currency, status,type")
+      errorHandler(400, "Required fields for record: amount, status,type")
     );
   }
 
@@ -110,7 +110,7 @@ exports.createRecord = async (req, res, next) => {
         recordId: newRecord.id,
         labelId: id,
       }));
-      await RecordLabel.bulkCreate(RecordLabelsPayload);
+      await RecordLabel.bulkCreate(RecordLabelsPayload, { returning: false });
     }
 
     return res.status(201).json(newRecord);
