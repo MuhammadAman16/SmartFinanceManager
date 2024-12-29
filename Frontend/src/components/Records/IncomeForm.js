@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, Dimensions, TouchableOpacity, View, ScrollView, Keyboard, Alert } from 'react-native'
+import { KeyboardAvoidingView, Platform, Dimensions, TouchableOpacity, View, ScrollView, Keyboard, Alert, Text } from 'react-native'
 import React, { useState, useEffect, useContext } from 'react'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
@@ -143,6 +143,7 @@ const IncomeForm = ({ route }) => {
             }
         }
     }
+
     return (
         <KeyboardAvoidingView
             enabled
@@ -154,6 +155,35 @@ const IncomeForm = ({ route }) => {
                         padding: 20
                     }}
                 >
+                    <View
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-around'
+                        }}
+                    >
+                        <TouchableOpacity>
+                            <Text>Income</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                            <Text>Expense</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontSize: 24,
+                                fontFamily: 'cali'
+                            }}
+                        >INCOME</Text>
+                    </View>
                     <Formik
                         initialValues={{
                             ...record,

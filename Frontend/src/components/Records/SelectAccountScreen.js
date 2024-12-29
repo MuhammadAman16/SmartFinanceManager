@@ -1,11 +1,13 @@
 import { View, Text, Alert, ActivityIndicator, TouchableOpacity } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import user_api from '@/app/api/user_api'
 import { ScrollView } from 'react-native-gesture-handler';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { AuthContext } from '@/app/context/AuthContext';
 
 const SelectAccountScreen = () => {
+    const { user } = useContext(AuthContext);
     const navigation = useNavigation();
     const [loading, setLoading] = useState(true);
     const [accounts, setaccounts] = useState(null);
