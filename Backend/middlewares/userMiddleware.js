@@ -10,17 +10,11 @@ const authMiddleware = (req, res, next) => {
   }
 
   const token = authHeader;
-  if (!token) {
-    return res
-      .status(401)
-      .json({ message: "No token provided, authorization denied" });
-  }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // console.log("Decoded token:", decoded);
+    req.query = { ...req.query, userId: decoded.id };
     req.user = decoded;
-    // chatbotController.initiateChatbot;
     next();
   } catch (err) {
     console.error("Token verification error:", err);

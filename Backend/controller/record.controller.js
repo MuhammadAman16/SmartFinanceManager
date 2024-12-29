@@ -1,4 +1,4 @@
-const { Record, Account, Category, Label } = require("../models");
+const { Record, Account, Category, Label, RecordLabel } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
 const { Op } = require("sequelize");
 const {sequelize} = require("../models")
@@ -17,13 +17,15 @@ exports.createRecord = async (req, res, next) => {
     attachment,
     labelIds,
     accountId, // Template-specific field
-    categoryId, // One-to-one with Category
     amount, // Record-specific field
     currency, // Record-specific field
     name, // Template-specific field
     type, // Template-specific field
     isTemplate, // Template toggle
+    category
   } = req.body;
+
+  let { categoryId } = req.body
   // Validation for required fields based on isTemplate value
   if (!userId || !isTemplate) {
     return next(errorHandler(400, "Required fields: userId and isTemplate"));
@@ -35,9 +37,9 @@ exports.createRecord = async (req, res, next) => {
     );
   }
 
-  if (isTemplate === "No" && (!amount || !currency || !status || !type)) {
+  if (isTemplate === "No" && (!amount || !type)) {
     return next(
-      errorHandler(400, "Required fields for record: amount, currency, status,type")
+      errorHandler(400, "Required fields for record: amount, status,type")
     );
   }
 
@@ -63,6 +65,23 @@ exports.createRecord = async (req, res, next) => {
     // Upload file to S3
     const data = await s3.upload(params).promise();
     attachmentUrl = data.Location
+    }
+
+    if (category) {
+      const categoryInDb = await Category.findOne({
+        where: {
+          name: category
+        }
+      })
+
+      if (!categoryInDb) {
+        return next(
+          errorHandler(404, "category not found!")
+        );
+      }
+
+      categoryId = categoryInDb.id
+
     }
      
     const newRecord = await Record.create({
@@ -91,7 +110,7 @@ exports.createRecord = async (req, res, next) => {
         recordId: newRecord.id,
         labelId: id,
       }));
-      await RecordLabel.bulkCreate(RecordLabelsPayload);
+      await RecordLabel.bulkCreate(RecordLabelsPayload, { returning: false });
     }
 
     return res.status(201).json(newRecord);

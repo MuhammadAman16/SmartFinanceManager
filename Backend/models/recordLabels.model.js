@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
         primaryKey: true,
+        field: "recordId",
       },
       labelId: {
         type: DataTypes.INTEGER,
@@ -19,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
         primaryKey: true,
+        field: "labelId",
       },
     },
     {
