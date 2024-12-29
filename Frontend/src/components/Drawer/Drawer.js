@@ -4,7 +4,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import BankSync from '@/src/Screens/Section-1-Screens/BankSync';
 import Imports from '@/src/Screens/Section-1-Screens/Imports';
 // Imports for Section 2 Screens
-import Records from '@/src/Screens/Section-2-Screens/Records';
+// import RecordStackFile from '@/src/Screens/Section-2-Screens/RecordFolder/RecordStackFile';
+import Record_H from '@/src/Screens/Section-2-Screens/Record_H';
 import HomeSecondScreen from '@/src/Screens/Section-2-Screens/TheHomeSackNavigationScreens/HomeSecondScreen';
 import Investments from '@/src/Screens/Section-2-Screens/Investments';
 import PlannedPayments from '@/src/Screens/Section-2-Screens/PlannedPayments';
@@ -61,7 +62,8 @@ const Drawer = () => {
 
             {/* Components for Section 2 Screens */}
             <DrawerComponent.Screen name='Home Screen' component={HomeSecondScreen} />
-            <DrawerComponent.Screen name='Records' component={Records} />
+            {/* <DrawerComponent.Screen name='Records' component={Records} /> */}
+            <DrawerComponent.Screen name='Records' component={Record_H} />
             <DrawerComponent.Screen name='Investments' component={Investments} />
             <DrawerComponent.Screen name='Planned Payments' component={PlannedPayments} />
 

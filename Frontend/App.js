@@ -9,6 +9,10 @@ import BudgetScreen from './src/Screens/Section-2-Screens/TheHomeSackNavigationS
 import AccountScreen from './src/Screens/Section-2-Screens/TheHomeSackNavigationScreens/AccountScreen';
 import { ActivityIndicator, StatusBar, SafeAreaView, View } from 'react-native';
 import ChatScreen from './src/Screens/Chatbot';
+import RecordCreation from './src/components/Records/RecordCreation';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -39,6 +43,7 @@ const App = () => {
                 }
                 <Stack.Screen name='BudgetScreen' component={BudgetScreen} />
                 <Stack.Screen name='AccountScreen' component={AccountScreen} />
+                <Stack.Screen name='RecordCreationScreen' component={RecordCreation} />
                 <Stack.Screen name='ChatBotScreen' component={ChatScreen} />
             </Stack.Navigator>
         </SafeAreaView>
@@ -46,11 +51,13 @@ const App = () => {
 }
 
 export default () => (
-    <AuthProvider>
-        <BudgetProvider>
-            <ColorProvider>
-                <App />
-            </ColorProvider>
-        </BudgetProvider>
-    </AuthProvider>
+    <GestureHandlerRootView>
+            <AuthProvider>
+                <BudgetProvider>
+                    <ColorProvider>
+                        <App />
+                    </ColorProvider>
+                </BudgetProvider>
+            </AuthProvider>
+    </GestureHandlerRootView>
 );

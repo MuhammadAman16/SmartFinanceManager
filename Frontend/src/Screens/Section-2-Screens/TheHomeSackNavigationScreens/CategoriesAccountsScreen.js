@@ -1,4 +1,4 @@
-import { View, Text, ActivityIndicator, Image, Button, ScrollView, Alert } from 'react-native'
+import { View, Text, ActivityIndicator, Image, ScrollView, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import user_api from '@/app/api/user_api'
 import styles from '@/src/components/Styling/Stlyes'
