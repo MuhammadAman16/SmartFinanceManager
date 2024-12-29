@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import user_api from '@/app/api/user_api';
 import { useNavigation } from '@react-navigation/native';
 
-const SelectCategoryScreen = () => {
+const SelectCategoryScreen = ( income ) => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState(null);
@@ -38,7 +38,20 @@ const SelectCategoryScreen = () => {
 
   return (
     <ScrollView>
-
+      <View
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 24,
+            fontStyle: 'italic'
+          }}
+        >Select Category</Text>
+      </View>
       <View>
         {categories.map((category, index) => (
           <TouchableOpacity
@@ -53,7 +66,11 @@ const SelectCategoryScreen = () => {
             }}
             onPress={() => {
               const { id, name } = category;
-              navigation.navigate('Income Form', { selectedCategory: { id, name } });
+              {income.route.params.income === true ? 
+                navigation.navigate('Income Form', { selectedCategory: { id, name } })
+                :
+                navigation.navigate('Expense Form', { selectedCategory: { id, name } })
+              }
             }}
           >
             <View

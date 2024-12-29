@@ -46,7 +46,7 @@ const IncomeForm = ({ route }) => {
     const [isPaymentTypeModalOpen, setIsPaymentTypeModalOpen] = useState(false);
     const [isDatePickerOpen, setIsDatePicerOpen] = useState(false);
     const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
-    const [account, setAccount] = useState({ id: 0, name: "" });
+    const [account, setAccount] = useState({ id: 0, name: "", currency: "" });
     const [category, setCategory] = useState({ id: 0, name: "" });
     const [labels, setLabels] = useState();
 
@@ -56,7 +56,6 @@ const IncomeForm = ({ route }) => {
         name: 'Test Record',
         amount: 0,
         note: '',
-        currency: 'PKR',
         payer: '',
         warranty: 0,
         attachment: 'Add Receipt'
@@ -116,7 +115,7 @@ const IncomeForm = ({ route }) => {
                 name: record.name,
                 userId: user.id,
                 amount: values.amount,
-                currency: record.currency,
+                currency: account.currency,
                 accounId: values.account.id,
                 paymentType: values.paymentType,
                 datetime: `${values.date} ${values.time}`,
@@ -127,7 +126,7 @@ const IncomeForm = ({ route }) => {
                 payee: values.payee,
                 warranty: values.warranty,
                 labelIds: labelIds,
-                attachment: values.attachment
+                payee: values.payer
             })
 
             formikActions.resetForm();
@@ -148,7 +147,9 @@ const IncomeForm = ({ route }) => {
         <KeyboardAvoidingView
             enabled
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={[styles.scrollView, { width: Dimensions.get('window').width, flex: 1 }]}>
+            style={[styles.scrollView, { width: Dimensions.get('window').width, flex: 1 }]}
+            keyboardVerticalOffset={100}
+        >
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <View
                     style={{
@@ -163,10 +164,34 @@ const IncomeForm = ({ route }) => {
                             justifyContent: 'space-around'
                         }}
                     >
-                        <TouchableOpacity>
+                        <TouchableOpacity
+                            style={{
+                                borderWidth: 2,
+                                borderColor: 'rgba(56,142,60,255)',
+                                padding: 10,
+                                paddingHorizontal: 20,
+                                backgroundColor: 'rgb(229, 228, 226)',
+                                borderRadius: 7
+                            }}
+                            onPress={() => {
+                                console.warn('You Already on the Income Form');
+                            }}
+                        >
                             <Text>Income</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity>
+                        <TouchableOpacity
+                            style={{
+                                borderWidth: 2,
+                                borderColor: 'grey',
+                                padding: 10,
+                                paddingHorizontal: 20,
+                                backgroundColor: 'rgb(229, 228, 226)',
+                                borderRadius: 7
+                            }}
+                            onPress={() => {
+                                navigation.navigate('ExpenseFormStackFile')
+                            }}
+                        >
                             <Text>Expense</Text>
                         </TouchableOpacity>
                     </View>
@@ -174,13 +199,14 @@ const IncomeForm = ({ route }) => {
                         style={{
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
+                            marginTop: 10
                         }}
                     >
                         <Text
                             style={{
                                 fontSize: 24,
-                                fontFamily: 'cali'
+                                fontStyle: 'italic'
                             }}
                         >INCOME</Text>
                     </View>
@@ -244,7 +270,7 @@ const IncomeForm = ({ route }) => {
                                         keyboardype={'numeric'}
                                     />
                                     <TouchableOpacity
-                                        onPress={() => navigation.navigate('Select Account')}
+                                        onPress={() => navigation.navigate('Select Account', { income: true })}
                                     >
                                         <BudgetInputFields
                                             label={'Account'}
@@ -257,7 +283,7 @@ const IncomeForm = ({ route }) => {
                                         />
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        onPress={() => navigation.navigate('Select Category')}
+                                        onPress={() => navigation.navigate('Select Category', { income: true })}
                                     >
                                         <BudgetInputFields
                                             label={'Category'}
@@ -351,12 +377,12 @@ const IncomeForm = ({ route }) => {
                                             color={'black'}
                                         />
                                     </TouchableOpacity>
-                                    <BudgetInputFields
+                                    {/* <BudgetInputFields
                                         label={'Attachment'}
                                         value={attachment}
                                         onChangeText={handleChange('attachment')}
                                         onBlur={handleBlur('attachment')}
-                                    />
+                                    /> */}
                                     <FormSubmitButton
                                         title={'Save'}
                                         onPressFunction={handleSubmit}

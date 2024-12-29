@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, Dimensions, TouchableOpacity, View, ScrollView, Keyboard, Alert } from 'react-native'
+import { Text, KeyboardAvoidingView, Platform, Dimensions, TouchableOpacity, View, ScrollView, Keyboard, Alert } from 'react-native'
 import React, { useState, useEffect, useContext } from 'react'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
@@ -30,7 +30,7 @@ const validationSchema = Yup.object({
     )
 })
 
-const ExpenseForm = () => {
+const ExpenseForm = ({ route }) => {
   const navigation = useNavigation();
   const { user } = useContext(AuthContext);
   const { selectedAccount } = route?.params || {};
@@ -45,7 +45,7 @@ const ExpenseForm = () => {
   const [isPaymentTypeModalOpen, setIsPaymentTypeModalOpen] = useState(false);
   const [isDatePickerOpen, setIsDatePicerOpen] = useState(false);
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
-  const [account, setAccount] = useState({ id: 0, name: "" });
+  const [account, setAccount] = useState({ id: 0, name: "", currency: "" });
   const [category, setCategory] = useState({ id: 0, name: "" });
   const [labels, setLabels] = useState();
 
@@ -56,7 +56,7 @@ const ExpenseForm = () => {
     amount: 0,
     note: '',
     currency: 'PKR',
-    payer: '',
+    payee: '',
     warranty: 0,
     attachment: 'Add Receipt'
   };
@@ -115,22 +115,23 @@ const ExpenseForm = () => {
         name: record.name,
         userId: user.id,
         amount: values.amount,
-        currency: record.currency,
+        currency: account.currency,
         accounId: values.account.id,
         paymentType: values.paymentType,
         datetime: `${values.date} ${values.time}`,
-        type: "INCOME",
+        type: "EXPENSE",
         status: values.status,
         categoryId: values.category.id,
         note: values.note,
         payee: values.payee,
         warranty: values.warranty,
         labelIds: labelIds,
-        attachment: values.attachment
+        attachment: values.attachment,
+        payee: values.payee
       })
 
       formikActions.resetForm();
-      Alert.alert("Income Record Created Successfully");
+      Alert.alert("Expense Record Created Successfully");
       navigation.goBack();
     } catch (error) {
       if (error.response) {
@@ -147,13 +148,69 @@ const ExpenseForm = () => {
     <KeyboardAvoidingView
       enabled
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={[styles.scrollView, { width: Dimensions.get('window').width, flex: 1 }]}>
+      style={[styles.scrollView, { width: Dimensions.get('window').width, flex: 1 }]}
+      keyboardVerticalOffset={100}
+    >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View
           style={{
             padding: 20
           }}
         >
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-around'
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                borderWidth: 2,
+                borderColor: 'grey',
+                padding: 10,
+                paddingHorizontal: 20,
+                backgroundColor: 'rgb(229, 228, 226)',
+                borderRadius: 7
+              }}
+              onPress={() => {
+                navigation.goBack();
+              }}
+            >
+              <Text>Income</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                borderWidth: 2,
+                borderColor: 'rgba(56,142,60,255)',
+                padding: 10,
+                paddingHorizontal: 20,
+                backgroundColor: 'rgb(229, 228, 226)',
+                borderRadius: 7
+              }}
+              onPress={() => {
+                console.warn('You Already on the Expense Form');
+              }}
+            >
+              <Text>Expense</Text>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: 10
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 24,
+                fontStyle: 'italic'
+              }}
+            >EXPENSE</Text>
+          </View>
           <Formik
             initialValues={{
               ...record,
@@ -190,7 +247,7 @@ const ExpenseForm = () => {
                 account,
                 category,
                 note,
-                payer,
+                payee,
                 label,
                 date,
                 time,
@@ -214,7 +271,7 @@ const ExpenseForm = () => {
                     keyboardype={'numeric'}
                   />
                   <TouchableOpacity
-                    onPress={() => navigation.navigate('Select Account')}
+                    onPress={() => navigation.navigate('Select Account', { income: false })}
                   >
                     <BudgetInputFields
                       label={'Account'}
@@ -227,7 +284,7 @@ const ExpenseForm = () => {
                     />
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate('Select Category')}
+                    onPress={() => navigation.navigate('Select Category', { income: false })}
                   >
                     <BudgetInputFields
                       label={'Category'}
@@ -265,10 +322,10 @@ const ExpenseForm = () => {
                     />
                   </TouchableOpacity>
                   <BudgetInputFields
-                    label={'Payer'}
-                    value={payer}
-                    onChangeText={handleChange('payer')}
-                    onBlur={handleBlur('payer')}
+                    label={'Payee'}
+                    value={payee}
+                    onChangeText={handleChange('payee')}
+                    onBlur={handleBlur('payee')}
                   />
                   <TouchableOpacity
                     onPress={() => setIsDatePicerOpen(true)}
@@ -321,12 +378,12 @@ const ExpenseForm = () => {
                       color={'black'}
                     />
                   </TouchableOpacity>
-                  <BudgetInputFields
+                  {/* <BudgetInputFields
                     label={'Attachment'}
                     value={attachment}
                     onChangeText={handleChange('attachment')}
                     onBlur={handleBlur('attachment')}
-                  />
+                  /> */}
                   <FormSubmitButton
                     title={'Save'}
                     onPressFunction={handleSubmit}
