@@ -3,6 +3,7 @@ const express = require("express");
 const db = require("./models");
 const syncDatabase = require("./config/dbconfig"); // Import syncDatabase
 const routes = require("./routes");
+require("dotenv").config();
 
 const app = express();
 app.use(express.json());
