@@ -1,6 +1,6 @@
 import React from 'react'
 import IncomeFormStackFile from './IncomeFormStackFile';
-import ExpenseForm from './ExpenseForm'
+import ExpenseFormStackFile from './ExpenseStackFile';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 const Stack = createNativeStackNavigator();
@@ -17,7 +17,7 @@ const RecordCreation = () => {
       }}
     >
       <Stack.Screen name='IncomeFormStackFile' component={IncomeFormStackFile} />
-      <Stack.Screen name='Expense Form' component={ExpenseForm} />
+      <Stack.Screen name='ExpenseFormStackFile' component={ExpenseFormStackFile} />
     </Stack.Navigator>
   );
 
