@@ -3,20 +3,17 @@ const { PineconeStore } = require("@langchain/pinecone");
 const { Pinecone: PineconeClient } = require("@pinecone-database/pinecone");
 const { Document } = require("@langchain/core/documents");
 
-require("dotenv").config();
-
 console.log(process.env.OPENAI_API_KEY);
 async function addDataToPinecone() {
   const embeddings = new OpenAIEmbeddings({
-    apiKey:
-      "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",
+    apiKey: process.env.OPENAI_API_KEY,
     batchSize: 512,
     model: "text-embedding-3-small",
   });
 
   // Initialize Pinecone Client
   const pinecone = new PineconeClient({
-    apiKey: "389d3ec7-3672-4b5f-b7a6-459d38414d20",
+    apiKey: process.env.PINECONE_API_KEY,
   });
   // Initialize Pinecone Index
   const pineconeIndex = pinecone.Index("smartfinance-embeddings");
@@ -428,15 +425,14 @@ async function addDataToPinecone() {
 exports.getClass = async (query) => {
   try {
     const embeddings = new OpenAIEmbeddings({
-      apiKey:
-        "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",
+      apiKey: process.env.OPENAI_API_KEY,
       batchSize: 512,
       model: "text-embedding-3-small",
     });
 
     // Initialize Pinecone Client
     const pinecone = new PineconeClient({
-      apiKey: "389d3ec7-3672-4b5f-b7a6-459d38414d20",
+      apiKey: process.env.PINECONE_API_KEY,
     });
     // Initialize Pinecone Index
     const pineconeIndex = pinecone.Index("smartfinance-embeddings");
