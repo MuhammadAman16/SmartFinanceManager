@@ -1,22 +1,20 @@
 const { initializeModel } = require("../config/chatbot.config");
 const { getClass } = require("../chatbot/index");
-const { getBudgetById, getAllBudgets } = require("./budget.controller");
-const { getAllAccounts } = require("./account.controller");
-const e = require("express");
-const { getAllRecords } = require("./record.controller");
+const { getAllBudgets } = require("./budget.controller");
+const { getAllRecords, createRecord } = require("./record.controller");
 
 let model = null;
-exports.initiateChatbot = async (req, res, next) => {
-  const prompt = "Ask me a question.";
-  model = await initializeModel();
-  try {
-    const result = await model.generateContent(prompt);
-    res.json({ response: "Hi, How can I help you today?" });
-  } catch (error) {
-    console.error("Error connecting to chatbot:", error);
-    res.status(500).json({ error: "Failed connecting to chatbot" });
-  }
-};
+// exports.initiateChatbot = async (req, res, next) => {
+//   const prompt = "Ask me a question.";
+//   model = await initializeModel();
+//   try {
+//     const result = await model.generateContent(prompt);
+//     res.json({ response: "Hi, How can I help you today?" });
+//   } catch (error) {
+//     console.error("Error connecting to chatbot:", error);
+//     res.status(500).json({ error: "Failed connecting to chatbot" });
+//   }
+// };
 
 // exports.generateResponse = async (req, res, next) => {
 //   const prompt = req.body.prompt;
@@ -31,20 +29,6 @@ exports.initiateChatbot = async (req, res, next) => {
 //     res.status(500).json({ error: "Failed connecting to chatbot" });
 //   }
 // };
-const PARAM_MAPPING = ["param1", "param2", "param3"];
-
-function mapParamsToQuery(params) {
-  const query = {};
-
-  // Dynamically assign parameters to predefined keys
-  PARAM_MAPPING.forEach((key, index) => {
-    if (params[index] !== undefined) {
-      query[key] = params[index];
-    }
-  });
-
-  return query;
-}
 
 exports.getResponse = async (req, res, next) => {
   let params = "";
@@ -87,7 +71,7 @@ exports.getResponse = async (req, res, next) => {
 
     Query:
     ${query}`;
-    const get_rec_prompt = `Extract parameters, if any, from the given user query. If no parameters exist, return an empty JSON object {}. The response must be a JSON object where keys are in camelCase and the values are the corresponding extracted parameters. For example:
+    const getRecPrompt = `Extract parameters, if any, from the given user query. If no parameters exist, return an empty JSON object {}. The response must be a JSON object where keys are in camelCase and the values are the corresponding extracted parameters. For example:
     {
       "period":"Month",
       "startDate": "21-10-2024",
@@ -109,10 +93,10 @@ exports.getResponse = async (req, res, next) => {
 
     Query:
     ${query}`;
-
-    const createExpensePrompt = `
-Extract the relevant parameters for creating an expense from the given user query. If no parameters exist, return an empty JSON object {}. The response must be a JSON object where keys are in camelCase and the values are the corresponding extracted parameters. For example:
+    const createRecPrompt = `
+Extract the relevant parameters for creating an expense or income from the given user query. If no parameters exist, return an empty JSON object {}. The response must be a JSON object where keys are in camelCase and the values are the corresponding extracted parameters. For example:
 {
+  "type": "Expense",
   "category": "Food & Drinks",
   "amount": "Rs500",
   "date": "21-10-2024",
@@ -127,9 +111,10 @@ Instructions:
 - For relative dates like "yesterday" or "last week," calculate the exact date in the format "dd-mm-yyyy."
 - Ensure all extracted parameters are included, even if some need to be inferred.
 - Example Queries and Responses:
-  - Query: "I spent Rs500 on apples today" → {"category": "Food & Drinks"", "amount": "Rs500", "date": "21-12-2024", "note": "apples"}.
-  - Query: "Add an expense of Rs3000 for jeans yesterday" → {"category": "clothes", "amount": "Rs3000", "date": "20-12-2024", "note": "jeans"}.
-  - Query: "I paid Rs1000 for transport last week" → {"category": "transport", "amount": "Rs1000", "date": "14-12-2024", "note": "transport"}.
+  - Query: "I spent Rs500 on apples today" → {"type": "EXPENSE","category": "Food & Drinks"", "amount": "500", "currency":"Rs", "date": "21-12-2024", "note": "apples"}.
+  - Query: "Add an expense of Rs3000 for jeans yesterday" → {"type": "EXPENSE","category": "clothes", "amount": "3000","currency":"Rs", "date": "20-12-2024", "note": "jeans"}.
+  - Query: "I paid Rs1000 for transport last week" → {"type": "EXPENSE","category": "transport", "amount": "1000","currency":"Rs", "date": "14-12-2024", "note": "transport"}.
+  - Query: "I eanned Rs5000 from wages" → {"type": "INCOME","category": "Food & Drinks"", "amount": "500","currency":"Rs", "date": "21-12-2024", "note": "apples"}.
 - Ensure no irrelevant details or extra text are included. Only return the JSON object.
 
 Query:
@@ -145,34 +130,37 @@ ${query}`;
 
     if (trimmedResult == "get_budget") {
       await getParams(budgetPrompt);
-      req.query = params;
+      req.query = { ...req.query, ...params };
       data = await getAllBudgets(req, res, next);
     } else if (trimmedResult == "get_exp") {
-      await getParams(get_rec_prompt);
-      req.query = { ...params, type: "EXPENSE" };
+      await getParams(getRecPrompt);
+      req.query = { ...req.query, ...params, type: "EXPENSE" };
       data = await getAllRecords(req, res);
     } else if (trimmedResult == "get_inc") {
-      req.query = { ...params, type: "INCOME" };
+      req.query = { ...req.query, ...params, type: "INCOME" };
       data = await getAllRecords(req, res);
     } else if (trimmedResult == "get_u_name") {
       if (req.user) {
-        const { userId: Id, email, fullName } = req.user;
+        const { fullName } = req.user;
         data = { response: `your name is ${fullName}` };
       }
     } else if (trimmedResult == "get_trans") {
       if (req.user) {
         data = await getAllRecords(req, res);
-        req.query = { ...params };
+        req.query = { ...req.query, ...params };
       }
     } else if (trimmedResult == "get_u_email") {
       if (req.user) {
-        const { userId: Id, email, fullName } = req.user;
+        const { email, fullName } = req.user;
         data = { response: `your email is ${email} and name is ${fullName}` };
       }
-    } else if (trimmedResult == "create_exp") {
-      req.query = { ...params };
+    } else if (trimmedResult == "create_record") {
+      await getParams(createRecPrompt);
+      req.body = { userId: req.user.id, isTemplate: "No", ...params };
+      data = await createRecord(req, res, next);
     } else {
-      data = { response: "I'm sorry, I don't understand." };
+      const result = await model.generateContent(query);
+      data = res.json({ response: result.response.text() });
     }
 
     return res.status(200).send(data);
