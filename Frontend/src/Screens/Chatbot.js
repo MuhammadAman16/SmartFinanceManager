@@ -5,7 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
-  StyleSheet,
+  ScrollView,
   Animated,
   Platform,
   KeyboardAvoidingView
@@ -18,6 +18,7 @@ import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import styles from '../components/Styling/Stlyes';
+import DisplayBudgetTable from '../components/ChatBot/DisplayBudgetTable';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
@@ -54,7 +55,7 @@ const ChatScreen = () => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [isListening, setIsListening] = useState(false); // New state for mic listening
+  const [isListening, setIsListening] = useState(false);
   const FlatListRef = useRef(null);
   const navigation = useNavigation();
 
@@ -77,7 +78,7 @@ const ChatScreen = () => {
         ])
       ).start();
     } else {
-      dotOpacity.setValue(1); // Reset opacity when not listening
+      dotOpacity.setValue(1);
     }
   }, [isListening]);
 
@@ -146,21 +147,48 @@ const ChatScreen = () => {
     setIsTyping(true);
 
     const token = await SecureStore.getItemAsync('jwtToken');
-    await user_api.post('chatbot', {
-      query: inputMessage,
-      headers: {
-        Authorization: `bearer ${token}`
-      }
-    }).then(response => {
-      setMessages((prevMessage) => [
-        ...prevMessage,
-        { id: Math.random().toString(), text: response.data, sender: 'bot' }
-      ])
-    }).catch(error => {
-      console.error("The error is : ", error.message);
-    }).finally(() => {
-      setIsTyping(false);
-    });
+    await user_api.post(
+      'chatbot',
+      { query: inputMessage },
+      {
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+          "Accept-Encoding": "gzip, deflate, br",
+          Connection: "keep-alive",
+          Authorization: token
+        }
+      }).then(response => {
+        const allBudgets = response.data;
+        // console.log(allBudgets.response);
+        if (allBudgets.length !== undefined) {
+          const budgetNames = allBudgets.map((budget) => {
+            return {
+              name: budget.name,
+              amount: budget.amount,
+              remainingAmount: budget.remainingAmount,
+              period: budget.period,
+              currency: budget.currency,
+              startDate: budget.startDate.split("T")[0],
+              endDate: budget.endDate.split("T")[0]
+            };
+          })
+          setMessages((prevMessage) => [
+            ...prevMessage,
+            { id: Math.random().toString(), component: <DisplayBudgetTable data={budgetNames} />, sender: 'bot' }
+          ])
+        } else {
+          // console.log("ALL BUDGETS");
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { id: Math.random().toString(), text: allBudgets.response, sender: 'bot' }
+          ])
+        }
+      }).catch(error => {
+        console.error("The error is : ", error);
+      }).finally(() => {
+        setIsTyping(false);
+      });
   };
 
   const renderMessageItem = ({ item }) => (
@@ -170,7 +198,9 @@ const ChatScreen = () => {
         item.sender === 'user' ? styles.userBubble : styles.botBubble,
       ]}
     >
-      <Text style={[styles.BotmessageText, { color: item.sender === 'bot' ? '#000' : '#fff' }]}>{item.text}</Text>
+      {item.text ?
+        (<Text style={[styles.BotmessageText, { color: item.sender === 'bot' ? '#000' : '#fff' }]}>{item.text}</Text>)
+        : (item.component) }
     </View>
   );
 
@@ -201,15 +231,19 @@ const ChatScreen = () => {
           </View>
         </View>
 
-        <FlatList
-          ref={FlatListRef}
-          data={messages}
-          renderItem={renderMessageItem}
-          keyExtractor={(item) => item.id}
-          style={styles.chatContainer}
-          contentContainerStyle={{ paddingVertical: 10 }}
-          keyboardShouldPersistTaps="handled"
-        />
+        <ScrollView horizontal={true} style={styles.chatContainer}>
+          <FlatList
+            ref={FlatListRef}
+            data={messages}
+            renderItem={renderMessageItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{ paddingVertical: 10 }}
+            keyboardShouldPersistTaps="handled"
+            style={{
+              paddingRight: 20
+            }}
+          />
+        </ScrollView>
 
         {isTyping && <TypingIndicator />}
 

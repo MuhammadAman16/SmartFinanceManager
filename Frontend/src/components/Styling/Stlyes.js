@@ -965,10 +965,10 @@ const styles = StyleSheet.create({
     },
     chatContainer: {
         flex: 1,
-        paddingHorizontal: 15,
+        paddingHorizontal: 15
     },
     messageBubble: {
-        maxWidth: '75%',
+        maxWidth: '100%',
         padding: 10,
         marginVertical: 5,
         borderRadius: 15,
@@ -982,6 +982,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         backgroundColor: '#e0e0e0',
         borderBottomLeftRadius: 0,
+        // width: '100%'
     },
     BotmessageText: {
         fontSize: 16,
