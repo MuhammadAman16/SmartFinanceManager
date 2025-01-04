@@ -1,10 +1,12 @@
 import React, { createContext, useState, useContext, useEffect } from 'react'
 import initialBudgets from '@/src/components/Data/OnGoingBudget/InitialBudgetsArray';
 import user_api from '../api/user_api';
+import { AuthContext } from './AuthContext';
 
 const BudgetConext = createContext();
 
 export const BudgetProvider = ({ children }) => {
+    const { user } = useContext(AuthContext);
     const [budgets, setBudgets] = useState(initialBudgets);
     const [loading, setLoading] = useState(true);
     const [budgetCategories, setBudgetCategories] = useState({
@@ -15,7 +17,12 @@ export const BudgetProvider = ({ children }) => {
 
     const fetchAllBudget = async () => {
         try {
-            const res = await user_api.get('budget');
+            if (!user || !user.id) {
+                console.error("User ID is not available");
+                return;
+            }
+
+            const res = await user_api.get(`budget?userId=${user.id}`);
             const today = new Date();
             const ongoing = res.data.filter((budget) => {
                 const start = new Date(budget.startDate);
@@ -30,7 +37,6 @@ export const BudgetProvider = ({ children }) => {
                 const end = new Date(budget.endDate);
                 return end.getTime() <= today.getTime() && budget.remainingAmount < 0;
             })
-            // console.log(ongoing);
             setBudgets(res.data);
             setBudgetCategories({
                 ongoingbudgets: ongoing,
@@ -51,8 +57,10 @@ export const BudgetProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        fetchAllBudget();
-    }, [])
+        if (user) {
+            fetchAllBudget();
+        }
+    }, [user])
 
     const addBudgets = (budgetEntry) => {
         setBudgets((prev) => [...prev, budgetEntry]);
