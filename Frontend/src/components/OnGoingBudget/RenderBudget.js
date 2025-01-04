@@ -3,14 +3,28 @@ import { View, Text, TouchableOpacity, Dimensions, Alert } from "react-native";
 import styles from "../Styling/Stlyes";
 import * as Progress from 'react-native-progress';
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
+import user_api from "@/app/api/user_api";
 
 const Renderitem = ({ item, type }) => {
     const { width: screenWidth } = Dimensions.get('window');
 
     const amountspent = item.amount - item.remainingAmount;
     const percentage = ((amountspent / item.amount) * 100).toFixed(2);
-    // console.log(type);
 
+    const deleteBudget = async (itemId) => {
+        try {
+            await user_api.delete(`budget/${itemId}`);
+            Alert.alert("Operation Successfull");
+        } catch (error) {
+            if (error.response) {
+                Alert.alert(`Error: ${error.response.data.error}`);
+            } else if (error.request) {
+                console.log('No response from server');
+            } else {
+                console.log('Error: ', error.error);
+            }
+        }
+    }
 
     return (
         <View
@@ -32,11 +46,11 @@ const Renderitem = ({ item, type }) => {
                 >
                     {item.name}
                 </Text>
-                <View style={{flexDirection: 'row'}}>
-                    <TouchableOpacity onPress={() => Alert.alert('View More')} style={{marginHorizontal: 10}}>
+                <View style={{ flexDirection: 'row' }}>
+                    <TouchableOpacity onPress={() => console.warn(item.id)} style={{ marginHorizontal: 10 }}>
                         <Entypo name="edit" size={24} color={'rgba(56,142,60,255)'} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => Alert.alert('View More')}>
+                    <TouchableOpacity onPress={() => deleteBudget(item.id)}>
                         <MaterialIcons name="delete" size={24} color={'rgba(56,142,60,255)'} />
                     </TouchableOpacity>
                 </View>
