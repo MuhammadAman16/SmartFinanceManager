@@ -18,10 +18,12 @@ import {
   HorizontalAxis,
 } from 'react-native-responsive-linechart';
 import Feather from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
 
 const screenWidth = Dimensions.get('window').width;
 
 function CashFlowChart() {
+  const navigation = useNavigation();
   const [transactions, setTransactions] = useState([
     {
       type: 'income',
@@ -370,6 +372,7 @@ function CashFlowChart() {
         style={styles.editButton}
         onPress={() => {
           setSelectedAccountNumber(item.accountNumber);
+          navigation.navigate('AccountStackScreen', { viewMore: false })
         }}
       >
         <Feather name="eye" size={24} color="#007bff" />
@@ -423,7 +426,7 @@ function CashFlowChart() {
       <View style={styles.sectionContainer}>
         <View style={styles.header}>
           <Text style={styles.sectionHeading}>Cash Flow Overview</Text>
-          <TouchableOpacity style={styles.viewMoreButton}>
+          <TouchableOpacity style={styles.viewMoreButton} onPress={() => navigation.navigate('AccountStackScreen', { viewMore: true })}>
             <Text style={styles.viewMoreText}>View More</Text>
           </TouchableOpacity>
         </View>
@@ -546,7 +549,7 @@ function CashFlowChart() {
       <View style={styles.sectionContainer}>
         <View style={styles.header}>
           <Text style={styles.sectionHeading}>Top 3 incomes</Text>
-          <TouchableOpacity style={styles.viewMoreButton}>
+          <TouchableOpacity style={styles.viewMoreButton} onPress={() => navigation.navigate('AccountStackScreen', { viewMore: true })}>
             <Text style={styles.viewMoreText}>View More</Text>
           </TouchableOpacity>
         </View>
@@ -618,7 +621,7 @@ function CashFlowChart() {
       <View style={styles.sectionContainer}>
         <View style={styles.header}>
           <Text style={styles.sectionHeading}>Top 3 expenses</Text>
-          <TouchableOpacity style={styles.viewMoreButton}>
+          <TouchableOpacity style={styles.viewMoreButton} onPress={() => navigation.navigate('AccountStackScreen', { viewMore: true })}>
             <Text style={styles.viewMoreText}>View More</Text>
           </TouchableOpacity>
         </View>
