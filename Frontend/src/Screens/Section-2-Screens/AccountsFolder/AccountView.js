@@ -18,7 +18,7 @@ import {
   HorizontalAxis,
 } from 'react-native-responsive-linechart';
 const AccountView = () => {
-  const accountNumber  = "1234567890"; // Get the account number from the route parameters
+  const accountNumber = "1234567890"; // Get the account number from the route parameters
 
   // Assuming transactions are available in this screen, you can define them here or pass them from the previous screen
   const [transactions, setTransactions] = useState([
@@ -41,28 +41,28 @@ const AccountView = () => {
       amount: 8000,
       date: new Date('2024-09-05T09:00:00'),
       category: 'freelance',
-       accountNumber: '1234567890',
+      accountNumber: '1234567890',
     },
     {
       type: 'expense',
       amount: 2000,
       date: new Date('2024-09-06T17:45:00'),
       category: 'shopping',
-       accountNumber: '1234567890',
+      accountNumber: '1234567890',
     },
     {
       type: 'income',
       amount: 1500,
       date: new Date('2024-09-08T11:15:00'),
       category: 'gift',
-       accountNumber: '1234567890',
+      accountNumber: '1234567890',
     },
     {
       type: 'expense',
       amount: 3000,
       date: new Date('2024-09-09T19:30:00'),
       category: 'entertainment',
-       accountNumber: '1234567890',
+      accountNumber: '1234567890',
     },
     {
       type: 'income',
@@ -90,7 +90,7 @@ const AccountView = () => {
       amount: 2500,
       date: new Date('2024-09-13T18:30:00'),
       category: 'utilities',
-       accountNumber: '1234567890',
+      accountNumber: '1234567890',
     },
     {
       type: 'income',
@@ -104,7 +104,7 @@ const AccountView = () => {
       amount: 1800,
       date: new Date('2024-09-15T12:15:00'),
       category: 'healthcare',
-       accountNumber: "1234567890",
+      accountNumber: "1234567890",
     },
     {
       type: 'expense',
@@ -132,42 +132,42 @@ const AccountView = () => {
       amount: 4500,
       date: new Date('2024-09-19T10:00:00'),
       category: 'rent income',
-       accountNumber: "1234567890",
+      accountNumber: "1234567890",
     },
     {
       type: 'expense',
       amount: 900,
       date: new Date('2024-09-20T09:15:00'),
       category: 'mobile bill',
-       accountNumber: "1234567890",
+      accountNumber: "1234567890",
     },
     {
       type: 'income',
       amount: 3000,
       date: new Date('2024-09-21T08:30:00'),
       category: 'investment return',
-       accountNumber: "1234567890",
+      accountNumber: "1234567890",
     },
     {
       type: 'expense',
       amount: 6000,
       date: new Date('2024-09-22T19:30:00'),
       category: 'home repairs',
-       accountNumber: "1234567890",
+      accountNumber: "1234567890",
     },
     {
       type: 'income',
       amount: 5500,
       date: new Date('2024-09-23T14:30:00'),
       category: 'freelance',
-       accountNumber: "0987654321",
+      accountNumber: "0987654321",
     },
     {
       type: 'expense',
       amount: 2000,
       date: new Date('2024-09-24T16:00:00'),
       category: 'dining out',
-       accountNumber: "0987654321",
+      accountNumber: "0987654321",
     },
   ]);
 
@@ -209,14 +209,23 @@ const AccountView = () => {
 
   const cashFlowData = calculateCashFlow(last30DaysTransactions);
 
-  const chartData = cashFlowData.map((item, index) => ({
-    x: index,
-    y: item.cashFlow,
-    date: item.date, // Include date in the chart data
-    amount: item.cashFlow, // Include amount in the chart data
-  }));
-  const xAxisLabels = cashFlowData.map((item) => item.date);
-   const CustomTooltip = ({ value, position }) => {
+  const chartData = [
+    { x: 0, y: 30 },
+    { x: 1, y: 40 },
+    { x: 2, y: 35 },
+    { x: 3, y: 50 },
+    { x: 4, y: 45 },
+  ];
+  // const chartData = cashFlowData.map((item, index) => ({
+  //   x: index,
+  //   y: item.cashFlow,
+  //   date: item.date, // Include date in the chart data
+  //   amount: item.cashFlow, // Include amount in the chart data
+  // }));
+
+  // const xAxisLabels = cashFlowData.map((item) => item.date);
+  const xAxisLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May'];
+  const CustomTooltip = ({ value, position }) => {
     return (
       <View
         style={[
@@ -239,119 +248,177 @@ const AccountView = () => {
   );
 
   return (
-     <SafeAreaView style={styles.safeArea}>
-    <ScrollView style={styles.container}>
-      <View style={styles.mainHeadingContainer}>
-    <Text style={styles.mainHeading}>Account Number: 123-456-78</Text>
-    
-  </View>
-      <View style={styles.sectionContainer}>
-        <View style={styles.header}>
-          <Text style={styles.sectionHeading}>Cash Flow Overview</Text>
-          
-        </View>
-        <View style={styles.chartContainer}>
-          <Chart
-            style={{ height: 200, width: '100%' }}
-            data={chartData}
-            padding={{ left: 40, bottom: 40, right: 20, top: 20 }}
-            xDomain={{ min: 0, max: chartData.length - 1 }}
-            yDomain={{
-              min: Math.min(...chartData.map((d) => d.y)),
-              max: Math.max(...chartData.map((d) => d.y)),
-            }}>
-            <VerticalAxis
-              tickCount={5}
-              theme={{ labels: { formatter: (v) => `$${v.toFixed(2)}` } }}
-            />
-            <HorizontalAxis
-              tickCount={4}
-              theme={{
-                labels: {
-                  formatter: (v) => xAxisLabels[Math.round(v)] || '',
-                  labelRotation: 45,
-                },
-              }}
-            />
-            <Line
-              tooltipComponent={<CustomTooltip />}
-              theme={{
-                stroke: { color: '#4caf50', width: 2 },
-              }}
-            />
-            <Area
-              theme={{
-                gradient: {
-                  from: { color: '#4caf50', opacity: 0.4 },
-                  to: { color: '#4caf50', opacity: 0.0 },
-                },
-              }}
-            />
-            <Line
-              theme={{
-                stroke: { color: '#44bd32', width: 5 },
-                scatter: {
-                  default: { width: 8, height: 8, rx: 4, color: '#44ad32' },
-                  selected: { color: 'red' },
-                },
-              }}
-            />
-          </Chart>
-        </View>
-      </View>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
+        <View style={styles.mainHeadingContainer}>
+          <Text style={styles.mainHeading}>Account Number: 123-456-78</Text>
 
-      {/* Income List */}
-      <View style={styles.listContainer}>
-        <Text style={styles.listHeading}>Income</Text>
-        <FlatList
-          data={incomeTransactions}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View style={[styles.listItem, styles.incomeItem]}>
-              <View style={styles.verticalLine}></View>
-              <View style={styles.listItemContent}>
-                <Text style={styles.listItemText}>
-                  {item.category} - {item.date.toLocaleDateString()}
-                </Text>
-                <Text style={[styles.listItemAmount, styles.incomeAmount]}>
-                  ${item.amount}
-                </Text>
-              </View>
-            </View>
-          )}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-        />
-      </View>
+        </View>
+        <View style={styles.sectionContainer}>
+          <View style={styles.header}>
+            <Text style={styles.sectionHeading}>Cash Flow Overview</Text>
 
-      <View style={styles.listContainer}>
-        <Text style={styles.listHeading}>Expenses</Text>
-        <FlatList
-          data={expenseTransactions}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View style={[styles.listItem, styles.expenseItem]}>
-              <View style={styles.verticalLine}></View>
-              <View style={styles.listItemContent}>
-                <Text style={styles.listItemText}>
-                  {item.category} - {item.date.toLocaleDateString()}
-                </Text>
-                <Text style={[styles.listItemAmount, styles.expenseAmount]}>
-                  ${item.amount}
-                </Text>
+          </View>
+          <View style={styles.chartContainer}>
+            <Chart
+              style={{ height: 200, width: '100%' }}
+              data={chartData}
+              padding={{ left: 40, bottom: 40, right: 20, top: 20 }}
+              xDomain={{ min: 0, max: chartData.length - 1 }}
+              yDomain={{
+                min: Math.min(...chartData.map((d) => d.y)),
+                max: Math.max(...chartData.map((d) => d.y)),
+              }}>
+
+              <VerticalAxis
+                tickCount={5}
+                theme={{
+                  labels: {
+                    formatter: (v) => `$${v.toFixed(2)}`,
+                  },
+                }}
+              />
+
+              <HorizontalAxis
+                tickCount={4}
+                theme={{
+                  labels: {
+                    formatter: (v) => xAxisLabels[Math.round(v)] || '',
+                    labelRotation: 45,
+                  },
+                }}
+              />
+
+              {/* Area chart (optional) */}
+              <Area
+                theme={{
+                  gradient: {
+                    from: { color: '#4caf50', opacity: 0.4 },
+                    to: { color: '#4caf50', opacity: 0.0 },
+                  },
+                }}
+              />
+
+              {/* Line chart */}
+              <Line
+                theme={{
+                  stroke: { color: '#4caf50', width: 2 },
+                }}
+              />
+
+              {/* Tooltip (this should be customized if you need dynamic tooltips) */}
+              <Tooltip
+                containerStyle={{
+                  backgroundColor: 'transparent',
+                  zIndex: 1,
+                }}
+                renderTooltip={({ x, y, index }) => {
+                  const value = chartDataforStatic[index];
+                  return <CustomTooltip value={value} position={{ x, y }} />;
+                }}
+              />
+            </Chart>
+            {/* <Chart
+              style={{ height: 200, width: '100%' }}
+              data={chartData}
+              padding={{ left: 40, bottom: 40, right: 20, top: 20 }}
+              xDomain={{ min: 0, max: chartData.length - 1 }}
+              yDomain={{
+                min: Math.min(...chartData.map((d) => d.y)),
+                max: Math.max(...chartData.map((d) => d.y)),
+              }}>
+              <VerticalAxis
+                tickCount={5}
+                theme={{ labels: { formatter: (v) => `$${v.toFixed(2)}` } }}
+              />
+              <HorizontalAxis
+                tickCount={4}
+                theme={{
+                  labels: {
+                    formatter: (v) => xAxisLabels[Math.round(v)] || '',
+                    labelRotation: 45,
+                  },
+                }}
+              />
+              <Line
+                tooltipComponent={<CustomTooltip />}
+                theme={{
+                  stroke: { color: '#4caf50', width: 2 },
+                }}
+              />
+              <Area
+                theme={{
+                  gradient: {
+                    from: { color: '#4caf50', opacity: 0.4 },
+                    to: { color: '#4caf50', opacity: 0.0 },
+                  },
+                }}
+              />
+              <Line
+                theme={{
+                  stroke: { color: '#44bd32', width: 5 },
+                  scatter: {
+                    default: { width: 8, height: 8, rx: 4, color: '#44ad32' },
+                    selected: { color: 'red' },
+                  },
+                }}
+              />
+            </Chart> */}
+          </View>
+        </View>
+
+        {/* Income List */}
+        <View style={styles.listContainer}>
+          <Text style={styles.listHeading}>Income</Text>
+          <FlatList
+            data={incomeTransactions}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <View style={[styles.listItem, styles.incomeItem]}>
+                <View style={styles.verticalLine}></View>
+                <View style={styles.listItemContent}>
+                  <Text style={styles.listItemText}>
+                    {item.category} - {item.date.toLocaleDateString()}
+                  </Text>
+                  <Text style={[styles.listItemAmount, styles.incomeAmount]}>
+                    ${item.amount}
+                  </Text>
+                </View>
               </View>
-            </View>
-          )}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-        />
-      </View>
-    </ScrollView>
-      </SafeAreaView>
+            )}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+          />
+        </View>
+
+        <View style={styles.listContainer}>
+          <Text style={styles.listHeading}>Expenses</Text>
+          <FlatList
+            data={expenseTransactions}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <View style={[styles.listItem, styles.expenseItem]}>
+                <View style={styles.verticalLine}></View>
+                <View style={styles.listItemContent}>
+                  <Text style={styles.listItemText}>
+                    {item.category} - {item.date.toLocaleDateString()}
+                  </Text>
+                  <Text style={[styles.listItemAmount, styles.expenseAmount]}>
+                    ${item.amount}
+                  </Text>
+                </View>
+              </View>
+            )}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  
-   container: {
+
+  container: {
     flexGrow: 1,
     backgroundColor: '#f4f4f4',
     padding: 16,
@@ -363,13 +430,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     zIndex: 10,
   },
-   chartContainer: {
+  chartContainer: {
     backgroundColor: '#fff',
     padding: 16,
     borderRadius: 8,
     elevation: 3,
   },
-   sectionContainer: {
+  sectionContainer: {
     marginBottom: 24,
   },
   header: {
@@ -382,7 +449,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-   tooltipText: {
+  tooltipText: {
     color: 'white',
     fontSize: 12,
   },
@@ -451,7 +518,7 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#ddd',
   },
- 
+
 });
 
 export default AccountView;

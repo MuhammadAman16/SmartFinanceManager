@@ -12,6 +12,7 @@ import ChatScreen from './src/Screens/Chatbot';
 import RecordCreation from './src/components/Records/RecordCreation';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
+import AccountStackFile from './src/Screens/Section-2-Screens/TheHomeSackNavigationScreens/AccountStackFile';
 
 
 const Stack = createNativeStackNavigator();
@@ -45,6 +46,7 @@ const App = () => {
                 <Stack.Screen name='AccountScreen' component={AccountScreen} />
                 <Stack.Screen name='RecordCreationScreen' component={RecordCreation} />
                 <Stack.Screen name='ChatBotScreen' component={ChatScreen} />
+                <Stack.Screen name='AccountStackScreen' component={AccountStackFile}/>
             </Stack.Navigator>
         </SafeAreaView>
     );
