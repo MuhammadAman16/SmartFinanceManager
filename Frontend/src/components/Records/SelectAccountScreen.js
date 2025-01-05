@@ -6,7 +6,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '@/app/context/AuthContext';
 
-const SelectAccountScreen = ( income ) => {
+const SelectAccountScreen = (income) => {
     const { user } = useContext(AuthContext);
     const navigation = useNavigation();
     const [loading, setLoading] = useState(true);
@@ -72,9 +72,12 @@ const SelectAccountScreen = ( income ) => {
                         onPress={() => {
                             const { id, name, currency } = account;
                             {
-                                income.route.params.income === true ?
-                                navigation.navigate('Income Form', { selectedAccount: { id, name, currency } })
-                                : navigation.navigate('Expense Form', { selectedAccount: { id, name, currency } })
+                                income.route.params.income === 'income' ?
+                                    navigation.navigate('Income Form', { selectedAccount: { id, name, currency } })
+                                    :
+                                    income.route.params.income === 'expense' ? navigation.navigate('Expense Form', { selectedAccount: { id, name, currency } })
+                                        :
+                                        navigation.navigate('Create Template', { selectedAccount: { id, name, currency } })
                             }
                         }}
                     >

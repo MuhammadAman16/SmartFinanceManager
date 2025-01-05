@@ -524,16 +524,14 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         textAlign: 'center',
     },
-    ProfileScreenInput: {
-        height: 48,
-        borderColor: '#ddd',
-        borderWidth: 1,
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        fontSize: 16,
-        marginBottom: 12,
-        backgroundColor: '#fff',
-    },
+    // ProfileScreenInput: {
+    //     borderWidth: 0,
+    //     paddingHorizontal: 16,
+    //     fontSize: 16,
+    //     marginBottom: 12,
+    //     backgroundColor: '#fff',
+    //     width: '90%',
+    // },
     ProfileScreenButton: {
         backgroundColor: 'rgba(34,68,35,255)',
         borderRadius: 8,
@@ -552,46 +550,6 @@ const styles = StyleSheet.create({
         color: '#ff4d4d',
         marginBottom: 12,
         textAlign: 'center',
-    },
-    // FAQ Screen Styling
-    FAQScreenContainer: {
-        flexGrow: 1,
-        backgroundColor: "#f5f5f5",
-        padding: 16,
-    },
-    FAQScreenTitle: {
-        fontSize: 24,
-        fontWeight: "bold",
-        marginBottom: 16,
-        color: "#333",
-    },
-    FAQScreenItem: {
-        marginBottom: 12,
-        backgroundColor: "#fff",
-        borderRadius: 8,
-        elevation: 2,
-        overflow: "hidden",
-    },
-    FAQScreenQuestionContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 16,
-        backgroundColor: "#e0e0e0",
-    },
-    FAQScreenQuestion: {
-        fontSize: 16,
-        fontWeight: "bold",
-        color: "#333",
-        flex: 1,
-    },
-    FAQScreenAnswerContainer: {
-        paddingHorizontal: 16,
-        paddingBottom: 16,
-        overflow: "hidden",
-    },
-    FAQScreenAnswer: {
-        fontSize: 14,
-        color: "#555",
     },
     // Follow ScreenStyling
     FollowScreenContainer: {

@@ -1,13 +1,33 @@
-import React, { useEffect, useContext } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import React, { useState, useEffect, useContext } from "react";
+import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import styles from "../Styling/Stlyes";
 import { AuthContext } from "@/app/context/AuthContext";
+import user_api from "@/app/api/user_api";
 
 const ProfileNameForm = () => {
-  const {user} = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
+  const [userFullName, setUserFullName] = useState(null);
 
-  const handleNameChange = () => {
-    console.log("Name changed to:", name);
+  useEffect(() => {
+    setUserFullName(user.fullName);
+  }, [])
+
+  const handleNameChange = async () => {
+    try {
+      const result = await user_api.put(`user/updateFullName?userId=${user.id}`, {
+        fullName: userFullName
+      });
+      setUser({...user, fullName: userFullName});
+      Alert.alert(result.data.message)
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`);
+      } else if (error.request) {
+        console.log('No response from server');
+      } else {
+        console.log('Error: ', error.error);
+      }
+    }
   };
 
   return (
@@ -15,11 +35,8 @@ const ProfileNameForm = () => {
       <Text style={styles.ProfileScreenlabel}>Name</Text>
       <TextInput
         style={styles.ProfileScreenInput}
-        value={user.fullName}
-        onChangeText={(text) => {
-          user.fullName = text;
-        }}
-        placeholder="Enter your name"
+        value={userFullName}
+        onChangeText={(text) => setUserFullName(text)}
       />
       <TouchableOpacity style={styles.ProfileScreenButton} onPress={handleNameChange}>
         <Text style={styles.ProfileScreenButtonText}>Change Name</Text>
