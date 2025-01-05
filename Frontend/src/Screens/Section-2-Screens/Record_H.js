@@ -6,14 +6,17 @@
 //   paymentType: 'cash',
 // }
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, SafeAreaView, TouchableOpacity, Button, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, FlatList, SafeAreaView, TouchableOpacity, Button, ActivityIndicator, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import user_api from '@/app/api/user_api';
 import { Feather } from '@expo/vector-icons';
+import SelectTimePeriod from '@/src/components/Records/SelectTimePeriod';
+import { AuthContext } from '@/app/context/AuthContext';
 
 const Record_H = (props) => {
+  const { user } = useContext(AuthContext);
   const [startDate, setStartDate] = useState(new Date('1970-01-01')); // Initially set to a far past date
   const [endDate, setEndDate] = useState(new Date()); // Initially set to today
   const [selectedAccount, setSelectedAccount] = useState('');
@@ -25,9 +28,10 @@ const Record_H = (props) => {
 
   const fetchAllRecords = async () => {
     try {
-      const result = await user_api.get('record');
+      const result = await user_api.get(`record?userId=${user.id}`);
       // console.log("The records are : ", result.data);
       setTransactions(result.data);
+      // console.log(result.data.Category);
     } catch (error) {
       if (error.response) {
         Alert.alert(`Error: ${error.response.data.error}`)
@@ -43,7 +47,88 @@ const Record_H = (props) => {
 
   useEffect(() => {
     fetchAllRecords();
+    // console.log(transactions[0]["Category"])
   }, [])
+
+  const renderItem = ({ item }) => {
+    // console.log(`The item Category ${item.Category?.name}`);
+    return (
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          marginVertical: 5,
+          backgroundColor: 'white',
+          paddingHorizontal: 10,
+          paddingVertical: 15,
+          borderRadius: 10,
+          borderWidth: 2,
+          borderColor: 'rgb(226, 226, 226)'
+        }}
+      >
+        <View
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 35,
+            height: 35,
+            backgroundColor: '#8fbc8f',
+            borderRadius: 50
+          }}
+        >
+          <Image
+            style={{
+              width: 30,
+              height: 30,
+              borderRadius: 50
+            }}
+            source={{ uri: item.Category.icon }}
+          />
+        </View>
+        {/* <Text>{item["Category"]?.icon}</Text> */}
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              paddingHorizontal: 10
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                fontStyle: 'italic',
+                fontWeight: '500'
+              }}
+            >
+              {item.Category.name}
+            </Text>
+            <Text
+              style={{
+                fontSize: 13,
+                color: 'rgb(128, 128, 128)'
+              }}
+            >
+              {item.Account.name}
+            </Text>
+          </View>
+          <View>
+            <Text>{item.amount}</Text>
+          </View>
+        </View>
+        {/* <Text>{item.type}</Text> */}
+      </View>
+    );
+  }
 
 
   // const filterTransactions = (transactions) => {
@@ -92,14 +177,48 @@ const Record_H = (props) => {
             alignItems: 'center',
             borderRadius: 10,
             justifyContent: 'space-around'
-        }}>
+          }}>
           <Feather name="plus" size={24} color={'white'} />
           <Text style={{ color: 'white', fontSize: 20 }}>New</Text>
         </TouchableOpacity>
       </View>
+      <View
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginVertical: 10
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 30,
+            fontWeight: 'bold',
+            fontStyle: 'italic'
+          }}
+        >
+          Record
+        </Text>
+      </View>
+
+      <View>
+        <Text>Select Time Period</Text>
+      </View>
+
+      <SelectTimePeriod />
+
+      <View>
+        <Text>Last 7 Days</Text>
+      </View>
+
+      <FlatList
+        data={transactions}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+      />
 
       {/* Date Pickers */}
-      <View style={styles.datePickerContainer}>
+      {/* <View style={styles.datePickerContainer}>
         <Button title="Select Start Date" onPress={() => setShowStartPicker(true)} />
         {showStartPicker && (
           <DateTimePicker
@@ -124,10 +243,10 @@ const Record_H = (props) => {
             }}
           />
         )}
-      </View>
+      </View> */}
 
       {/* Account Picker */}
-      <View style={styles.pickerContainer}>
+      {/* <View style={styles.pickerContainer}>
         <Text>Select Account:</Text>
         <Picker
           selectedValue={selectedAccount}
@@ -138,10 +257,10 @@ const Record_H = (props) => {
           <Picker.Item label="Account 1234567890" value="1234567890" />
           <Picker.Item label="Account 0987654321" value="0987654321" />
         </Picker>
-      </View>
+      </View> */}
 
       {/* Combined Transactions List */}
-      <View style={styles.listContainer}>
+      {/* <View style={styles.listContainer}>
         <Text style={styles.listHeading}>Transactions</Text>
         <FlatList
           data={transactions}
@@ -161,7 +280,7 @@ const Record_H = (props) => {
           )}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
-      </View>
+      </View> */}
 
     </SafeAreaView>
     // </ScrollView>
