@@ -1,10 +1,10 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useState, useEffect, useContext } from 'react'
 import { Ionicons, AntDesign } from '@expo/vector-icons'
 import { useNavigation } from 'expo-router'
 import user_api from '@/app/api/user_api'
 import { AuthContext } from '@/app/context/AuthContext'
-// import CashFlowChart from './CashFlow'
+import CashFlowChart from '../AccountsFolder/CashFlow'
 
 const Accounts = () => {
   const { user } = useContext(AuthContext);
@@ -42,56 +42,87 @@ const Accounts = () => {
   }, [])
 
   return (
-    <View>
-      <View
-        style={{
-          backgroundColor: 'white',
-          height: 'auto',
-          paddingBottom: 20
-        }}
-      >
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <View>
         <View
           style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginHorizontal: 20,
-            marginVertical: 20
+            backgroundColor: 'white',
+            height: 'auto',
+            paddingBottom: 20
           }}
         >
-          <Text
+          <View
             style={{
-              fontSize: 16,
-              fontWeight: 'bold'
-            }}
-          >List of accounts</Text>
-          <TouchableOpacity
-            style={{
-              borderWidth: 1,
-              padding: 5,
-              borderRadius: 5,
-              borderColor: 'rgb(229,228,226)'
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginHorizontal: 20,
+              marginVertical: 20
             }}
           >
-            <Ionicons
-              name='settings-sharp'
-              size={22}
-              color={'rgba(3,155,230,255)'}
-            />
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            marginHorizontal: 20,
-            display: 'flex',
-            flexDirection: 'row',
-            gap: 10,
-            rowGap: 10
-          }}
-        >
-          {accounts.map((account, index) => (
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 'bold'
+              }}
+            >List of accounts</Text>
             <TouchableOpacity
-              key={index}
+              style={{
+                borderWidth: 1,
+                padding: 5,
+                borderRadius: 5,
+                borderColor: 'rgb(229,228,226)'
+              }}
+            >
+              <Ionicons
+                name='settings-sharp'
+                size={22}
+                color={'rgba(3,155,230,255)'}
+              />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              marginHorizontal: 20,
+              display: 'flex',
+              flexDirection: 'row',
+              gap: 10,
+              rowGap: 10
+            }}
+          >
+            {accounts.map((account, index) => (
+              <TouchableOpacity
+                key={index}
+                style={{
+                  flexDirection: 'row',
+                  width: '50%',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  borderWidth: 2,
+                  borderColor: 'rgba(3,155,230,255)',
+                  backgroundColor: 'rgba(3,155,230,255)',
+                  borderRadius: 5,
+                  paddingHorizontal: 15,
+                  paddingVertical: 10
+                }}
+                onPress={() => navigation.navigate('AccountScreen')}
+              >
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    color: 'white'
+                  }}
+                >{account.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <View
+            style={{
+              marginHorizontal: 20,
+              marginVertical: 10
+            }}
+          >
+            <TouchableOpacity
               style={{
                 flexDirection: 'row',
                 width: '50%',
@@ -99,7 +130,6 @@ const Accounts = () => {
                 alignItems: 'center',
                 borderWidth: 2,
                 borderColor: 'rgba(3,155,230,255)',
-                backgroundColor: 'rgba(3,155,230,255)',
                 borderRadius: 5,
                 paddingHorizontal: 15,
                 paddingVertical: 10
@@ -109,48 +139,20 @@ const Accounts = () => {
               <Text
                 style={{
                   fontWeight: 'bold',
-                  color: 'white'
+                  color: 'rgba(3,155,230,255)'
                 }}
-              >{account.name}</Text>
+              >ADD ACCOUNT</Text>
+              <AntDesign
+                name='pluscircle'
+                size={17}
+                color={'rgba(3,155,230,255)'}
+              />
             </TouchableOpacity>
-          ))}
-        </View>
-        <View
-          style={{
-            marginHorizontal: 20,
-            marginVertical: 10
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              flexDirection: 'row',
-              width: '50%',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              borderWidth: 2,
-              borderColor: 'rgba(3,155,230,255)',
-              borderRadius: 5,
-              paddingHorizontal: 15,
-              paddingVertical: 10
-            }}
-            onPress={() => navigation.navigate('AccountScreen')}
-          >
-            <Text
-              style={{
-                fontWeight: 'bold',
-                color: 'rgba(3,155,230,255)'
-              }}
-            >ADD ACCOUNT</Text>
-            <AntDesign
-              name='pluscircle'
-              size={17}
-              color={'rgba(3,155,230,255)'}
-            />
-          </TouchableOpacity>
+          </View>
         </View>
       </View>
-      {/* <CashFlowChart /> */}
-    </View>
+      <CashFlowChart />
+    </ScrollView>
   )
 }
 

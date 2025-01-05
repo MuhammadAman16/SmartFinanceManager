@@ -36,11 +36,12 @@ const ExpenseForm = ({ route }) => {
   const { selectedAccount } = route?.params || {};
   const { selectedCategory } = route?.params || {};
   const { selectedLabels } = route?.params || {};
+  const { selectedTemplate } = route?.params || {};
   const today = new Date().toISOString().split('T')[0]; // Format as YYYY-MM-DD
   const now = new Date();
   const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
   const status = 'Cleared';
-  const paymentType = 'Cash';
+  const paymentType = selectedTemplate?.paymentType || 'Cash';
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [isPaymentTypeModalOpen, setIsPaymentTypeModalOpen] = useState(false);
   const [isDatePickerOpen, setIsDatePicerOpen] = useState(false);
@@ -48,17 +49,15 @@ const ExpenseForm = ({ route }) => {
   const [account, setAccount] = useState({ id: 0, name: "", currency: "" });
   const [category, setCategory] = useState({ id: 0, name: "" });
   const [labels, setLabels] = useState();
+  const [template, setTemplate] = useState();
 
 
   const record = {
-    isTemplate: 'No',
-    name: 'Test Record',
-    amount: 0,
-    note: '',
-    currency: 'PKR',
-    payee: '',
-    warranty: 0,
-    attachment: 'Add Receipt'
+    name: template?.name || 'Test Record',
+    amount: template?.amount || 0,
+    note: template?.note || '',
+    payee: template?.payee || '',
+    warranty: 0
   };
 
   useEffect(() => {
@@ -76,6 +75,22 @@ const ExpenseForm = ({ route }) => {
   useEffect(() => {
     setLabels(selectedLabels);
   }, [selectedLabels])
+
+  useEffect(() => {
+    // console.log(selectedTemplate.name, selectedTemplate.amount, selectedTemplate.paymentType);
+    if (selectedTemplate) {
+      // setTemplate(selectedTemplate.name, selectedTemplate.amount, selectedTemplate.paymentType);
+      setAccount(selectedTemplate.selectedAccount);
+      setCategory(selectedTemplate.selectedCategory);
+      setLabels(selectedTemplate.Labels);
+      setTemplate({
+        name: selectedTemplate.name,
+        amount: selectedTemplate.amount,
+        note: selectedTemplate.note,
+        payee: selectedTemplate.payee
+      })
+    }
+  }, [selectedTemplate])
 
   const handleConfirm = (date, setFieldValue) => {
     if (!moment(date).isValid()) {
@@ -110,25 +125,45 @@ const ExpenseForm = ({ route }) => {
   const submit = async (values, formikActions) => {
     try {
       const labelIds = values.label.map(label => label.id);
-      await user_api.post('/record', {
-        isTemplate: record.isTemplate,
-        name: record.name,
-        userId: user.id,
-        amount: values.amount,
-        currency: account.currency,
-        accounId: values.account.id,
-        paymentType: values.paymentType,
-        datetime: `${values.date} ${values.time}`,
-        type: "EXPENSE",
-        status: values.status,
-        categoryId: values.category.id,
-        note: values.note,
-        payee: values.payee,
-        warranty: values.warranty,
-        labelIds: labelIds,
-        attachment: values.attachment,
-        payee: values.payee
-      })
+      if (values.isTemplate === '') {
+        await user_api.post('/record', {
+          isTemplate: "No",
+          name: values.name,
+          userId: user.id,
+          amount: values.amount,
+          currency: values.account.currency,
+          accountId: values.account.id,
+          paymentType: values.paymentType,
+          datetime: `${values.date} ${values.time}`,
+          type: "EXPENSE",
+          status: values.status,
+          categoryId: values.category.id,
+          note: values.note,
+          payee: values.payee,
+          warranty: values.warranty,
+          labelIds: labelIds,
+          payee: values.payee
+        })
+      } else {
+        await user_api.post('/record', {
+          isTemplate: "Yes",
+          name: values.name,
+          userId: user.id,
+          amount: values.amount,
+          currency: values.account.currency,
+          accountId: values.account.id,
+          paymentType: values.paymentType,
+          datetime: `${values.date} ${values.time}`,
+          type: "EXPENSE",
+          status: values.status,
+          categoryId: values.category.id,
+          note: values.note,
+          payee: values.payee,
+          warranty: values.warranty,
+          labelIds: labelIds,
+          payee: values.payee
+        })
+      }
 
       formikActions.resetForm();
       Alert.alert("Expense Record Created Successfully");
@@ -221,6 +256,7 @@ const ExpenseForm = ({ route }) => {
               account: account,
               category: category,
               label: labels || [],
+              isTemplate: template?.name || ''
             }}
             validationSchema={validationSchema}
             onSubmit={submit}
@@ -254,7 +290,7 @@ const ExpenseForm = ({ route }) => {
                 paymentType,
                 warranty,
                 status,
-                attachment
+                isTemplate
               } = values;
 
               const displayLabels = getLabelItesm(label);
@@ -262,6 +298,19 @@ const ExpenseForm = ({ route }) => {
 
               return (
                 <>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('Template Stack File', { income: false })}
+                  >
+                    <BudgetInputFields
+                      label={'isTemplate'}
+                      value={isTemplate}
+                      iconName={'down'}
+                      editable={false}
+                      color={'black'}
+                      error={touched.isTemplate && errors.isTemplate}
+                      placeHolder={"Select Template"}
+                    />
+                  </TouchableOpacity>
                   <BudgetInputFields
                     label={'Amount'}
                     value={amount}
@@ -271,7 +320,7 @@ const ExpenseForm = ({ route }) => {
                     keyboardype={'numeric'}
                   />
                   <TouchableOpacity
-                    onPress={() => navigation.navigate('Select Account', { income: false })}
+                    onPress={() => navigation.navigate('Select Account', { income: 'expense' })}
                   >
                     <BudgetInputFields
                       label={'Account'}
@@ -284,7 +333,7 @@ const ExpenseForm = ({ route }) => {
                     />
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate('Select Category', { income: false })}
+                    onPress={() => navigation.navigate('Select Category', { income: 'expense' })}
                   >
                     <BudgetInputFields
                       label={'Category'}
@@ -378,12 +427,6 @@ const ExpenseForm = ({ route }) => {
                       color={'black'}
                     />
                   </TouchableOpacity>
-                  {/* <BudgetInputFields
-                    label={'Attachment'}
-                    value={attachment}
-                    onChangeText={handleChange('attachment')}
-                    onBlur={handleBlur('attachment')}
-                  /> */}
                   <FormSubmitButton
                     title={'Save'}
                     onPressFunction={handleSubmit}

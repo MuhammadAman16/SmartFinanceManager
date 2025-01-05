@@ -66,10 +66,13 @@ const SelectCategoryScreen = ( income ) => {
             }}
             onPress={() => {
               const { id, name } = category;
-              {income.route.params.income === true ? 
+              {income.route.params.income === 'income' ? 
                 navigation.navigate('Income Form', { selectedCategory: { id, name } })
                 :
+                income.route.params.income === 'expense' ?
                 navigation.navigate('Expense Form', { selectedCategory: { id, name } })
+                :
+                navigation.navigate('Create Template', { selectedCategory: { id, name } })
               }
             }}
           >

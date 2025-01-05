@@ -2,7 +2,6 @@ import { KeyboardAvoidingView, Platform, Dimensions, TouchableOpacity, View, Scr
 import React, { useState, useEffect, useContext } from 'react'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
-import styles from '../Styling/Stlyes'
 import BudgetInputFields from '../OnGoingBudget/BudgetInputFields'
 import StatusModal from './StatusModal'
 import PaymentTypeModal from './PaymentTypeModal'
@@ -37,11 +36,12 @@ const IncomeForm = ({ route }) => {
     const { selectedAccount } = route?.params || {};
     const { selectedCategory } = route?.params || {};
     const { selectedLabels } = route?.params || {};
+    const { selectedTemplate } = route?.params || {};
     const today = new Date().toISOString().split('T')[0]; // Format as YYYY-MM-DD
     const now = new Date();
     const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
     const status = 'Cleared';
-    const paymentType = 'Cash';
+    const paymentType = selectedTemplate?.paymentType || 'Cash';
     const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
     const [isPaymentTypeModalOpen, setIsPaymentTypeModalOpen] = useState(false);
     const [isDatePickerOpen, setIsDatePicerOpen] = useState(false);
@@ -49,16 +49,15 @@ const IncomeForm = ({ route }) => {
     const [account, setAccount] = useState({ id: 0, name: "", currency: "" });
     const [category, setCategory] = useState({ id: 0, name: "" });
     const [labels, setLabels] = useState();
+    const [template, setTemplate] = useState();
 
 
     const record = {
-        isTemplate: 'No',
-        name: 'Test Record',
-        amount: 0,
-        note: '',
-        payer: '',
-        warranty: 0,
-        attachment: 'Add Receipt'
+        name: template?.name || 'Test Record',
+        amount: template?.amount || 0,
+        note: template?.note || '',
+        payer: template?.payer || '',
+        warranty: 0
     };
 
     useEffect(() => {
@@ -76,6 +75,22 @@ const IncomeForm = ({ route }) => {
     useEffect(() => {
         setLabels(selectedLabels);
     }, [selectedLabels])
+
+    useEffect(() => {
+        // console.log(selectedTemplate.name, selectedTemplate.amount, selectedTemplate.paymentType);
+        if (selectedTemplate) {
+            // setTemplate(selectedTemplate.name, selectedTemplate.amount, selectedTemplate.paymentType);
+            setAccount(selectedTemplate.selectedAccount);
+            setCategory(selectedTemplate.selectedCategory);
+            setLabels(selectedTemplate.Labels);
+            setTemplate({
+                name: selectedTemplate.name,
+                amount: selectedTemplate.amount,
+                note: selectedTemplate.note,
+                payer: selectedTemplate.payee
+            })
+        }
+    }, [selectedTemplate])
 
     const handleConfirm = (date, setFieldValue) => {
         if (!moment(date).isValid()) {
@@ -110,31 +125,73 @@ const IncomeForm = ({ route }) => {
     const submit = async (values, formikActions) => {
         try {
             const labelIds = values.label.map(label => label.id);
-            await user_api.post('/record', {
-                isTemplate: record.isTemplate,
-                name: record.name,
-                userId: user.id,
-                amount: values.amount,
-                currency: account.currency,
-                accounId: values.account.id,
-                paymentType: values.paymentType,
-                datetime: `${values.date} ${values.time}`,
-                type: "INCOME",
-                status: values.status,
-                categoryId: values.category.id,
-                note: values.note,
-                payee: values.payee,
-                warranty: values.warranty,
-                labelIds: labelIds,
-                payee: values.payer
-            })
+            if (values.isTemplate === '') {
+                // console.log(`The labelIds are ${labelIds} and values are ${values.name}`);
+                await user_api.post('record', {
+                    isTemplate: "No",
+                    name: values.name,
+                    userId: user.id,
+                    amount: values.amount,
+                    currency: values.account.currency,
+                    accountId: values.account.id,
+                    paymentType: values.paymentType,
+                    datetime: `${values.date} ${values.time}`,
+                    type: "INCOME",
+                    status: values.status,
+                    categoryId: values.category.id,
+                    note: values.note,
+                    payee: values.payee,
+                    warranty: values.warranty,
+                    labelIds: labelIds,
+                    payee: values.payer
+                })
+            } else {
+                // console.log(`The labelIds are ${labelIds} and values are ${values.isTemplate} and ${values.name}`);
+                await user_api.post('record', {
+                    isTemplate: "Yes",
+                    name: values.name,
+                    userId: user.id,
+                    amount: values.amount,
+                    currency: values.account.currency,
+                    accountId: values.account.id,
+                    paymentType: values.paymentType,
+                    datetime: `${values.date} ${values.time}`,
+                    type: "INCOME",
+                    status: values.status,
+                    categoryId: values.category.id,
+                    note: values.note,
+                    payee: values.payee,
+                    warranty: values.warranty,
+                    labelIds: labelIds,
+                    payee: values.payer
+                })
+            }
+            // await user_api.post('record', {
+            //     isTemplate: record.isTemplate,
+            //     name: record.name,
+            //     userId: user.id,
+            //     amount: values.amount,
+            //     currency: account.currency,
+            //     accounId: values.account.id,
+            //     paymentType: values.paymentType,
+            //     datetime: `${values.date} ${values.time}`,
+            //     type: "INCOME",
+            //     status: values.status,
+            //     categoryId: values.category.id,
+            //     note: values.note,
+            //     payee: values.payee,
+            //     warranty: values.warranty,
+            //     labelIds: labelIds,
+            //     payee: values.payer
+            // })
 
             formikActions.resetForm();
             Alert.alert("Income Record Created Successfully");
             navigation.goBack();
         } catch (error) {
             if (error.response) {
-                Alert.alert(`Error: ${error.response.data.message}`)
+                // Alert.alert(`Error: ${error.response.data.message}`);
+                console.log("Error : ", error.response.data);
             } else if (error.request) {
                 console.log(`No response from server`);
             } else {
@@ -147,7 +204,7 @@ const IncomeForm = ({ route }) => {
         <KeyboardAvoidingView
             enabled
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={[styles.scrollView, { width: Dimensions.get('window').width, flex: 1 }]}
+            style={{ paddingHorizontal: 20, width: Dimensions.get('window').width, flex: 1 }}
             keyboardVerticalOffset={100}
         >
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -220,6 +277,7 @@ const IncomeForm = ({ route }) => {
                             account: account,
                             category: category,
                             label: labels || [],
+                            isTemplate: template?.name || ''
                         }}
                         validationSchema={validationSchema}
                         onSubmit={submit}
@@ -253,7 +311,7 @@ const IncomeForm = ({ route }) => {
                                 paymentType,
                                 warranty,
                                 status,
-                                attachment
+                                isTemplate
                             } = values;
 
                             const displayLabels = getLabelItesm(label);
@@ -261,6 +319,19 @@ const IncomeForm = ({ route }) => {
 
                             return (
                                 <>
+                                    <TouchableOpacity
+                                        onPress={() => navigation.navigate('Template Stack File', { income: true })}
+                                    >
+                                        <BudgetInputFields
+                                            label={'isTemplate'}
+                                            value={isTemplate}
+                                            iconName={'down'}
+                                            editable={false}
+                                            color={'black'}
+                                            error={touched.isTemplate && errors.isTemplate}
+                                            placeHolder={"Select Template"}
+                                        />
+                                    </TouchableOpacity>
                                     <BudgetInputFields
                                         label={'Amount'}
                                         value={amount}
@@ -270,7 +341,7 @@ const IncomeForm = ({ route }) => {
                                         keyboardype={'numeric'}
                                     />
                                     <TouchableOpacity
-                                        onPress={() => navigation.navigate('Select Account', { income: true })}
+                                        onPress={() => navigation.navigate('Select Account', { income: 'income' })}
                                     >
                                         <BudgetInputFields
                                             label={'Account'}
@@ -283,7 +354,7 @@ const IncomeForm = ({ route }) => {
                                         />
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        onPress={() => navigation.navigate('Select Category', { income: true })}
+                                        onPress={() => navigation.navigate('Select Category', { income: 'income' })}
                                     >
                                         <BudgetInputFields
                                             label={'Category'}
@@ -377,12 +448,6 @@ const IncomeForm = ({ route }) => {
                                             color={'black'}
                                         />
                                     </TouchableOpacity>
-                                    {/* <BudgetInputFields
-                                        label={'Attachment'}
-                                        value={attachment}
-                                        onChangeText={handleChange('attachment')}
-                                        onBlur={handleBlur('attachment')}
-                                    /> */}
                                     <FormSubmitButton
                                         title={'Save'}
                                         onPressFunction={handleSubmit}

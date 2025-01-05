@@ -1,15 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import ExpenseForm from './ExpenseForm';
-import SelectAccountScreen from './SelectAccountScreen';
-import SelectCategoryScreen from './SelectCategoryScreen';
+import SelectTemplateScreen from './SelectTemplateScreen';
+import TemplateCreationScreen from './TemplateCreationScreen';
 import LabelScreen from '@/src/Screens/Section-2-Screens/TheHomeSackNavigationScreens/LabelScreen';
 import { Feather } from '@expo/vector-icons';
-import TemplateStackFile from './TemplateStackFile';
 
 const Stack = createNativeStackNavigator();
 
-const ExpenseFormStackFile = () => {
+const TemplateStackFile = ({ route }) => {
+    useEffect(() => {
+        console.log(route?.params);
+    }, [])
     return (
         <Stack.Navigator
             screenOptions={{
@@ -17,20 +18,15 @@ const ExpenseFormStackFile = () => {
                     backgroundColor: 'rgba(56,142,60,255)',
                 },
                 headerTintColor: 'white',
+                headerShown: true
             }}
-            initialRouteName='Expense Form'
+            initialRouteName='Select Template'
         >
-            <Stack.Screen name='Expense Form' component={ExpenseForm} options={{ headerShown: true }} />
-            <Stack.Screen name='Select Account' component={SelectAccountScreen} />
-            <Stack.Screen name='Select Category' component={SelectCategoryScreen} />
+            <Stack.Screen name='Select Template' component={() => <SelectTemplateScreen income={route.params.income}/>} />
+            <Stack.Screen name='Create Template' component={TemplateCreationScreen} />
             <Stack.Screen
-                name='Template Stack File'
-                component={TemplateStackFile}
-                options={{
-                    headerShown: false, // Show the header for TemplateStackFile
-                }}
-            />
-            <Stack.Screen name='Select Labels' component={LabelScreen}
+                name='Select Labels'
+                component={LabelScreen}
                 options={({ route, navigation }) => ({
                     headerRight: () => (
                         <Feather
@@ -43,11 +39,11 @@ const ExpenseFormStackFile = () => {
                                 navigation.goBack();
                             }}
                         />
-                    )
+                    ),
                 })}
             />
         </Stack.Navigator>
     )
 }
 
-export default ExpenseFormStackFile
+export default TemplateStackFile
