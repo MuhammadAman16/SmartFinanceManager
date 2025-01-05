@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "Smart.Finance.Manager_12"
     },
     "web": {
       "bundler": "metro",
@@ -33,9 +34,18 @@
     "experiments": {
       "typedRoutes": true
     },
-    "androidStatusBar": {
-      "backgroundColor": "transparent",
-      "translucent": true
+"androidStatusBar": {
+  "backgroundColor": "#000000", 
+  "translucent": true
+},
+
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "3b1a17ca-24e5-407f-8a2c-a4e2029923cd"
+      }
     }
   }
 }
