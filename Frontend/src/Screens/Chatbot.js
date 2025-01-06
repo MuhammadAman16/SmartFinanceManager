@@ -133,7 +133,6 @@ const ChatScreen = () => {
     setInputMessage(text)
   };
 
-
   const sendMessage = async () => {
     if (inputMessage.trim().length === 0) return;
 
@@ -159,29 +158,88 @@ const ChatScreen = () => {
           Authorization: token
         }
       }).then(response => {
-        const allBudgets = response.data;
-        // console.log(allBudgets.response);
-        if (allBudgets.length !== undefined) {
-          const budgetNames = allBudgets.map((budget) => {
-            return {
-              name: budget.name,
-              amount: budget.amount,
-              remainingAmount: budget.remainingAmount,
-              period: budget.period,
-              currency: budget.currency,
-              startDate: budget.startDate.split("T")[0],
-              endDate: budget.endDate.split("T")[0]
-            };
-          })
-          setMessages((prevMessage) => [
-            ...prevMessage,
-            { id: Math.random().toString(), component: <DisplayBudgetTable data={budgetNames} />, sender: 'bot' }
-          ])
+        const Botresponse = response.data;
+        // console.log("All Budeget :: ",Botresponse);
+        if (Botresponse.length !== undefined) {
+          if ('period' in Botresponse[0]) {
+            // console.log("Inside The Budget");
+            const data = Botresponse.map((budget) => {
+              return {
+                name: budget.name,
+                amount: budget.amount,
+                period: budget.period,
+                currency: budget.currency,
+                startDate: budget.startDate.split("T")[0],
+                endDate: budget.endDate.split("T")[0],
+                remainingAmount: budget.remainingAmount
+              };
+            })
+            setMessages((prevMessage) => [
+              ...prevMessage,
+              { id: Math.random().toString(), component: <DisplayBudgetTable data={data} />, sender: 'bot' }
+            ])
+          } else if ('type' in Botresponse[0]) {
+            if (Botresponse[0].type === 'INCOME') {
+              const data = Botresponse.map((income) => {
+                return {
+                  name: income.name,
+                  amount: income.amount,
+                  currency: income.currency,
+                  account: income.accountId,
+                  category: income.categoryId,
+                  paymentType: income.paymentType,
+                  created: income.createdAt.split("T")[0],
+                  payee: income.payee,
+                };
+              })
+              setMessages((prevMessage) => [
+                ...prevMessage,
+                { id: Math.random().toString(), component: <DisplayBudgetTable data={data} />, sender: 'bot' }
+              ])
+            } else if (Botresponse[0].type === 'EXPENSE') {
+              const data = Botresponse.map((income) => {
+                return {
+                  name: income.name,
+                  amount: income.amount,
+                  currency: income.currency,
+                  account: income.accountId,
+                  category: income.categoryId,
+                  paymentType: income.paymentType,
+                  created: income.createdAt.split("T")[0],
+                  payee: income.payee,
+                };
+              })
+              setMessages((prevMessage) => [
+                ...prevMessage,
+                { id: Math.random().toString(), component: <DisplayBudgetTable data={data} />, sender: 'bot' }
+              ])
+            }
+          }
+          // setMessages((prevMessage) => [
+          //   ...prevMessage,
+          //   { id: Math.random().toString(), component: <DisplayBudgetTable data={botResponseData} />, sender: 'bot' }
+          // ])
+          // console.log("The Bot response is : ", botResponseData);
+          // setMessages((prevMessage) => [
+          //   ...prevMessage,
+          //   { id: Math.random().toString(), text: 'Sorry', sender: 'bot' }
+          // ])
+          // if (botResponseData !== undefined) {
+          //   setMessages((prevMessage) => [
+          //     ...prevMessage,
+          //     { id: Math.random().toString(), component: <DisplayBudgetTable data={botResponseData} />, sender: 'bot' }
+          //   ])
+          // } else if (botResponseData === undefined) {
+          //   setMessages((prevMessage) => [
+          //     ...prevMessage,
+          //     { id: Math.random().toString(), text: 'Sorry', sender: 'bot' }
+          //   ])
+          // }
         } else {
           // console.log("ALL BUDGETS");
           setMessages((prevMessages) => [
             ...prevMessages,
-            { id: Math.random().toString(), text: allBudgets.response, sender: 'bot' }
+            { id: Math.random().toString(), text: Botresponse.response, sender: 'bot' }
           ])
         }
       }).catch(error => {
@@ -200,7 +258,7 @@ const ChatScreen = () => {
     >
       {item.text ?
         (<Text style={[styles.BotmessageText, { color: item.sender === 'bot' ? '#000' : '#fff' }]}>{item.text}</Text>)
-        : (item.component) }
+        : (item.component)}
     </View>
   );
 
