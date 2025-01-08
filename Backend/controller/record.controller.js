@@ -223,39 +223,108 @@ exports.deleteRecord = async (req, res, next) => {
 
 
 
+// exports.getAllRecords = async (req, res, next) => {
+//   try {
+//     const { userId, amount, category, type, isTemplate, createdAt, paymentType } = req.query;
+
+//     let whereClause = {};
+
+//     // Check if `isTemplate` is provided in the query
+//     if (isTemplate) {
+//       whereClause.isTemplate = isTemplate;
+//     }
+
+//     // Apply filters based on other query parameters
+//     if (userId) {
+//       whereClause.userId = userId;
+//     }
+
+//     if (amount) {
+//       whereClause.amount = amount;
+//     }
+
+//     if (type) {
+//       whereClause.type = type; // Filter by record type (INCOME or EXPENSE)
+//     }
+
+//     if (paymentType) {
+//       whereClause.paymentType = paymentType; // Filter by payment type
+//     }
+
+//     // Apply filtering based on createdAt
+//     if (createdAt) {
+//       whereClause["createdAt"] = sequelize.literal(`CAST("Record"."createdAt" AS DATE) = '${createdAt}'`);
+//     }
+
+//     if (category) {
+//       whereClause["$Category.name$"] = category; // Filter by associated category name
+//     }
+
+//     // Fetch records with filters and include associated models
+//     const records = await Record.findAll({
+//       where: whereClause,
+//       include: [
+//         {
+//           model: Account,
+//           as: "Account",
+//         },
+//         {
+//           model: Category,
+//           as: "Category",
+//         },
+//         {
+//           model: Label,
+//           as: "Labels",
+//         },
+//       ],
+//     });
+
+//     return res.status(200).json(records);
+//   } catch (error) {
+//     console.log("Error fetching records:", error);
+//     next(error);
+//   }
+// };
 exports.getAllRecords = async (req, res, next) => {
   try {
-    const { userId, amount, category, type, isTemplate, createdAt, paymentType } = req.query;
+    const { userId, amount, category, type, isTemplate, paymentType, from, to } = req.query;
 
     let whereClause = {};
 
-    // Check if `isTemplate` is provided in the query
+    // Filter by isTemplate
     if (isTemplate) {
       whereClause.isTemplate = isTemplate;
     }
 
-    // Apply filters based on other query parameters
+    // Filter by userId
     if (userId) {
       whereClause.userId = userId;
     }
 
+    // Filter by amount
     if (amount) {
-      whereClause.amount = amount;
+      whereClause.amount = +amount; // Convert amount to a number
     }
 
+    // Filter by record type
     if (type) {
-      whereClause.type = type; // Filter by record type (INCOME or EXPENSE)
+      whereClause.type = type; // INCOME or EXPENSE
     }
 
+    // Filter by paymentType
     if (paymentType) {
-      whereClause.paymentType = paymentType; // Filter by payment type
+      whereClause.paymentType = paymentType;
     }
 
-    // Apply filtering based on createdAt
-    if (createdAt) {
-      whereClause["createdAt"] = sequelize.literal(`CAST("Record"."createdAt" AS DATE) = '${createdAt}'`);
+    // Filter by date range (from-to)
+    if (from || to) {
+      whereClause.createdAt = {
+        ...(from && { [Op.gte]: new Date(from) }), // Records on or after `from`
+        ...(to && { [Op.lte]: new Date(to) }), // Records on or before `to`
+      };
     }
 
+    // Filter by category name
     if (category) {
       whereClause["$Category.name$"] = category; // Filter by associated category name
     }
@@ -279,12 +348,16 @@ exports.getAllRecords = async (req, res, next) => {
       ],
     });
 
+    // (Optional) Process records if needed (e.g., calculate totals or summaries)
+
     return res.status(200).json(records);
   } catch (error) {
     console.log("Error fetching records:", error);
     next(error);
   }
 };
+
+
 
 
 
