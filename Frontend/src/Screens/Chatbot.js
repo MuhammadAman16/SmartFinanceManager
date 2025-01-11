@@ -19,6 +19,7 @@ import { useNavigation } from '@react-navigation/native';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import styles from '../components/Styling/Stlyes';
 import DisplayBudgetTable from '../components/ChatBot/DisplayBudgetTable';
+import DisplayBudgetTable_2 from '../components/ChatBot/DisplayBudgetTable_2';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 

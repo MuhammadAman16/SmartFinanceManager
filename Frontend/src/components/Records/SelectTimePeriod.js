@@ -1,7 +1,9 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 
-const SelectTimePeriod = () => {
+const SelectTimePeriod = ({
+    setTimePeriod
+}) => {
     return (
         <View
             style={{
@@ -15,6 +17,7 @@ const SelectTimePeriod = () => {
             }}
         >
             <TouchableOpacity
+                onPress={() => setTimePeriod("7D")}
                 style={{
                     borderWidth: 2,
                     borderRadius: 5,
@@ -26,6 +29,7 @@ const SelectTimePeriod = () => {
                 <Text>7D</Text>
             </TouchableOpacity>
             <TouchableOpacity
+                onPress={() => setTimePeriod("30D")}
                 style={{
                     borderWidth: 2,
                     borderRadius: 5,
@@ -37,6 +41,7 @@ const SelectTimePeriod = () => {
                 <Text>30D</Text>
             </TouchableOpacity>
             <TouchableOpacity
+                onPress={() => setTimePeriod("12W")}
                 style={{
                     borderWidth: 2,
                     borderRadius: 5,
@@ -45,9 +50,10 @@ const SelectTimePeriod = () => {
                     paddingVertical: 5
                 }}
             >
-                <Text>12D</Text>
+                <Text>12W</Text>
             </TouchableOpacity>
             <TouchableOpacity
+                onPress={() => setTimePeriod("6M")}
                 style={{
                     borderWidth: 2,
                     borderRadius: 5,
@@ -59,6 +65,7 @@ const SelectTimePeriod = () => {
                 <Text>6M</Text>
             </TouchableOpacity>
             <TouchableOpacity
+                onPress={() => setTimePeriod("1Y")}
                 style={{
                     borderWidth: 2,
                     borderRadius: 5,
