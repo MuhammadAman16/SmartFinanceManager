@@ -228,7 +228,6 @@ Query:
       }
     } else if (trimmedResult == "update_name") {
       await getParams(updateNamePrompt);
-      console.log(params);
       if (params.fullName) {
         req.body = { userId: req.user.id, ...params };
         console.log(":--------------------------update fullname ---------------------------")
@@ -246,7 +245,13 @@ Query:
       const result = await model.generateContent(query);
       data = res.json({ response: result.response.text() });
     }
-    return res.status(200).send(data);
+    if (
+      trimmedResult == "get_u_pass" ||
+      trimmedResult == "get_u_email" ||
+      trimmedResult == "get_u_name"
+    ) {
+      return res.status(200).send(data);
+    }
   } catch (error) {
     console.error("Chatbot error please try again:", error);
     return res.status(500);
