@@ -1,6 +1,7 @@
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
 const { errorHandler } = require('../utils/errorHandler');
+const { sendWhatsAppMessage } = require('../services/messaging.service');
 
 // Update user's full name
 exports.updateFullName = async (req, res, next) => {
@@ -84,45 +85,18 @@ exports.updatePassword = async (req, res, next) => {
   }
 };
 
-exports.sendMessage = async (phoneNumber, message) => {
+exports.sendMessage = async (req, res, next) => {
   try {
 
-    const accountSid = 'ACa8f41f9830e890f8260be0c610577d03';
-    const authToken = '0205dd85068cc1351c454731000e39fc';
+    await sendWhatsAppMessage("+923343696707", "test whatsapp message from api")
 
-    const client = require('twilio')(accountSid, authToken);
-    message = 'awdawCongrats, awdwyour request is succesfully processed!'
-    client.messages
-    // .create({
-    //   to: `whatsapp:${phoneNumber}`,
-    //   // from: 'whatsapp:+12314034142',
-    //   from: 'whatsapp:+14155238886',
-    //   body: message || "Your request has been successfully processed!",
-    // })
-    // .then(() => {
-    //   console.log("message delivered successfully")
-    //   // // Access details about the last request
-    //   // console.log(client.lastRequest.method);
-    //   // console.log(client.lastRequest.url);
-    //   // console.log(client.lastRequest.auth);
-    //   // console.log(client.lastRequest.params);
-    //   // console.log(client.lastRequest.headers);
-    //   // console.log(client.lastRequest.data);
-
-      //   // Access details about the last response
-      //   // console.log(client.httpClient.lastResponse.statusCode);
-      //   // console.log(client.httpClient.lastResponse.body);
-      // }).catch(err => {
-      //   console.log(":- err", err)
-      // });
-      .create({
-        body: message,
-        from: 'whatsapp:+14155238886',
-        to: `whatsapp:${phoneNumber}`
-      })
-      .then(message => console.log(message.sid))
+    return res.status(200).json({
+      message: 'Message sent successfully.',
+    });
 
   } catch (error) {
     console.log(" error:", error);
+    return next(error);
+
   }
 }
