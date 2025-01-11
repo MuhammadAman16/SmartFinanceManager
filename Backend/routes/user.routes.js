@@ -22,4 +22,14 @@ router.post('/whatsapp-webhook', (req, res) => {
     res.send('<Response></Response>'); // Empty response for Twilio
 });
 
+router.post('/message-status', (req, res) => {
+    const { MessageSid, MessageStatus } = req.body;
+
+    console.log(`Message SID: ${MessageSid}`);
+    console.log(`Message Status: ${MessageStatus}`);
+
+    // Respond to Twilio to acknowledge the callback
+    res.status(200).send('Status received');
+});
+
 module.exports = router;
