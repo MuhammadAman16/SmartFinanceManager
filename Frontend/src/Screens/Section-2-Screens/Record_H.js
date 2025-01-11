@@ -56,9 +56,9 @@ const Record_H = (props) => {
     setIsLoading(true);
     try {
       const startDate = formatDate(timePeriod);
-      console.log("The Date is : ", typeof startDate);
+      // console.log("The Date is : ", startDate);
       const result = await user_api.get(`record?userId=${user.id}&createdAt=${startDate}`);
-      console.log("The records are : ", result.data);
+      // console.log("The records are : ", result.data);
       setTransactions(result.data);
       // console.log(result.data.Category);
     } catch (error) {
@@ -289,6 +289,7 @@ const Record_H = (props) => {
 
       <SelectTimePeriod
         setTimePeriod={setTimePeriod}
+        timePeriod={timePeriod}
       />
 
       <View

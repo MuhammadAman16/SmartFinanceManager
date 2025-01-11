@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import {
   View,
   Text,
@@ -11,17 +11,18 @@ import {
   KeyboardAvoidingView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import Voice from '@react-native-voice/voice';
+// import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import user_api from '@/app/api/user_api';
 import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import styles from '../components/Styling/Stlyes';
 import DisplayBudgetTable from '../components/ChatBot/DisplayBudgetTable';
-import DisplayBudgetTable_2 from '../components/ChatBot/DisplayBudgetTable_2';
+// import DisplayBudgetTable_2 from '../components/ChatBot/DisplayBudgetTable_2';
+import { AccountContext } from '@/app/context/AccountContext';
+import Voice from '@react-native-voice/voice';
 
-const audioRecorderPlayer = new AudioRecorderPlayer();
+// const audioRecorderPlayer = new AudioRecorderPlayer();
 
 const TypingIndicator = () => {
   const dot1 = new Animated.Value(0);
@@ -59,6 +60,9 @@ const ChatScreen = () => {
   const [isListening, setIsListening] = useState(false);
   const FlatListRef = useRef(null);
   const navigation = useNavigation();
+  const { activeAccount } = useContext(AccountContext);
+  const [result, setResult] = useState("");
+  const [error, setError] = useState("");
 
   const dotOpacity = new Animated.Value(1);
 
@@ -84,55 +88,87 @@ const ChatScreen = () => {
   }, [isListening]);
 
 
-  useEffect(() => {
-    Voice.onSpeechStart = onSpeechStart;
-    Voice.onSpeechEnd = stopListning;
-    Voice.onSpeechResults = onSpeechResults;
-    Voice.onSpeechError = error => console.log('onspeecherror:', error);
+  Voice.onSpeechStart = () => setIsListening(true);
+  Voice.onSpeechError = () => setIsListening(false);
+  Voice.onSpeechError = err => setError(err.error);
+  Voice.onSpeechResults = (result) => setResult(result.value[0]);
 
-    return () => {
-      Voice.destroy().then(Voice.removeAllListeners);
-    }
-  }, [isListening]);
-
-  useEffect(() => {
-    if (FlatListRef.current) {
-      FlatListRef.current.scrollToEnd({ animated: true })
-    }
-  }, [messages])
-
-  const onSpeechStart = event => {
-    console.log('recording start', event)
-  };
-
-  const startListning = async () => {
-    setIsListening(true)
+  const startRecording = async () => {
     try {
       await Voice.start('en-US');
-    }
-    catch (error) {
-      console.log('start listning', error)
+    } catch (error) {
+      console.log(error);
     }
   }
 
-  const stopListning = async () => {
+  const stopRecording = async () => {
     try {
-      Voice.removeAllListeners;
-      await Voice.stop()
-      setIsListening(false)
-
-    }
-    catch (error) {
-      console.log('stop listning', error)
+      await Voice.stop();
+    } catch (error) {
+      console.log(error);
     }
   }
 
 
-  const onSpeechResults = event => {
-    console.log('on speech result', event)
-    const text = event.value[0]
-    setInputMessage(text)
-  };
+  // useEffect(() => {
+  //   Voice.onSpeechStart = onSpeechStart;
+  //   Voice.onSpeechEnd = stopListning;
+  //   Voice.onSpeechResults = onSpeechResults;
+  //   Voice.onSpeechError = error => console.log('onspeecherror:', error);
+
+  //   return () => {
+  //     Voice.destroy().then(Voice.removeAllListeners);
+  //   }
+  // }, [isListening]);
+
+  // useEffect(() => {
+  //   if (FlatListRef.current) {
+  //     FlatListRef.current.scrollToEnd({ animated: true })
+  //   }
+  //   // console.log("ChatBot : ", activeAccount);
+  // }, [messages])
+
+  // const onSpeechStart = event => {
+  //   console.log('recording start', event);
+  // };
+
+  // const startListning = () => {
+  //   setIsListening(true)
+  //   try {
+  //     console.log("Listening");
+  //   }
+  //   catch (error) {
+  //     console.log('start listning', error)
+  //   }
+  // }
+  // // const startListning = async () => {
+  // //   setIsListening(true)
+  // //   try {
+  // //     await Voice.start('en-US');
+  // //   }
+  // //   catch (error) {
+  // //     console.log('start listning', error)
+  // //   }
+  // // }
+
+  // const stopListning = async () => {
+  //   try {
+  //     Voice.removeAllListeners;
+  //     await Voice.stop()
+  //     setIsListening(false)
+
+  //   }
+  //   catch (error) {
+  //     console.log('stop listning', error)
+  //   }
+  // }
+
+
+  // const onSpeechResults = event => {
+  //   console.log('on speech result', event)
+  //   const text = event.value[0]
+  //   setInputMessage(text)
+  // };
 
   const sendMessage = async () => {
     if (inputMessage.trim().length === 0) return;
@@ -149,7 +185,10 @@ const ChatScreen = () => {
     const token = await SecureStore.getItemAsync('jwtToken');
     await user_api.post(
       'chatbot',
-      { query: inputMessage },
+      {
+        query: inputMessage,
+        account: activeAccount.name
+      },
       {
         headers: {
           Accept: "*/*",
@@ -314,7 +353,10 @@ const ChatScreen = () => {
             value={inputMessage}
             onChangeText={(text) => setInputMessage(text)}
           />
-          <TouchableOpacity onPress={() => isListening ? stopListning() : startListning()} style={styles.audioButton}>
+          <TouchableOpacity
+            onPress={isListening ? stopRecording : startRecording}
+            style={styles.audioButton}
+          >
             {isListening ? (
               <Animated.Text style={[styles.voiceButtonText, { opacity: dotOpacity }]}>
                 •••

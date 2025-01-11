@@ -4,11 +4,16 @@ const db = require("./models");
 const syncDatabase = require("./config/dbconfig"); // Import syncDatabase
 const routes = require("./routes");
 require("dotenv").config();
+const bodyParser = require('body-parser');
+
 
 const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
 
 // Example route to fetch users
 app.get("/users", async (req, res) => {

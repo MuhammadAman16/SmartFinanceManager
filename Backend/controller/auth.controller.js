@@ -3,22 +3,69 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { errorHandler } = require('../utils/errorHandler');
 
+// exports.signup = async (req, res, next) => {
+//     const { fullName, email, password } = req.body;
+
+//     // Validation
+//     if (!fullName || !email || !password) {
+//         // return res.status(400).json({ error: 'All fields are required: fullName, email, password' });
+//         next(errorHandler(400, 'All fields are required!'))
+//     }
+
+//     try {
+//         // Check if the user already exists (based on unique email)
+//         const existingUser = await User.findOne({ where: { email }, logging: true });
+//         if (existingUser) {
+//             // return res.status(400).json({ error: 'User with this email already exists' });
+//             next(errorHandler(400, 'User with this email already exists!'))
+
+//         }
+
+//         // Hash the password
+//         const hashedPassword = await bcrypt.hash(password, 10);
+
+//         // Create the user
+//         const newUser = await User.create({
+//             fullName,
+//             email,
+//             password: hashedPassword,
+//         });
+//         const token = jwt.sign({ id: newUser.id, email: newUser.email,fullName:newUser.fullName }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+
+//         return res.status(201).json({
+//             message: 'User created successfully',
+//             user: {
+//                 id: newUser.id,
+//                 fullName: newUser.fullName,
+//                 email: newUser.email,
+//             },
+//             token
+//         });
+//     } catch (error) {
+//         console.log("error", error)
+//         next(error)
+//     }
+// };
 exports.signup = async (req, res, next) => {
-    const { fullName, email, password } = req.body;
+    const { fullName, email, password, phoneNumber } = req.body;
 
     // Validation
-    if (!fullName || !email || !password) {
-        // return res.status(400).json({ error: 'All fields are required: fullName, email, password' });
-        next(errorHandler(400, 'All fields are required!'))
+    if (!fullName || !email || !password || !phoneNumber) {
+        return next(errorHandler(400, 'All fields are required: fullName, email, password, phoneNumber'));
+    }
+
+    // Check if the phone number is valid
+    const phoneRegex = /^\+?[1-9]\d{1,14}$/; // Matches international phone numbers, with optional "+"
+    if (!phoneRegex.test(phoneNumber)) {
+        return next(errorHandler(400, 'Invalid phone number format'));
     }
 
     try {
         // Check if the user already exists (based on unique email)
         const existingUser = await User.findOne({ where: { email }, logging: true });
         if (existingUser) {
-            // return res.status(400).json({ error: 'User with this email already exists' });
-            next(errorHandler(400, 'User with this email already exists!'))
-
+            return next(errorHandler(400, 'User with this email already exists!'));
         }
 
         // Hash the password
@@ -29,9 +76,11 @@ exports.signup = async (req, res, next) => {
             fullName,
             email,
             password: hashedPassword,
+            phoneNumber,
         });
-        const token = jwt.sign({ id: newUser.id, email: newUser.email,fullName:newUser.fullName }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
+        // Generate JWT token
+        const token = jwt.sign({ id: newUser.id, email: newUser.email, fullName: newUser.fullName }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         return res.status(201).json({
             message: 'User created successfully',
@@ -39,14 +88,18 @@ exports.signup = async (req, res, next) => {
                 id: newUser.id,
                 fullName: newUser.fullName,
                 email: newUser.email,
+                phoneNumber: newUser.phoneNumber, // Include phoneNumber in the response if needed
             },
-            token
+            token,
         });
     } catch (error) {
-        console.log("error", error)
-        next(error)
+        console.log("error", error);
+        return next(error);
     }
 };
+
+
+
 
 exports.login = async (req, res, next) => {
     const { email, password } = req.body;

@@ -2,7 +2,8 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 
 const SelectTimePeriod = ({
-    setTimePeriod
+    setTimePeriod,
+    timePeriod
 }) => {
     return (
         <View
@@ -23,10 +24,13 @@ const SelectTimePeriod = ({
                     borderRadius: 5,
                     borderColor: 'green',
                     paddingHorizontal: 15,
-                    paddingVertical: 5
+                    paddingVertical: 5,
+                    backgroundColor: timePeriod === "7D" ? 'green' : 'white'
                 }}
             >
-                <Text>7D</Text>
+                <Text style={{color: timePeriod === "7D" ? 'white' : 'green'}}>
+                    7D
+                </Text>
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={() => setTimePeriod("30D")}
@@ -35,10 +39,13 @@ const SelectTimePeriod = ({
                     borderRadius: 5,
                     borderColor: 'green',
                     paddingHorizontal: 15,
-                    paddingVertical: 5
+                    paddingVertical: 5,
+                    backgroundColor: timePeriod === "30D" ? 'green' : 'white'
                 }}
             >
-                <Text>30D</Text>
+                <Text style={{color: timePeriod === "30D" ? 'white' : 'green'}}>
+                    30D
+                </Text>
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={() => setTimePeriod("12W")}
@@ -47,10 +54,13 @@ const SelectTimePeriod = ({
                     borderRadius: 5,
                     borderColor: 'green',
                     paddingHorizontal: 15,
-                    paddingVertical: 5
+                    paddingVertical: 5,
+                    backgroundColor: timePeriod === "12W" ? 'green' : 'white'
                 }}
             >
-                <Text>12W</Text>
+                <Text style={{color: timePeriod === "12W" ? 'white' : 'green'}}>
+                    12W
+                </Text>
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={() => setTimePeriod("6M")}
@@ -59,10 +69,13 @@ const SelectTimePeriod = ({
                     borderRadius: 5,
                     borderColor: 'green',
                     paddingHorizontal: 15,
-                    paddingVertical: 5
+                    paddingVertical: 5,
+                    backgroundColor: timePeriod === "6M" ? 'green' : 'white'
                 }}
             >
-                <Text>6M</Text>
+                <Text style={{color: timePeriod === "6M" ? 'white' : 'green'}}>
+                    6M
+                </Text>
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={() => setTimePeriod("1Y")}
@@ -71,10 +84,13 @@ const SelectTimePeriod = ({
                     borderRadius: 5,
                     borderColor: 'green',
                     paddingHorizontal: 15,
-                    paddingVertical: 5
+                    paddingVertical: 5,
+                    backgroundColor: timePeriod === "1Y" ? 'green' : 'white'
                 }}
             >
-                <Text>1Y</Text>
+                <Text style={{color: timePeriod === "1Y" ? 'white' : 'green'}}>
+                    1Y
+                </Text>
             </TouchableOpacity>
         </View>
     )
