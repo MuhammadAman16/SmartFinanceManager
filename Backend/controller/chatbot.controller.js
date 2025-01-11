@@ -26,7 +26,7 @@ exports.getResponse = async (req, res, next) => {
       model = await initializeModel();
     }
   } catch (error) {
-    console.error("Error connecting to Gemini:", error);
+    console.error("-----------------------Error connecting to Gemini: --------------------------", error);
     return res.status(500).json({ error: "Failed connecting to Gemini" });
   }
   const trimmedResult = result.replace(/"/g, "");
@@ -178,13 +178,16 @@ Query:
     if (trimmedResult == "get_budget") {
       await getParams(budgetPrompt);
       req.query = { ...req.query, ...params };
+      console.log(":- get budget 1 -------------------------------------------------")
       data = await getAllBudgets(req, res, next);
     } else if (trimmedResult == "get_exp") {
       await getParams(getRecPrompt);
       req.query = { ...req.query, ...params, type: "EXPENSE" };
+      console.log(":- get records 2 -------------------------------------------------")
       data = await getAllRecords(req, res);
     } else if (trimmedResult == "get_inc") {
       req.query = { ...req.query, ...params, type: "INCOME" };
+      console.log(":- get records 3 -------------------------------------------------")
       data = await getAllRecords(req, res);
     } else if (trimmedResult == "get_u_name") {
       if (req.user) {
@@ -205,17 +208,20 @@ Query:
       };
     } else if (trimmedResult == "get_trans") {
       if (req.user) {
+        console.log(":- get records 3 -------------------------------------------------")
         data = await getAllRecords(req, res);
         req.query = { ...req.query, ...params };
       }
     } else if (trimmedResult == "create_record") {
       await getParams(createRecPrompt);
       req.body = { userId: req.user.id, isTemplate: "No", ...params };
+      console.log(":- create records -------------------------------------------------")
       data = await createRecord(req, res, next);
     } else if (trimmedResult == "update_pass") {
       await getParams(updatePassPrompt);
       if (params.currentPassword && params.newPassword) {
         req.body = { userId: req.user.id, ...params };
+        console.log(":-----------------update password")
         data = await updatePassword(req, res, next);
       } else {
         data = { response: "Please provide both current and new password" };
@@ -225,6 +231,7 @@ Query:
       console.log(params);
       if (params.fullName) {
         req.body = { userId: req.user.id, ...params };
+        console.log(":--------------------------update fullname ---------------------------")
         data = await updateFullName(req, res, next);
       } else {
         data = { response: "Please provide the new user name" };
@@ -233,6 +240,7 @@ Query:
       await getParams(getAccPrompt);
       console.log(params);
       req.query = { userId: req.user.id, ...params };
+      console.log(":- get all acounts -------------------------------------------")
       await getAllAccounts(req, res, next);
     } else {
       const result = await model.generateContent(query);

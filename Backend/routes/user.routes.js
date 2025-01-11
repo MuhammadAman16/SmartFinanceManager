@@ -23,7 +23,7 @@ router.post('/whatsapp-webhook', async (req, res) => {
     try {
         // Find the user by phoneNumber in the Users table
         console.log(":- phoneNumber", phoneNumber)
-        const user = await User.findOne({ where: { phoneNumber }, logging: true });
+        const user = JSON.parse(JSON.stringify(await User.findOne({ where: { phoneNumber }, logging: true })));
         console.log(":- user", user)
         if (!user) {
             // If no user found with the phone number, return an error message
@@ -33,9 +33,10 @@ router.post('/whatsapp-webhook', async (req, res) => {
         req.body = {
             ...req.body,
             query: Body,
-            userId: user.id,
             sendWhatsAppMessage: true
         }
+
+        req.user = user
         // Call the getResponse function with the user's ID and the message
         await chatController.getResponse(req, res);
 

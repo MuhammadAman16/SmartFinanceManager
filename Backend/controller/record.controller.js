@@ -3,7 +3,8 @@ const { errorHandler } = require("../utils/errorHandler");
 const { Op } = require("sequelize");
 const {sequelize} = require("../models")
 const constants = require('./../utils/constants');
-const s3 =  require('./../utils/bucket');
+const s3 = require('./../utils/bucket');
+const { sendWhatsAppMessage } = require("../services/messaging.service");
 exports.createRecord = async (req, res, next) => {
   const {
     userId,
@@ -226,7 +227,6 @@ exports.deleteRecord = async (req, res, next) => {
 exports.getAllRecords = async (req, res, next) => {
   try {
     const { userId, amount, category, type, isTemplate, createdAt, paymentType } = req.query;
-
     let whereClause = {};
 
     // Check if `isTemplate` is provided in the query
@@ -262,23 +262,28 @@ exports.getAllRecords = async (req, res, next) => {
 
     // Fetch records with filters and include associated models
     const records = await Record.findAll({
+      attributes: ["id", "name", "amount", "currency", "note", "paymentType", "warranty", "status", "datetime"],
       where: whereClause,
       include: [
         {
+          attributes: ["id", "name", "bankAccountNumber", "initialValue", "currentValue"],
           model: Account,
           as: "Account",
         },
         {
+          attributes: ["name"],
           model: Category,
           as: "Category",
         },
         {
+          attributes: ["name"],
           model: Label,
           as: "Labels",
         },
       ],
     });
-
+    console.log(":------------------- sending response ------------------------------------------", req.body.query, req.user.phoneNumber)
+    await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(records))
     return res.status(200).json(records);
   } catch (error) {
     console.log("Error fetching records:", error);
