@@ -5,25 +5,29 @@ import { useNavigation } from 'expo-router'
 import user_api from '@/app/api/user_api'
 import { AuthContext } from '@/app/context/AuthContext'
 import CashFlowChart from '../AccountsFolder/CashFlow'
+import { AccountContext } from '@/app/context/AccountContext'
 
 const Accounts = () => {
   const { user } = useContext(AuthContext);
+  const { activeAccount, setActiveAccount } = useContext(AccountContext);
   const navigation = useNavigation();
   const [accounts, setAccounts] = useState([]);
+  // const backgroundColorOfAccount = activeAccount ? 'rgba(3,155,230,255)' : 'none';
+  // const textColor = activeAccount ? 'white' : 'rgba(3,155,230,255)';
 
   const fetchAccounts = async () => {
     try {
       let res = await user_api.get(`accounts?userId=${user.id}`);
       const dataArray = res.data;
       // console.log(res.data);
-      const account = dataArray.map(item => ({
+      const allAccounts = dataArray.map(item => ({
         id: item.id,
-        name: item.name
+        name: item.name,
+        currency: item.currency
       }));
-      const accountLastId = account.length - 1;
-      const filteredArray = account.filter((_, index) => index === accountLastId || index === accountLastId - 1);
-      setAccounts(filteredArray);
-      // console.log("Accounts : ", accounts);
+      // const accountLastId = account.length - 1;
+      // const filteredArray = account.filter((_, index) => index === accountLastId || index === accountLastId - 1);
+      setAccounts(allAccounts);
     } catch (error) {
       if (error.response) {
         Alert.alert(`Error: ${error.response.data.error}`);
@@ -40,6 +44,10 @@ const Accounts = () => {
   useEffect(() => {
     fetchAccounts();
   }, [])
+
+  useEffect(() => {
+    console.log(activeAccount);
+  }, [activeAccount])
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -84,70 +92,59 @@ const Accounts = () => {
           <View
             style={{
               marginHorizontal: 20,
-              display: 'flex',
               flexDirection: 'row',
-              gap: 10,
-              rowGap: 10
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+              rowGap: 10,
             }}
           >
-            {accounts.map((account, index) => (
-              <TouchableOpacity
-                key={index}
-                style={{
-                  flexDirection: 'row',
-                  width: '50%',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  borderWidth: 2,
-                  borderColor: 'rgba(3,155,230,255)',
-                  backgroundColor: 'rgba(3,155,230,255)',
-                  borderRadius: 5,
-                  paddingHorizontal: 15,
-                  paddingVertical: 10
-                }}
-                onPress={() => navigation.navigate('AccountScreen')}
-              >
-                <Text
+            {[...accounts, { name: 'ADD ACCOUNT', isAddAccount: true }].map(
+              (account, index) => (
+                <TouchableOpacity
+                  key={index}
                   style={{
-                    fontWeight: 'bold',
-                    color: 'white'
+                    borderWidth: 2,
+                    borderColor: 'rgba(3,155,230,255)',
+                    borderRadius: 5,
+                    paddingHorizontal: 15,
+                    paddingVertical: 10,
+                    width: '48%',
+                    marginBottom: 5,
+                    flexDirection: 'row',
+                    justifyContent: account.isAddAccount ? 'space-between' : 'center',
+                    alignItems: 'center',
+                    backgroundColor:
+                      activeAccount && activeAccount.name === account.name
+                        ? 'rgba(3,155,230,255)' // Background color for active account
+                        : 'white', // No background for other accounts
                   }}
-                >{account.name}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View
-            style={{
-              marginHorizontal: 20,
-              marginVertical: 10
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                flexDirection: 'row',
-                width: '50%',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                borderWidth: 2,
-                borderColor: 'rgba(3,155,230,255)',
-                borderRadius: 5,
-                paddingHorizontal: 15,
-                paddingVertical: 10
-              }}
-              onPress={() => navigation.navigate('AccountScreen')}
-            >
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  color: 'rgba(3,155,230,255)'
-                }}
-              >ADD ACCOUNT</Text>
-              <AntDesign
-                name='pluscircle'
-                size={17}
-                color={'rgba(3,155,230,255)'}
-              />
-            </TouchableOpacity>
+                  onPress={() =>
+                    account.isAddAccount
+                      ? navigation.navigate('AccountScreen')
+                      : setActiveAccount(account)
+                  }
+                >
+                  <Text
+                    style={{
+                      fontWeight: 'bold',
+                      color:
+                        activeAccount && activeAccount.name === account.name
+                          ? 'white' // Text color for active account
+                          : 'rgba(3,155,230,255)', // Text color for others
+                    }}
+                  >
+                    {account.name}
+                  </Text>
+                  {account.isAddAccount && (
+                    <AntDesign
+                      name="pluscircle"
+                      size={17}
+                      color={'rgba(3,155,230,255)'}
+                    />
+                  )}
+                </TouchableOpacity>
+              )
+            )}
           </View>
         </View>
       </View>
