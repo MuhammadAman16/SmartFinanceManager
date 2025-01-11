@@ -29,29 +29,40 @@ exports.createRecord = async (req, res, next) => {
   let { categoryId } = req.body
   // Validation for required fields based on isTemplate value
   if (!userId || !isTemplate) {
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, "Required fields: userId and isTemplate")
+    }
     return next(errorHandler(400, "Required fields: userId and isTemplate"));
   }
 
   if (isTemplate === "Yes" && (!name || !accountId)) {
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, "Required fields for template: name, accountId")
+    }
     return next(
       errorHandler(400, "Required fields for template: name, accountId")
     );
   }
 
   if (isTemplate === "No" && (!amount || !type)) {
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, "Required fields for record: amount, status,type")
+    }
     return next(
       errorHandler(400, "Required fields for record: amount, status,type")
     );
   }
 
   if (isTemplate === "No" && (type != 'INCOME' && type != 'EXPENSE')) {
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, "Invalid value for record type")
+    }
     return next(
       errorHandler(400, "Invalid value for record type")
     );
   }
 
   try {
-
     let attachmentUrl
     if(req.file){
       // Configure the S3 upload parameters
@@ -76,6 +87,9 @@ exports.createRecord = async (req, res, next) => {
       })
 
       if (!categoryInDb) {
+        if (req.body.sendWhatsAppMessage) {
+          await sendWhatsAppMessage(req.user.phoneNumber, "category not found in db")
+        }
         return next(
           errorHandler(404, "category not found!")
         );
@@ -84,7 +98,6 @@ exports.createRecord = async (req, res, next) => {
       categoryId = categoryInDb.id
 
     }
-     
     const newRecord = await Record.create({
       userId,
       note,
@@ -113,9 +126,15 @@ exports.createRecord = async (req, res, next) => {
       }));
       await RecordLabel.bulkCreate(RecordLabelsPayload, { returning: false });
     }
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, "record created successfully")
+    }
 
     return res.status(201).json(newRecord);
   } catch (error) {
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, "error creating record")
+    }
     console.log("Error creating record:", error);
     next(error);
   }
@@ -282,8 +301,9 @@ exports.getAllRecords = async (req, res, next) => {
         },
       ],
     });
-    console.log(":------------------- sending response ------------------------------------------", req.body.query, req.user.phoneNumber)
-    await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(records))
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(records))
+    }
     return res.status(200).json(records);
   } catch (error) {
     console.log("Error fetching records:", error);

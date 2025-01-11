@@ -1,6 +1,8 @@
 const { Account,Record } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
 const { Op } = require('sequelize');
+const { sendWhatsAppMessage } = require('../services/messaging.service');
+
 
 // Create a new Account
 exports.createAccount = async (req, res, next) => {
@@ -157,9 +159,15 @@ exports.getAllAccounts = async (req, res, next) => {
       })
     );
 
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(accounts))
+    }
     // Return the filtered accounts
     return res.status(200).json(accounts);
   } catch (error) {
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, "error fetching accounts")
+    }
     console.log("Error fetching accounts:", error);
     next(error);
   }

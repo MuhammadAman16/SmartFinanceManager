@@ -214,13 +214,13 @@ Query:
       }
     } else if (trimmedResult == "create_record") {
       await getParams(createRecPrompt);
-      req.body = { userId: req.user.id, isTemplate: "No", ...params };
+      req.body = { userId: req.user.id, isTemplate: "No", ...params, ...req.body };
       console.log(":- create records -------------------------------------------------")
       data = await createRecord(req, res, next);
     } else if (trimmedResult == "update_pass") {
       await getParams(updatePassPrompt);
       if (params.currentPassword && params.newPassword) {
-        req.body = { userId: req.user.id, ...params };
+        req.body = { userId: req.user.id, ...params, ...req.body };
         console.log(":-----------------update password")
         data = await updatePassword(req, res, next);
       } else {
@@ -229,7 +229,7 @@ Query:
     } else if (trimmedResult == "update_name") {
       await getParams(updateNamePrompt);
       if (params.fullName) {
-        req.body = { userId: req.user.id, ...params };
+        req.body = { userId: req.user.id, ...params, ...req.body };
         console.log(":--------------------------update fullname ---------------------------")
         data = await updateFullName(req, res, next);
       } else {

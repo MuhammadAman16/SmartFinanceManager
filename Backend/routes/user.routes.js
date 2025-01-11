@@ -14,7 +14,7 @@ router.put("/updatePassword", userController.updatePassword);
 
 router.post("/send-message", userController.sendMessage)
 
-router.post('/whatsapp-webhook', async (req, res) => {
+router.post('/whatsapp-webhook', async (req, res, next) => {
     const { From, Body } = req.body; // Extract sender and message content
     console.log("req.body", req.body);
     console.log(`Message received from ${From}: ${Body}`);
@@ -22,9 +22,7 @@ router.post('/whatsapp-webhook', async (req, res) => {
     
     try {
         // Find the user by phoneNumber in the Users table
-        console.log(":- phoneNumber", phoneNumber)
         const user = JSON.parse(JSON.stringify(await User.findOne({ where: { phoneNumber }, logging: true })));
-        console.log(":- user", user)
         if (!user) {
             // If no user found with the phone number, return an error message
             return res.status(404).json({ error: 'User not found' });
@@ -38,7 +36,7 @@ router.post('/whatsapp-webhook', async (req, res) => {
 
         req.user = user
         // Call the getResponse function with the user's ID and the message
-        await chatController.getResponse(req, res);
+        await chatController.getResponse(req, res, next);
 
         // Respond to Twilio (empty response)
         res.set('Content-Type', 'text/xml');

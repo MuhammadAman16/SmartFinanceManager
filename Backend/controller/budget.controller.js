@@ -3,7 +3,7 @@ const { BudgetCategory, BudgetLabel, Category, Label ,BudgetAccounts,Account,Rec
 const { errorHandler } = require("../utils/errorHandler");
 const { Op } = require('sequelize');
 const moment = require('moment');
-
+const { sendWhatsAppMessage } = require("../services/messaging.service")
 exports.getAllBudgets = async (req, res, next) => {
   try {
     const { startDate, endDate, createdAt, to, from, userId, category,amount,period } = req.query;
@@ -38,7 +38,6 @@ exports.getAllBudgets = async (req, res, next) => {
     if (category) {
       whereClause['$Categories.name$'] = category; // Filter budgets associated with the categoryId
     }
-
     const budgets = JSON.parse(JSON.stringify(await Budget.findAll({
       include: [
         {
@@ -106,9 +105,15 @@ exports.getAllBudgets = async (req, res, next) => {
       }
       
     }))
+    if (req.body.sendWhatsAppMessage) {
+      const msgRes = await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(budgets))
+    }
 
     return res.status(200).json(budgets);
   } catch (error) {
+    if (req.body.sendWhatsAppMessage) {
+      const msgRes = await sendWhatsAppMessage(req.user.phoneNumber, "Error fetching budgets")
+    }
     console.log("Error fetching budgets:", error);
     next(error);
   }

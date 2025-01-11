@@ -9,10 +9,16 @@ exports.updateFullName = async (req, res, next) => {
   const { fullName } = req.body; // New full name from body
 
   if (!userId) {
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, "User ID is required.")
+    }
     return next(errorHandler(400, 'User ID is required.'));
   }
 
   if (!fullName) {
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, "Full name is required")
+    }
     return next(errorHandler(400, 'Full name is required.'));
   }
 
@@ -21,13 +27,18 @@ exports.updateFullName = async (req, res, next) => {
     const user = await User.findByPk(userId);
 
     if (!user) {
+      if (req.body.sendWhatsAppMessage) {
+        await sendWhatsAppMessage(req.user.phoneNumber, "User not found")
+      }
       return next(errorHandler(404, 'User not found.'));
     }
 
     // Update the fullName
     user.fullName = fullName;
     await user.save();
-
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, "Full name updated successfully")
+    }
     return res.status(200).json({
       message: 'Full name updated successfully',
       user: {
@@ -36,6 +47,9 @@ exports.updateFullName = async (req, res, next) => {
       },
     });
   } catch (error) {
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, "Erro updating full name")
+    }
     console.log('Error updating full name:', error);
     return next(error);
   }
@@ -76,10 +90,16 @@ exports.updatePassword = async (req, res, next) => {
     user.password = hashedPassword;
     await user.save();
 
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, "password updated successfully")
+    }
     return res.status(200).json({
       message: 'Password updated successfully.',
     });
   } catch (error) {
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, "error updating password")
+    }
     console.log('Error updating password:', error);
     return next(error);
   }

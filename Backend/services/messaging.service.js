@@ -3,8 +3,6 @@ exports.sendWhatsAppMessage = async (phoneNumber, message) => {
     const authToken = '483b8f58314890e0dec0af4cac90266e';
 
     const client = require('twilio')(accountSid, authToken);
-    // message = 'awdawCongrats, awdwyour request is succesfully processed!'
-
 
     return client.messages
         .create({
