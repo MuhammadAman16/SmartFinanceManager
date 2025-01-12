@@ -169,8 +169,8 @@ exports.getAllBudgets = async (req, res, next) => {
       whereClause.amount = amount;
     }
     if (period) {
-      whereClause.period = {
-        [Op.like]: `%${period}%`,
+      whereClause[sequelize.literal(`CAST("Budget"."period" AS TEXT)`)] = {
+        [Op.like]: `%${period}%`,  // Now LIKE works with ENUM
       };
     }
 
