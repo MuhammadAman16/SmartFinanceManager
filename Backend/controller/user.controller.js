@@ -167,3 +167,63 @@ exports.sendMessage = async (req, res, next) => {
     return next(error);
   }
 };
+
+
+// Update user's phone number
+exports.updatePhoneNumber = async (req, res, next) => {
+  const { userId } = req.query; // User ID from query
+  const { phoneNumber } = req.body; // New phone number from body
+
+  if (!userId) {
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, "User ID is required.");
+    }
+    return next(errorHandler(400, "User ID is required."));
+  }
+
+  if (!phoneNumber) {
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, "Phone number is required");
+    }
+    return next(errorHandler(400, "Phone number is required."));
+  }
+
+  try {
+    // Find the user by userId from query
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      if (req.body.sendWhatsAppMessage) {
+        await sendWhatsAppMessage(req.user.phoneNumber, "User not found");
+      }
+      return next(errorHandler(404, "User not found."));
+    }
+
+    // Update the phone number
+    user.phoneNumber = phoneNumber;
+    await user.save();
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(
+        req.user.phoneNumber,
+        "Phone number updated successfully"
+      );
+    }
+    return res.status(200).json({
+      message: "Phone number updated successfully",
+      user: {
+        id: user.id,
+        phoneNumber: user.phoneNumber,
+      },
+    });
+  } catch (error) {
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(
+        req.user.phoneNumber,
+        "Error updating phone number"
+      );
+    }
+    console.log("Error updating phone number:", error);
+    return next(error);
+  }
+};
+
