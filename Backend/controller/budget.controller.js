@@ -156,23 +156,22 @@ exports.getAllBudgets = async (req, res, next) => {
 
     // Apply direct date comparisons instead of LIKE
     if (startDate) {
-      whereClause.startDate = startDate;
+      whereClause.startDate = new Date(startDate); // Convert to Date
     }
-
+    
     if (endDate) {
-      whereClause.endDate = endDate;
+      whereClause.endDate = new Date(endDate); // Convert to Date
     }
+    
 
-    if (createdAt) {
-      whereClause.createdAt = createdAt;
-    }
-
-    // Apply filtering based on fromDate and toDate for createdAt
     if (fromDate && toDate) {
       whereClause.createdAt = {
         [Op.between]: [fromDate, toDate],
       };
+    } else if (createdAt) {
+      whereClause.createdAt = new Date(createdAt);
     }
+    
 
     if (userId) {
       whereClause.userId = userId;
