@@ -154,25 +154,25 @@ exports.getAllBudgets = async (req, res, next) => {
     if (from) fromDate = new Date(from);
     if (to) toDate = new Date(to);
 
-    // Apply direct date comparisons instead of LIKE
+    // Handle startDate and endDate for budget date range filtering
     if (startDate) {
-      whereClause.startDate = new Date(startDate); // Convert to Date
+      whereClause.startDate = new Date(startDate);
     }
-    
-    if (endDate) {
-      whereClause.endDate = new Date(endDate); // Convert to Date
-    }
-    
 
+    if (endDate) {
+      whereClause.endDate = new Date(endDate);
+    }
+
+    // Handle filtering for createdAt based on 'from' and 'to'
     if (fromDate && toDate) {
       whereClause.createdAt = {
         [Op.between]: [fromDate, toDate],
       };
     } else if (createdAt) {
-      whereClause.createdAt = new Date(createdAt);
+      whereClause.createdAt = new Date(createdAt); // Convert createdAt to Date
     }
-    
 
+    // Apply other query filters
     if (userId) {
       whereClause.userId = userId;
     }
@@ -180,7 +180,7 @@ exports.getAllBudgets = async (req, res, next) => {
     if (amount) {
       whereClause.amount = amount;
     }
-    // Apply exact period filtering
+
     if (period) {
       whereClause.period = period;
     }
@@ -192,27 +192,23 @@ exports.getAllBudgets = async (req, res, next) => {
     }
 
     // Fetch budgets with applied filters
-    const budgets = JSON.parse(
-      JSON.stringify(
-        await Budget.findAll({
-          include: [
-            {
-              model: Category,
-              as: "Categories",
-            },
-            {
-              model: Label,
-              as: "Labels",
-            },
-            {
-              model: Account,
-              as: "Accounts",
-            },
-          ],
-          where: whereClause,
-        })
-      )
-    );
+    const budgets = await Budget.findAll({
+      include: [
+        {
+          model: Category,
+          as: "Categories",
+        },
+        {
+          model: Label,
+          as: "Labels",
+        },
+        {
+          model: Account,
+          as: "Accounts",
+        },
+      ],
+      where: whereClause,
+    });
 
     // Calculate remaining amount for each budget
     await Promise.all(
@@ -228,13 +224,13 @@ exports.getAllBudgets = async (req, res, next) => {
           },
         };
 
-        if (budget.period == "One-time") {
+        if (budget.period === "One-time") {
           whereClauseForRecord["datetime"] = {
             [Op.between]: [budget.startDate, budget.endDate],
           };
         } else {
           let startDate, endDate;
-          if (budget.period == "Week") {
+          if (budget.period === "Week") {
             startDate = moment(budget.createdAt).startOf("week").toDate();
             endDate = moment(budget.createdAt).endOf("week").toDate();
           } else if (budget.period === "Month") {
@@ -256,9 +252,9 @@ exports.getAllBudgets = async (req, res, next) => {
 
         budget["remainingAmount"] = +budget.amount;
         for (const record of records) {
-          if (record.type == "INCOME") {
+          if (record.type === "INCOME") {
             budget["remainingAmount"] += +record.amount;
-          } else if (record.type == "EXPENSE") {
+          } else if (record.type === "EXPENSE") {
             budget["remainingAmount"] -= +record.amount;
           }
         }
@@ -279,6 +275,7 @@ exports.getAllBudgets = async (req, res, next) => {
     next(error);
   }
 };
+
 
 exports.getBudgetById = async (req, res, next) => {
   const { id } = req.params;
