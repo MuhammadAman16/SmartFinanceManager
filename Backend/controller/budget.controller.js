@@ -1,7 +1,7 @@
 const { Budget } = require("../models");
 const { BudgetCategory, BudgetLabel, Category, Label ,BudgetAccounts,Account,Record } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
-const { Op } = require('sequelize');
+const { Op, literal } = require('sequelize');
 const moment = require('moment');
 const { sendWhatsAppMessage } = require("../services/messaging.service")
 // exports.getAllBudgets = async (req, res, next) => {
@@ -134,49 +134,53 @@ exports.getAllBudgets = async (req, res, next) => {
     if (from) fromDate = new Date(from);
     if (to) toDate = new Date(to);
 
-    // Apply filtering based on startDate and endDate (budget period)
-    if (startDate || endDate) {
-      whereClause.startDate = {
-        ...(startDate && {
-          [Op.like]: `${startDate}%`, // Partial match on startDate
-        }),
-        ...(endDate && {
-          [Op.like]: `${endDate}%`, // Partial match on endDate
-        }),
-      };
+    // Apply filtering based on startDate and endDate (with casting to TEXT)
+    if (startDate) {
+      whereClause[Op.and] = [
+        literal(`CAST("Budget"."startDate" AS TEXT) LIKE '${startDate}%'`)
+      ];
+    }
+    if (endDate) {
+      whereClause[Op.and] = [
+        ...(whereClause[Op.and] || []),
+        literal(`CAST("Budget"."endDate" AS TEXT) LIKE '${endDate}%'`)
+      ];
     }
 
-    // Apply filtering based on createdAt (for partial matching)
+    // Apply filtering based on createdAt (with casting to TEXT)
     if (createdAt) {
-      whereClause.createdAt = {
-        [Op.like]: `${createdAt}%`, // Partial match on createdAt
-      };
+      whereClause[Op.and] = [
+        ...(whereClause[Op.and] || []),
+        literal(`CAST("Budget"."createdAt" AS TEXT) LIKE '${createdAt}%'`)
+      ];
     }
 
-    // Apply filtering based on fromDate and toDate for createdAt field
+    // Apply filtering based on fromDate and toDate for createdAt
     if (fromDate && toDate) {
       whereClause.createdAt = {
-        [Op.between]: [fromDate, toDate], // From and To filtering for createdAt
+        [Op.between]: [fromDate, toDate],
       };
     }
 
     if (userId) {
-      whereClause.userId = userId; // Filter by userId
+      whereClause.userId = userId;
     }
     if (amount) {
-      whereClause.amount = amount; // Filter by amount
+      whereClause.amount = amount;
     }
     if (period) {
-      whereClause.period = period; // Filter by period
+      whereClause.period = {
+        [Op.like]: `%${period}%`,
+      };
     }
 
     if (category) {
       whereClause["$Categories.name$"] = {
-        [Op.like]: `%${category}%`, // Partial match on category name
+        [Op.like]: `%${category}%`,
       };
     }
 
-    // Fetch budgets based on whereClause
+    // Fetch budgets with applied filters
     const budgets = JSON.parse(
       JSON.stringify(
         await Budget.findAll({
@@ -199,7 +203,7 @@ exports.getAllBudgets = async (req, res, next) => {
       )
     );
 
-    // Iterate over each budget and calculate remaining amount
+    // Calculate remaining amount for each budget
     await Promise.all(
       budgets.map(async (budget) => {
         const whereClauseForRecord = {
@@ -234,40 +238,36 @@ exports.getAllBudgets = async (req, res, next) => {
           };
         }
 
-        // Fetch records based on whereClauseForRecord
         const records = await Record.findAll({
           where: whereClauseForRecord,
           raw: true,
         });
 
-        // Calculate remainingAmount for each budget
         budget["remainingAmount"] = +budget.amount;
         for (const record of records) {
           if (record.type == "INCOME") {
-            budget["remainingAmount"] = +budget["remainingAmount"] + +record.amount;
+            budget["remainingAmount"] += +record.amount;
           } else if (record.type == "EXPENSE") {
-            budget["remainingAmount"] = +budget["remainingAmount"] - +record.amount;
+            budget["remainingAmount"] -= +record.amount;
           }
         }
       })
     );
 
-    // If the user requests sending a WhatsApp message
+    // Send WhatsApp message if requested
     if (req.body.sendWhatsAppMessage) {
-      const msgRes = await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(budgets));
+      await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(budgets));
     }
 
-    // Return the filtered budgets
     return res.status(200).json(budgets);
   } catch (error) {
     if (req.body.sendWhatsAppMessage) {
       await sendWhatsAppMessage(req.user.phoneNumber, "Error fetching budgets");
     }
-    console.log("Error fetching budgets:", error);
+    console.error("Error fetching budgets:", error);
     next(error);
   }
 };
-
 
 
 
