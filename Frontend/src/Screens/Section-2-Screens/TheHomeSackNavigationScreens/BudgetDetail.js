@@ -230,30 +230,13 @@ const BudgetDetail = (props) => {
   const [budgetCategories, setBudgetCategories] = useState();
   // const [incomeRecords, setIncomeRecords] = useState()
 
-  // const fetchBudgetById = async () => {
-  //   try {
-  //     const res = await user_api.get(`budget/${budgetId}`)
-  //     setBudget(res.data);
-  //     setBudgetCategories(res.data.Categories.map(cat => ({
-
-  //     })))
-  //   } catch (error) {
-  //     if (error.response) {
-  //       Alert.alert(`Error: ${error.response.data.error}`);
-  //     } else if (error.request) {
-  //       console.log('No response from server');
-  //     } else {
-  //       console.log('Error: ', error.error);
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
-
-  const fetchIncome = async () => {
+  const fetchBudgetById = async () => {
     try {
-      const result = await user_api.get(`record?userId=${user.id}&type=INCOME&category`);
-
+      const res = await user_api.get(`budget/${budgetId}`)
+      setBudget(res.data);
+      // setBudgetCategories(res.data.Categories.map(cat => ({
+        
+      // })))
     } catch (error) {
       if (error.response) {
         Alert.alert(`Error: ${error.response.data.error}`);
@@ -262,8 +245,25 @@ const BudgetDetail = (props) => {
       } else {
         console.log('Error: ', error.error);
       }
+    } finally {
+      setLoading(false);
     }
   }
+
+  // const fetchIncome = async () => {
+  //   try {
+  //     const result = await user_api.get(`record?userId=${user.id}&type=INCOME&category`);
+
+  //   } catch (error) {
+  //     if (error.response) {
+  //       Alert.alert(`Error: ${error.response.data.error}`);
+  //     } else if (error.request) {
+  //       console.log('No response from server');
+  //     } else {
+  //       console.log('Error: ', error.error);
+  //     }
+  //   }
+  // }
 
   useEffect(() => {
     // console.warn(budgetId)

@@ -34,7 +34,6 @@ const Record_H = (props) => {
 
     switch (unit) {
       case 'D':
-        console.log("In the D section");
         today.setDate(today.getDate() - value);
         break;
       case 'W':
@@ -57,8 +56,8 @@ const Record_H = (props) => {
     setIsLoading(true);
     try {
       const startDate = formatDate(timePeriod);
-      console.log("The Date is : ", startDate);
-      const result = await user_api.get(`record?userId=${user.id}&fromDate=${startDate}`);
+      // console.log("The Date is : ", startDate);
+      const result = await user_api.get(`record?userId=${user.id}&startDate=${startDate}`);
       // console.log("The records are : ", result.data);
       setTransactions(result.data);
       // console.log(result.data.Category);
@@ -150,7 +149,7 @@ const Record_H = (props) => {
                 fontWeight: '500'
               }}
             >
-              { item.Category ? item.Category.name : 'null'}
+              { item?.Category ? item?.Category?.name : null}
             </Text>
             <Text
               style={{
@@ -158,7 +157,7 @@ const Record_H = (props) => {
                 color: 'rgb(128, 128, 128)'
               }}
             >
-              {item.Account ? item.Account.name : 'null'}
+              {item?.Account ? item?.Account?.name : null}
             </Text>
           </View>
           <View>
@@ -170,7 +169,7 @@ const Record_H = (props) => {
                 columnGap: 5
               }}
             >
-              {item.type === "EXPENSE" && (
+              {item?.type === "EXPENSE" && (
                 <Text
                   style={{
                     fontSize: 16,
@@ -186,7 +185,7 @@ const Record_H = (props) => {
                   fontWeight: '600'
                 }}
               >
-                {item.currency}
+                {item?.currency}
               </Text>
               <Text
                 style={{
@@ -195,7 +194,7 @@ const Record_H = (props) => {
                   fontWeight: '600'
                 }}
               >
-                {item.amount}
+                {item?.amount}
               </Text>
             </View>
             <Text
@@ -204,7 +203,7 @@ const Record_H = (props) => {
                 color: 'rgb(128, 128, 128)'
               }}
             >
-              {item?.datetime ? item.datetime.split("T")[0] : null}
+              {item?.datetime ? item?.datetime?.split("T")[0] : null}
             </Text>
           </View>
         </View>
@@ -298,7 +297,11 @@ const Record_H = (props) => {
           paddingBottom: 10
         }}
       >
-        <Text>Last 7 Days</Text>
+        <Text>
+          Last {timePeriod.slice(0, -1)} {timePeriod.slice(-1) === 'D' ? 'Days'
+              : timePeriod.slice(-1) === 'W' ? 'Weeks'
+              : timePeriod.slice(-1) === 'M' ? 'Months' : 'Year'}
+          </Text>
       </View>
 
       <FlatList
