@@ -97,15 +97,15 @@ Instructions:
   - "category" (e.g., Food & Drinks", clothes, transport)
   - "amount" (e.g., Rs500, Rs3000)
   - "account" (e.g., Cash, Bank, Credit Card)
-  - "date" (e.g., 21-10-2024, yesterday, last week)
+  - "datetime" (e.g., 2024-10-20 09:45, yesterday, last week)
   - "note" (e.g., item or reason for the expense like "apple" or "bus fare").
-- For relative dates like "yesterday" or "last week," calculate the exact date in the format "dd-mm-yyyy."
+- For relative dates like "today", "yesterday" or "last week," calculate the exact date in the format "yyyy-mm-dd 12:00"
 - Ensure all extracted parameters are included, even if some need to be inferred.
 - Example Queries and Responses:
-  - Query: "I spent Rs500 on apples from Cash" → {"type": "EXPENSE","category": "Food & Drinks"", "account":"Cash" ,"amount": "500", "currency":"Rs", "date": "21-12-2024", "note": "apples"}.
-  - Query: "Add an expense of Rs3000 for jeans yesterday from credit card account" → {"type": "EXPENSE","category": "clothes", "account":"credit card" ,"amount": "3000","currency":"Rs", "date": "20-12-2024", "note": "jeans"}.
-  - Query: "I paid Rs1000 for transport last week" → {"type": "EXPENSE","category": "transport", "amount": "1000","currency":"Rs", "date": "14-12-2024", "note": "transport"}.
-  - Query: "I eanned Rs5000 from wages" → {"type": "INCOME","category": "Food & Drinks"", "amount": "500","currency":"Rs", "date": "21-12-2024", "note": "apples"}.
+  - Query: "I spent Rs500 on apples from Cash" → {"type": "EXPENSE","category": "Food & Drinks"", "account":"Cash" ,"amount": "500", "currency":"Rs", "datetime": "2025-01-13 12:00", "note": "apples"}.
+  - Query: "Add an expense of Rs3000 for jeans yesterday from credit card account" → {"type": "EXPENSE","category": "clothes", "account":"credit card" ,"amount": "3000","currency":"Rs", "datetime": "2025-01-12 12:00", "note": "jeans"}.
+  - Query: "I paid Rs1000 for transport last week" → {"type": "EXPENSE","category": "transport", "amount": "1000","currency":"Rs", "datetime": "2025-01-13 12:00", "note": "transport"}.
+  - Query: "I eanned Rs5000 from wages" → {"type": "INCOME","category": "Food & Drinks"", "amount": "500","currency":"Rs", "datetime": "2025-01-12 12:00", "note": "apples"}.
 - Ensure no irrelevant details or extra text are included. Only return the JSON object.
 
 Query:
@@ -220,9 +220,11 @@ Query:
       }
     } else if (trimmedResult == "create_record") {
       await getParams(createRecPrompt);
+      console.log("params:", params);
       req.body = {
         userId: req.user.id,
         isTemplate: "No",
+
         ...params,
         ...req.body,
       };
