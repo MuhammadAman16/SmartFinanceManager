@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   ScrollView,
   TouchableOpacity,
   Dimensions,
@@ -199,7 +198,25 @@ function CashFlowChart() {
   ]
   )
   const [acc, setAcc] = useState();
-  const [records, setRecords] = useState();
+  const [incomes, setIncome] = useState();
+  const [expense, setExpense] = useState();
+  const [allAccounts, setAllAccounts] = useState();
+  const [IncomeCategoryData, setIncomeCategoryData] = useState();
+  const [ExpenseCategoryData, setExpenseCategoryData] = useState();
+  const [cashFlowChartData, setCashFlowChartData] = useState([
+    // { x: 0, y: 30 },
+    // { x: 1, y: 40 },
+    { x: 2, y: 35 },
+    { x: 3, y: 50 },
+    { x: 4, y: 45 },
+  ]);
+  // const chartDataforStatic = [
+  //   { x: 0, y: 30 },
+  //   { x: 1, y: 40 },
+  //   { x: 2, y: 35 },
+  //   { x: 3, y: 50 },
+  //   { x: 4, y: 45 },
+  // ];
 
   const fetchActiveAccount = async () => {
     try {
@@ -216,10 +233,10 @@ function CashFlowChart() {
     }
   }
 
-  const fetchRecords = async () => {
+  const fetchIncome = async () => {
     try {
-      const result = await user_api.get(`record?userId=${user.id}`);
-      setRecords(result.data);
+      const incomeResult = await user_api.get(`record?userId=${user.id}&type=INCOME`);
+      setIncome(incomeResult.data.filter((income) => income?.Account?.name === activeAccount.name));
     } catch (error) {
       if (error.response) {
         Alert.alert(`Error: ${error.response.data.error}`)
@@ -231,95 +248,141 @@ function CashFlowChart() {
     }
   }
 
+
+  const fetchExpense = async () => {
+    try {
+      const expenseResult = await user_api.get(`record?userId=${user.id}&type=EXPENSE`);
+      setExpense(expenseResult.data.filter((expense) => expense?.Account?.name === activeAccount.name));
+      console.log("Good");
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`);
+      } else if (error.request) {
+        console.log(`No response from server`);
+      } else {
+        console.log("Error: ", error.error);
+      }
+    }
+  }
+
+  const fetchAllAccounts = async () => {
+    try {
+      const result = await user_api.get(`accounts?userId=${user.id}`);
+      setAllAccounts(result.data);
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`);
+      } else if (error.request) {
+        console.log(`No response from server`);
+      } else {
+        console.log("Error: ", error.error);
+      }
+    }
+  }
+
+  const fetchIncomeCategoryData = async () => {
+    try {
+      const result = await user_api.get(`record?userId=${user.id}&type=INCOME`);
+      const sortedIncome = result.data.sort((a, b) => b.amount - a.amount);
+      const top3Income = sortedIncome.slice(0, 3);
+      const incomeCategory = top3Income?.map((income) => ({
+        category: income.Category.name,
+        amount: income.amount
+      }))
+      setIncomeCategoryData(incomeCategory);
+      // console.log("Good ", incomeCategory);
+      // console.log("Good ", incomeCategory);
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`);
+      } else if (error.request) {
+        console.log(`No response from server`);
+      } else {
+        console.log("Error: ", error.error);
+      }
+    }
+  }
+
+
+  const fetchExpenseCategoryData = async () => {
+    try {
+      const result = await user_api.get(`record?userId=${user.id}&type=EXPENSE`);
+      const sortedExpense = result.data.sort((a, b) => b.amount - a.amount);
+      const top3Expense = sortedExpense.slice(0, 3);
+      const expenseCategory = top3Expense.map((expense) => ({
+        category: expense.Category.name,
+        amount: expense.amount
+      }))
+      // console.log("Good ", incomeCategory);
+      setExpenseCategoryData(expenseCategory);
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`);
+      } else if (error.request) {
+        console.log(`No response from server`);
+      } else {
+        console.log("Error: ", error.error);
+      }
+    }
+  }
+
+  const fetchAllRecords1 = async () => {
+    try {
+      const result = await user_api.get(`record?userId=${user.id}&startFrom=2024-12-01&endDate=2024-12-31`);
+      const AllRecordAccount = result.data;
+      const record = parseInt(AllRecordAccount.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) || 0, 10);
+      // ${parseInt(expense?.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) || 0, 10)}
+      setCashFlowChartData((prevData) => [
+        { x: 0, y: record },
+        ...prevData
+      ]);
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`);
+      } else if (error.request) {
+        console.log(`No response from server`);
+      } else {
+        console.log("Error: ", error.error);
+      }
+    }
+  }
+
+  const fetchAllRecords2 = async () => {
+    try {
+      const result = await user_api.get(`record?userId=${user.id}&startFrom=2025-01-01&endDate=2025-01-31`);
+      const AllRecordAccount = result.data;
+      const record = parseInt(AllRecordAccount.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) || 0, 10);
+      // ${parseInt(expense?.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) || 0, 10)}
+      setCashFlowChartData((prevData) => [
+        { x: 1, y: record },
+        ...prevData,
+      ]);
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`);
+      } else if (error.request) {
+        console.log(`No response from server`);
+      } else {
+        console.log("Error: ", error.error);
+      }
+    }
+  }
+
+
   useEffect(() => {
     if (activeAccount) { fetchActiveAccount(); }
   }, [activeAccount])
 
   useEffect(() => {
-    if (user) { fetchRecords(); }
+    if (user) { fetchIncome(); fetchExpense(); fetchIncomeCategoryData(); fetchExpenseCategoryData(); }
+  }, [user, activeAccount])
+
+  useEffect(() => {
+    fetchAllAccounts();
+    fetchAllRecords1();
+    fetchAllRecords2();
   }, [user])
 
-  // useEffect(() => {
-
-  // }, [records])
-
-  const today = new Date();
-  const past30Days = new Date(today.setDate(today.getDate() - 30));
-
-  // Filter transactions from the last 30 days
-  const filterLast30Days = (transactions) => {
-    return transactions.filter((transaction) => transaction.date >= past30Days);
-  };
-
-  const last30DaysTransactions = filterLast30Days(transactions);
-
-  // Separate income and expenses
-  const incomeTransactions = last30DaysTransactions.filter(
-    (transaction) => transaction.type === 'income'
-  );
-  const expenseTransactions = last30DaysTransactions.filter(
-    (transaction) => transaction.type === 'expense'
-  );
-
-  // Calculate total income and expenses
-  const calculateTotal = (transactions) => {
-    return transactions.reduce(
-      (total, transaction) => total + transaction.amount,
-      0
-    );
-  };
-
-
-  const totalIncome = calculateTotal(incomeTransactions);
-  const totalExpenses = calculateTotal(expenseTransactions);
-
-  // Function to calculate cumulative cash flow
-  const calculateCashFlow = (transactions) => {
-    let cashFlow = 0;
-    const sortedTransactions = [...transactions].sort(
-      (a, b) => a.date - b.date
-    );
-
-    return sortedTransactions.map((transaction) => {
-      if (transaction.type === 'income') {
-        cashFlow += transaction.amount;
-      } else if (transaction.type === 'expense') {
-        cashFlow -= transaction.amount;
-      }
-      const formattedDate = `${String(transaction.date.getMonth() + 1).padStart(
-        2,
-        '0'
-      )}-${String(transaction.date.getDate()).padStart(2, '0')}`;
-
-      return { date: formattedDate, cashFlow };
-    });
-  };
-
-  const cashFlowData = calculateCashFlow(last30DaysTransactions);
-
-  // Function to calculate total amount per category
-  const calculateCategoryData = (transactions, type) => {
-    const categoryMap = {};
-
-    transactions
-      .filter((transaction) => transaction.type === type)
-      .forEach((transaction) => {
-        if (!categoryMap[transaction.category]) {
-          categoryMap[transaction.category] = 0;
-        }
-        categoryMap[transaction.category] += transaction.amount;
-      });
-
-    return Object.keys(categoryMap).map((category) => ({
-      category,
-      amount: categoryMap[category],
-    }));
-  };
-
-  // Function to sort and return top 5 categories
-  const getTop3Categories = (data) => {
-    return [...data].sort((a, b) => b.amount - a.amount).slice(0, 3);
-  };
 
   const incomeCategoryData = [
     { category: "Salary", amount: 5000 },
@@ -328,9 +391,7 @@ function CashFlowChart() {
     { category: "Rental", amount: 1200 },
     { category: "Miscellaneous", amount: 800 },
   ];
-  // const incomeCategoryData = getTop3Categories(
-  //   calculateCategoryData(last30DaysTransactions, 'income')
-  // );
+
   const expenseCategoryData = [
     { category: "Rent", amount: 1500 },
     { category: "Groceries", amount: 800 },
@@ -339,82 +400,15 @@ function CashFlowChart() {
     { category: "Entertainment", amount: 300 },
     { category: "Healthcare", amount: 200 },
   ];
-  // const expenseCategoryData = getTop3Categories(
-  //   calculateCategoryData(last30DaysTransactions, 'expense')
-  // );
 
-  // Convert the cashFlowData into a format usable for the chart
-  const chartData = cashFlowData.map((item, index) => ({
-    x: index,
-    y: item.cashFlow,
-    date: item.date, // Include date in the chart data
-    amount: item.cashFlow, // Include amount in the chart data
-  }));
-
-  const chartDataforStatic = [
-    { x: 0, y: 30 },
-    { x: 1, y: 40 },
-    { x: 2, y: 35 },
-    { x: 3, y: 50 },
-    { x: 4, y: 45 },
-  ];
-
-
-  // Get the list of dates for the X-axis labels
-  const xAxisLabels = cashFlowData.map((item) => item.date);
   const xAxisLabelsforStatic = ['Jan', 'Feb', 'Mar', 'Apr', 'May'];
-
-  const CustomTooltip = ({ value, position }) => {
-    return (
-      <View
-        style={[
-          {
-            position: 'absolute',
-            left: position.x,
-            top: position.y,
-            padding: 10,
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-            borderRadius: 5,
-          },
-        ]}
-      >
-        <Text style={{ color: 'white' }}>Date: {value.date}</Text>
-        <Text style={{ color: 'white' }}>Amount: ${value.amount.toFixed(2)}</Text>
-      </View>
-    );
-  };
-
-  // const CustomTooltip = ({ value, position }) => {
-  //   return (
-  //     <View
-  //       style={[
-  //         styles.tooltipContainer,
-  //         { left: position.x, top: position.y },
-  //       ]}>
-  //       <Text style={styles.tooltipText}>Date: {value.date}</Text>
-  //       <Text style={styles.tooltipText}>
-  //         Amount: ${value.amount.toFixed(2)}
-  //       </Text>
-  //     </View>
-  //   );
-  // };
-
-  const tooltipValue = {
-    date: '2025-01-05',
-    amount: 50.75,
-  };
-
-  const tooltipPosition = {
-    x: 100, // Example X position
-    y: 150, // Example Y position
-  };
 
   const renderAccount = ({ item }) => (
     <View style={styles.accountCard}>
       <View style={styles.accountInfo}>
-        <Text style={styles.accountName}>{item.accountName}</Text>
+        <Text style={styles.accountName}>{item.name}</Text>
         <Text style={styles.accountBalance}>
-          {item.currency} {item.currentBalance}
+          {item.currency} {item.currentValue}
         </Text>
       </View>
       <TouchableOpacity
@@ -445,26 +439,47 @@ function CashFlowChart() {
         </View>
         <View style={styles.summaryBox}>
           <Text style={styles.summaryHeading}>Incomes</Text>
-          <Text style={styles.summaryAmount}>${totalIncome.toFixed(2)}</Text>
+          <Text
+            style={styles.summaryAmount}
+          >
+            ${parseInt(incomes?.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) || 0, 10)}
+          </Text>
         </View>
         <View style={styles.summaryBox}>
           <Text style={styles.summaryHeading}>Expenses</Text>
-          <Text style={styles.summaryAmount}>${totalExpenses.toFixed(2)}</Text>
+          <Text
+            style={styles.summaryAmount}
+          >
+            ${parseInt(expense?.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) || 0, 10)}
+          </Text>
         </View>
 
       </View>
-      {accounts.length > 0 && (
+      {allAccounts?.length > 0 && (
         <View style={styles.sectionContainer}>
           <View style={styles.header}>
             <Text style={styles.sectionHeading}>Accounts</Text>
           </View>
           <View style={styles.chartContainer}>
-            <FlatList
-              data={accounts}
-              renderItem={renderAccount}
-              keyExtractor={(item) => item.id}
-              contentContainerStyle={styles.accountList}
-            />
+            {allAccounts.map((account, index) => (
+              <View style={styles.accountCard} key={index}>
+                <View style={styles.accountInfo}>
+                  <Text style={styles.accountName}>{account?.name}</Text>
+                  <Text style={styles.accountBalance}>
+                    {account?.currency} {account?.currentValue}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.editButton}
+                  onPress={() => {
+                    setSelectedAccountNumber(item.accountNumber);
+                    navigation.navigate('AccountStackScreen', { viewMore: false })
+                  }}
+                >
+                  <Feather name="eye" size={24} color="#007bff" />
+                </TouchableOpacity>
+              </View>
+            ))} 
           </View>
         </View>
       )}
@@ -482,12 +497,12 @@ function CashFlowChart() {
         <View style={styles.chartContainer}>
           <Chart
             style={{ height: 200, width: '100%' }}
-            data={chartDataforStatic}
+            data={cashFlowChartData}
             padding={{ left: 40, bottom: 40, right: 20, top: 20 }}
-            xDomain={{ min: 0, max: chartDataforStatic.length - 1 }}
+            xDomain={{ min: 0, max: cashFlowChartData.length - 1 }}
             yDomain={{
-              min: Math.min(...chartDataforStatic.map((d) => d.y)),
-              max: Math.max(...chartDataforStatic.map((d) => d.y)),
+              min: Math.min(...cashFlowChartData.map((d) => d.y)),
+              max: Math.max(...cashFlowChartData.map((d) => d.y)),
             }}>
 
             <VerticalAxis
@@ -533,7 +548,7 @@ function CashFlowChart() {
                 zIndex: 1,
               }}
               renderTooltip={({ x, y, index }) => {
-                const value = chartDataforStatic[index];
+                const value = cashFlowChartData[index];
                 return <CustomTooltip value={value} position={{ x, y }} />;
               }}
             />
@@ -606,10 +621,10 @@ function CashFlowChart() {
         <View style={styles.chartContainer}>
           <BarChart
             data={{
-              labels: incomeCategoryData.map((item) => item.category),
+              labels: (IncomeCategoryData?.length !== undefined ? IncomeCategoryData : incomeCategoryData).map((item) => item.category),
               datasets: [
                 {
-                  data: incomeCategoryData.map((item) => item.amount),
+                  data: (IncomeCategoryData?.length !== undefined ? IncomeCategoryData : incomeCategoryData).map((item) => item.amount),
                 },
               ],
             }}
@@ -678,10 +693,10 @@ function CashFlowChart() {
         <View style={styles.chartContainer}>
           <BarChart
             data={{
-              labels: expenseCategoryData.map((item) => item.category),
+              labels: (ExpenseCategoryData?.length !== undefined ? ExpenseCategoryData : expenseCategoryData).map((item) => item.category),
               datasets: [
                 {
-                  data: expenseCategoryData.map((item) => item.amount),
+                  data: (ExpenseCategoryData?.length !== undefined ? ExpenseCategoryData : expenseCategoryData).map((item) => item.amount),
                 },
               ],
             }}
@@ -743,46 +758,46 @@ function CashFlowChart() {
       {/* Income List */}
       <View style={styles.listContainer}>
         <Text style={styles.listHeading}>Income</Text>
-        <FlatList
-          data={incomeTransactions}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View style={[styles.listItem, styles.incomeItem]}>
+        {incomes?.length !== undefined ? (
+          incomes?.map((income, index) => (
+            <View style={[styles.listItem, styles.incomeItem]} key={index}>
               <View style={styles.verticalLine}></View>
               <View style={styles.listItemContent}>
                 <Text style={styles.listItemText}>
-                  {item.category} - {item.date.toLocaleDateString()}
+                  {income?.Category?.name} - {income?.datetime?.split("T")[0]}
                 </Text>
                 <Text style={[styles.listItemAmount, styles.incomeAmount]}>
-                  ${item.amount}
+                  ${income?.amount}
                 </Text>
               </View>
             </View>
-          )}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-        />
+          ))
+        )
+          :
+          (<Text>No Income Found</Text>)
+        }
       </View>
 
       <View style={styles.listContainer}>
         <Text style={styles.listHeading}>Expenses</Text>
-        <FlatList
-          data={expenseTransactions}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View style={[styles.listItem, styles.expenseItem]}>
+        {expense?.length !== undefined ? (
+          expense?.map((expense, index) => (
+            <View style={[styles.listItem, styles.expenseItem]} key={index}>
               <View style={styles.verticalLine}></View>
               <View style={styles.listItemContent}>
                 <Text style={styles.listItemText}>
-                  {item.category} - {item.date.toLocaleDateString()}
+                  {expense?.Category?.name} - {expense?.datetime ? expense.datetime?.split("T")[0] : null}
                 </Text>
                 <Text style={[styles.listItemAmount, styles.expenseAmount]}>
-                  ${item.amount}
+                  ${expense.amount}
                 </Text>
               </View>
             </View>
-          )}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-        />
+          ))
+        )
+          :
+          (<Text>No Expense Found</Text>)
+        }
       </View>
     </ScrollView>
   );
