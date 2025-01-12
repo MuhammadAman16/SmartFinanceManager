@@ -10,7 +10,7 @@ const {
 } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
 const { Op, literal } = require("sequelize");
-const { sequelize } = require("../models");
+const { Sequelize } = require("../models");
 const moment = require("moment");
 const { sendWhatsAppMessage } = require("../services/messaging.service");
 // exports.getAllBudgets = async (req, res, next) => {
