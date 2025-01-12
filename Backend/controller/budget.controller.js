@@ -13,126 +13,6 @@ const { Op, literal } = require("sequelize");
 const { Sequelize } = require("../models");
 const moment = require("moment");
 const { sendWhatsAppMessage } = require("../services/messaging.service");
-// exports.getAllBudgets = async (req, res, next) => {
-//   try {
-//     const { startDate, endDate, createdAt, to, from, userId, category,amount,period } = req.query;
-
-//     let whereClause = {};
-
-//     // Convert 'from' and 'to' to Date objects if they exist
-//     let fromDate, toDate;
-//     if (from) fromDate = new Date(from);
-//     if (to) toDate = new Date(to);
-
-//     // Apply filtering based on startDate and endDate (budget period)
-//     if (startDate || endDate) {
-//       whereClause.startDate = {
-//         ...(startDate && { [Op.gte]: new Date(startDate) }), // Greater than or equal to startDate
-//         ...(endDate && { [Op.lte]: new Date(endDate) }), // Less than or equal to endDate
-//       };
-//     }
-
-//     // Apply filtering based on createdAt
-//     if (createdAt) {
-//       whereClause.createdAt = {
-//         [Op.between]: [fromDate, toDate], // Only budgets created between from and to
-//       };
-//     }
-
-//     if(userId){
-//       whereClause.userId = userId; // Filter by userId
-//     }
-//     if(amount){
-//       whereClause.amount = amount; // Filter by userId
-//     }
-//     if(period){
-//       whereClause.period = period; // Filter by userId
-//     }
-
-//     if (category) {
-//       whereClause['$Categories.name$'] = category; // Filter budgets associated with the categoryId
-//     }
-//     const budgets = JSON.parse(JSON.stringify(await Budget.findAll({
-//       include: [
-//         {
-//           model: Category,
-//           as: "Categories",
-//         },
-//         {
-//           model: Label,
-//           as: "Labels",
-//         },
-//         {
-//           model: Account,
-//           as: "Accounts",
-//         },
-//       ],
-//       where:whereClause
-//     })));
-
-//     await Promise.all(budgets.map(async budget => {
-
-//       const whereClauseForRecord = {
-//         userId:budget.userId,
-//         isTemplate:'No',
-//         accountId: {
-//           [Op.in]:budget.Accounts.map(account => account.id)
-//         },
-//         categoryId:{
-//           [Op.in]:budget.Categories.map(category => category.id)
-//         },
-//       }
-
-//       if(budget.period == 'One-time'){
-//         whereClauseForRecord['datetime'] = {
-//           [Op.between]:[budget.startDate,budget.endDate]
-//         }
-//       }else{
-//         let startDate,endDate
-//         if(budget.period == 'Week'){
-//           startDate = moment(budget.createdAt).startOf('week').toDate();
-//           endDate = moment(budget.createdAt).endOf('week').toDate();
-//         }else if (budget.period === 'Month') {
-//           startDate = moment(budget.createdAt).startOf('month').toDate();
-//           endDate = moment(budget.createdAt).endOf('month').toDate();
-//         }else if (budget.period === 'Year') {
-//           startDate = moment(budget.createdAt).startOf('year').toDate();
-//           endDate = moment(budget.createdAt).endOf('year').toDate();
-//         }
-//         whereClauseForRecord['datetime'] = {
-//             [Op.between]: [startDate, endDate],
-//         }
-
-//       }
-
-//       const records = await Record.findAll({
-//         where:whereClauseForRecord,
-//         raw:true
-//       })
-//       budget['remainingAmount'] = +budget.amount
-//       for (const record of records) {
-//         if(record.type == 'INCOME'){
-//           budget['remainingAmount'] = (+budget['remainingAmount']) + (+record.amount)
-//         }else if(record.type == 'EXPENSE'){
-//           budget['remainingAmount'] = (+budget['remainingAmount']) - (+record.amount)
-//         }
-//       }
-
-//     }))
-//     if (req.body.sendWhatsAppMessage) {
-//       const msgRes = await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(budgets))
-//     }
-
-//     return res.status(200).json(budgets);
-//   } catch (error) {
-//     if (req.body.sendWhatsAppMessage) {
-//       const msgRes = await sendWhatsAppMessage(req.user.phoneNumber, "Error fetching budgets")
-//     }
-//     console.log("Error fetching budgets:", error);
-//     next(error);
-//   }
-// };
-
 exports.getAllBudgets = async (req, res, next) => {
   try {
     const {
@@ -154,26 +34,45 @@ exports.getAllBudgets = async (req, res, next) => {
     if (from) fromDate = new Date(from);
     if (to) toDate = new Date(to);
 
-    // Apply direct date comparisons instead of LIKE
-    if (startDate) {
-      whereClause.startDate = startDate;
-    }
 
-    if (endDate) {
-      whereClause.endDate = endDate;
-    }
+     if (startDate) {
+          whereClause["startDate"] = Sequelize.literal(`CAST("Budget"."startDate" AS DATE) = '${startDate}'`);
+        }
 
+        if (endDate) {
+          whereClause["endDate"] = Sequelize.literal(`CAST("Budget"."endDate" AS DATE) = '${endDate}'`);
+        }
+    // Handle startDate and endDate for budget date range filtering
+    // if (startDate) {
+    //   whereClause.startDate = {
+    //     [Op.gte]: new Date(startDate),  // Greater than or equal to startDate
+    //   };
+    // }
+
+    // if (endDate) {
+    //   whereClause.endDate = {
+    //     [Op.lte]: new Date(endDate),  // Less than or equal to endDate
+    //   };
+    // }
+
+ // Apply filtering based on createdAt (to and from filtering)
     if (createdAt) {
-      whereClause.createdAt = createdAt;
-    }
-
-    // Apply filtering based on fromDate and toDate for createdAt
-    if (fromDate && toDate) {
-      whereClause.createdAt = {
-        [Op.between]: [fromDate, toDate],
+      whereClause["createdAt"] = Sequelize.literal(`CAST("Budget"."createdAt" AS DATE) = '${createdAt}'`);
+    } else if (fromDate && toDate) {
+      whereClause["createdAt"] = {
+        [Op.between]: [fromDate, toDate], // From and To filtering for createdAt
+      };
+    } else if (fromDate) {
+      whereClause["createdAt"] = {
+        [Op.gte]: fromDate, // Greater than or equal to fromDate
+      };
+    } else if (toDate) {
+      whereClause["createdAt"] = {
+        [Op.lte]: toDate, // Less than or equal to toDate
       };
     }
 
+    // Apply other query filters
     if (userId) {
       whereClause.userId = userId;
     }
@@ -182,42 +81,38 @@ exports.getAllBudgets = async (req, res, next) => {
       whereClause.amount = amount;
     }
 
-    // Apply LIKE operator for ENUM-based period filtering with casting to text
     if (period) {
-      whereClause.period = Sequelize.cast(Sequelize.col("period"), "TEXT");
-      whereClause.period = {
-        [Op.iLike]: `%${period}%`,
-      };
+      whereClause.period = period;
     }
 
     if (category) {
       whereClause["$Categories.name$"] = {
-        [Op.like]: `%${category}%`,
+        [Op.iLike]: `%${category}%`,  // Use iLike for case-insensitive matching
       };
     }
 
     // Fetch budgets with applied filters
-    const budgets = JSON.parse(
-      JSON.stringify(
-        await Budget.findAll({
-          include: [
-            {
-              model: Category,
-              as: "Categories",
-            },
-            {
-              model: Label,
-              as: "Labels",
-            },
-            {
-              model: Account,
-              as: "Accounts",
-            },
-          ],
-          where: whereClause,
-        })
-      )
-    );
+    const budgets = await Budget.findAll({
+      include: [
+        {
+          model: Category,
+          as: "Categories",
+        },
+        {
+          model: Label,
+          as: "Labels",
+        },
+        {
+          model: Account,
+          as: "Accounts",
+        },
+      ],
+      where: whereClause,
+    });
+
+    if (!budgets.length) {
+      return res.status(404).json({ message: 'No budgets found matching the criteria.' });
+    }
 
     // Calculate remaining amount for each budget
     await Promise.all(
@@ -233,13 +128,14 @@ exports.getAllBudgets = async (req, res, next) => {
           },
         };
 
-        if (budget.period == "One-time") {
+        // Budget period-specific calculations
+        let startDate, endDate;
+        if (budget.period === "One-time") {
           whereClauseForRecord["datetime"] = {
             [Op.between]: [budget.startDate, budget.endDate],
           };
         } else {
-          let startDate, endDate;
-          if (budget.period == "Week") {
+          if (budget.period === "Week") {
             startDate = moment(budget.createdAt).startOf("week").toDate();
             endDate = moment(budget.createdAt).endOf("week").toDate();
           } else if (budget.period === "Month") {
@@ -254,16 +150,18 @@ exports.getAllBudgets = async (req, res, next) => {
           };
         }
 
+        // Fetch associated records
         const records = await Record.findAll({
           where: whereClauseForRecord,
           raw: true,
         });
 
+        // Calculate remaining amount
         budget["remainingAmount"] = +budget.amount;
         for (const record of records) {
-          if (record.type == "INCOME") {
+          if (record.type === "INCOME") {
             budget["remainingAmount"] += +record.amount;
-          } else if (record.type == "EXPENSE") {
+          } else if (record.type === "EXPENSE") {
             budget["remainingAmount"] -= +record.amount;
           }
         }
@@ -284,6 +182,150 @@ exports.getAllBudgets = async (req, res, next) => {
     next(error);
   }
 };
+
+
+// exports.getAllBudgets = async (req, res, next) => {
+//   try {
+//     const {
+//       startDate,
+//       endDate,
+//       createdAt,
+//       to,
+//       from,
+//       userId,
+//       category,
+//       amount,
+//       period,
+//     } = req.query;
+
+//     let whereClause = {};
+
+//     // Convert 'from' and 'to' to Date objects if they exist
+//     let fromDate, toDate;
+//     if (from) fromDate = new Date(from);
+//     if (to) toDate = new Date(to);
+
+//     // Handle startDate and endDate for budget date range filtering
+//     if (startDate) {
+//       whereClause.startDate = new Date(startDate);
+//     }
+
+//     if (endDate) {
+//       whereClause.endDate = new Date(endDate);
+//     }
+
+//     // Handle filtering for createdAt based on 'from' and 'to'
+//     if (fromDate && toDate) {
+//       whereClause.createdAt = {
+//         [Op.between]: [fromDate, toDate],
+//       };
+//     } else if (createdAt) {
+//       whereClause.createdAt = new Date(createdAt); // Convert createdAt to Date
+//     }
+
+//     // Apply other query filters
+//     if (userId) {
+//       whereClause.userId = userId;
+//     }
+
+//     if (amount) {
+//       whereClause.amount = amount;
+//     }
+
+//     if (period) {
+//       whereClause.period = period;
+//     }
+
+//     if (category) {
+//       whereClause["$Categories.name$"] = {
+//         [Op.like]: `%${category}%`,
+//       };
+//     }
+
+//     // Fetch budgets with applied filters
+//     const budgets = await Budget.findAll({
+//       include: [
+//         {
+//           model: Category,
+//           as: "Categories",
+//         },
+//         {
+//           model: Label,
+//           as: "Labels",
+//         },
+//         {
+//           model: Account,
+//           as: "Accounts",
+//         },
+//       ],
+//       where: whereClause,
+//     });
+
+//     // Calculate remaining amount for each budget
+//     await Promise.all(
+//       budgets.map(async (budget) => {
+//         const whereClauseForRecord = {
+//           userId: budget.userId,
+//           isTemplate: "No",
+//           accountId: {
+//             [Op.in]: budget.Accounts.map((account) => account.id),
+//           },
+//           categoryId: {
+//             [Op.in]: budget.Categories.map((category) => category.id),
+//           },
+//         };
+
+//         if (budget.period === "One-time") {
+//           whereClauseForRecord["datetime"] = {
+//             [Op.between]: [budget.startDate, budget.endDate],
+//           };
+//         } else {
+//           let startDate, endDate;
+//           if (budget.period === "Week") {
+//             startDate = moment(budget.createdAt).startOf("week").toDate();
+//             endDate = moment(budget.createdAt).endOf("week").toDate();
+//           } else if (budget.period === "Month") {
+//             startDate = moment(budget.createdAt).startOf("month").toDate();
+//             endDate = moment(budget.createdAt).endOf("month").toDate();
+//           } else if (budget.period === "Year") {
+//             startDate = moment(budget.createdAt).startOf("year").toDate();
+//             endDate = moment(budget.createdAt).endOf("year").toDate();
+//           }
+//           whereClauseForRecord["datetime"] = {
+//             [Op.between]: [startDate, endDate],
+//           };
+//         }
+
+//         const records = await Record.findAll({
+//           where: whereClauseForRecord,
+//           raw: true,
+//         });
+
+//         budget["remainingAmount"] = +budget.amount;
+//         for (const record of records) {
+//           if (record.type === "INCOME") {
+//             budget["remainingAmount"] += +record.amount;
+//           } else if (record.type === "EXPENSE") {
+//             budget["remainingAmount"] -= +record.amount;
+//           }
+//         }
+//       })
+//     );
+
+//     // Send WhatsApp message if requested
+//     if (req.body.sendWhatsAppMessage) {
+//       await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(budgets));
+//     }
+
+//     return res.status(200).json(budgets);
+//   } catch (error) {
+//     if (req.body.sendWhatsAppMessage) {
+//       await sendWhatsAppMessage(req.user.phoneNumber, "Error fetching budgets");
+//     }
+//     console.error("Error fetching budgets:", error);
+//     next(error);
+//   }
+// };
 
 exports.getBudgetById = async (req, res, next) => {
   const { id } = req.params;

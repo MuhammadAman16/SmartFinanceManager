@@ -9,6 +9,8 @@ const { User } = require('../models'); // Make sure to import the User model
 // Route to update user's full name
 router.put("/updateFullName", userController.updateFullName);
 
+router.put("/updatePhoneNumber", userController.updatePhoneNumber);
+
 // Route to update user's password
 router.put("/updatePassword", userController.updatePassword);
 

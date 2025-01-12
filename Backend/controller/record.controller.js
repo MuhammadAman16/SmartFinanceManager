@@ -1,9 +1,9 @@
 const { Record, Account, Category, Label, RecordLabel } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
 const { Op } = require("sequelize");
-const {sequelize} = require("../models")
-const constants = require('./../utils/constants');
-const s3 = require('./../utils/bucket');
+const { sequelize } = require("../models");
+const constants = require("./../utils/constants");
+const s3 = require("./../utils/bucket");
 const { sendWhatsAppMessage } = require("../services/messaging.service");
 exports.createRecord = async (req, res, next) => {
   const {
@@ -23,21 +23,27 @@ exports.createRecord = async (req, res, next) => {
     name, // Template-specific field
     type, // Template-specific field
     isTemplate, // Template toggle
-    category
+    category,
   } = req.body;
 
-  let { categoryId } = req.body
+  let { categoryId } = req.body;
   // Validation for required fields based on isTemplate value
   if (!userId || !isTemplate) {
     if (req.body.sendWhatsAppMessage) {
-      await sendWhatsAppMessage(req.user.phoneNumber, "Required fields: userId and isTemplate")
+      await sendWhatsAppMessage(
+        req.user.phoneNumber,
+        "Required fields: userId and isTemplate"
+      );
     }
     return next(errorHandler(400, "Required fields: userId and isTemplate"));
   }
 
   if (isTemplate === "Yes" && (!name || !accountId)) {
     if (req.body.sendWhatsAppMessage) {
-      await sendWhatsAppMessage(req.user.phoneNumber, "Required fields for template: name, accountId")
+      await sendWhatsAppMessage(
+        req.user.phoneNumber,
+        "Required fields for template: name, accountId"
+      );
     }
     return next(
       errorHandler(400, "Required fields for template: name, accountId")
@@ -46,57 +52,61 @@ exports.createRecord = async (req, res, next) => {
 
   if (isTemplate === "No" && (!amount || !type)) {
     if (req.body.sendWhatsAppMessage) {
-      await sendWhatsAppMessage(req.user.phoneNumber, "Required fields for record: amount, status,type")
+      await sendWhatsAppMessage(
+        req.user.phoneNumber,
+        "Required fields for record: amount, status,type"
+      );
     }
     return next(
       errorHandler(400, "Required fields for record: amount, status,type")
     );
   }
 
-  if (isTemplate === "No" && (type != 'INCOME' && type != 'EXPENSE')) {
+  if (isTemplate === "No" && type != "INCOME" && type != "EXPENSE") {
     if (req.body.sendWhatsAppMessage) {
-      await sendWhatsAppMessage(req.user.phoneNumber, "Invalid value for record type")
+      await sendWhatsAppMessage(
+        req.user.phoneNumber,
+        "Invalid value for record type"
+      );
     }
-    return next(
-      errorHandler(400, "Invalid value for record type")
-    );
+    return next(errorHandler(400, "Invalid value for record type"));
   }
 
   try {
-    let attachmentUrl
-    if(req.file){
+    let attachmentUrl;
+    if (req.file) {
       // Configure the S3 upload parameters
-     const params = {
-      Bucket: constants.AWS.bucketName, 
-      Key: `uploads/${Date.now()}_${req.file.originalname}`, 
-      Body: req.file.buffer, 
-      ContentType: req.file.mimetype, 
-      // ACL: 'public-read', 
-    };
+      const params = {
+        Bucket: constants.AWS.bucketName,
+        Key: `uploads/${Date.now()}_${req.file.originalname}`,
+        Body: req.file.buffer,
+        ContentType: req.file.mimetype,
+        // ACL: 'public-read',
+      };
 
-    // Upload file to S3
-    const data = await s3.upload(params).promise();
-    attachmentUrl = data.Location
+      // Upload file to S3
+      const data = await s3.upload(params).promise();
+      attachmentUrl = data.Location;
     }
 
     if (category) {
       const categoryInDb = await Category.findOne({
         where: {
-          name: category
-        }
-      })
+          name: category,
+        },
+      });
 
       if (!categoryInDb) {
         if (req.body.sendWhatsAppMessage) {
-          await sendWhatsAppMessage(req.user.phoneNumber, "category not found in db")
+          await sendWhatsAppMessage(
+            req.user.phoneNumber,
+            "category not found in db"
+          );
         }
-        return next(
-          errorHandler(404, "category not found!")
-        );
+        return next(errorHandler(404, "category not found!"));
       }
 
-      categoryId = categoryInDb.id
-
+      categoryId = categoryInDb.id;
     }
     const newRecord = await Record.create({
       userId,
@@ -115,7 +125,7 @@ exports.createRecord = async (req, res, next) => {
       type, // Set type only if it's a template
       isTemplate,
       categoryId, // Always include categoryId for one-to-one relation
-      attachmentUrl
+      attachmentUrl,
     });
 
     // If labelIds are provided, associate them with the record
@@ -127,13 +137,19 @@ exports.createRecord = async (req, res, next) => {
       await RecordLabel.bulkCreate(RecordLabelsPayload, { returning: false });
     }
     if (req.body.sendWhatsAppMessage) {
-      await sendWhatsAppMessage(req.user.phoneNumber, "record created successfully")
+      await sendWhatsAppMessage(
+        req.user.phoneNumber,
+        "record created successfully"
+      );
     }
 
-    return res.status(201).json(newRecord);
+    return res.status(201).json({
+      message: "Record created successfully",
+      data: newRecord,
+    });
   } catch (error) {
     if (req.body.sendWhatsAppMessage) {
-      await sendWhatsAppMessage(req.user.phoneNumber, "error creating record")
+      await sendWhatsAppMessage(req.user.phoneNumber, "error creating record");
     }
     console.log("Error creating record:", error);
     next(error);
@@ -240,9 +256,6 @@ exports.deleteRecord = async (req, res, next) => {
   }
 };
 
-
-
-
 // exports.getAllRecords = async (req, res, next) => {
 //   try {
 //     const { userId, amount, category, type, isTemplate, createdAt, paymentType } = req.query;
@@ -312,7 +325,19 @@ exports.deleteRecord = async (req, res, next) => {
 // };
 exports.getAllRecords = async (req, res, next) => {
   try {
-    const { userId, amount, category, type, isTemplate, createdAt, paymentType, startDate, endDate, fromDate, toDate } = req.query;
+    const {
+      userId,
+      amount,
+      category,
+      type,
+      isTemplate,
+      createdAt,
+      paymentType,
+      startDate,
+      endDate,
+      fromDate,
+      toDate,
+    } = req.query;
     let whereClause = {};
 
     // Check if `isTemplate` is provided in the query
@@ -330,7 +355,9 @@ exports.getAllRecords = async (req, res, next) => {
     }
 
     if (type) {
-      whereClause.type = type; // Filter by record type (INCOME or EXPENSE)
+      whereClause.type = {
+        [Op.iLike]: `%${type}%`, // Case-insensitive partial match
+      };
     }
 
     if (paymentType) {
@@ -339,7 +366,9 @@ exports.getAllRecords = async (req, res, next) => {
 
     // Apply filtering based on createdAt (to and from filtering)
     if (createdAt) {
-      whereClause["createdAt"] = sequelize.literal(`CAST("Record"."createdAt" AS DATE) = '${createdAt}'`);
+      whereClause["createdAt"] = sequelize.literal(
+        `CAST("Record"."createdAt" AS DATE) = '${createdAt}'`
+      );
     } else if (fromDate && toDate) {
       whereClause["createdAt"] = {
         [Op.between]: [fromDate, toDate], // From and To filtering for createdAt
@@ -370,16 +399,35 @@ exports.getAllRecords = async (req, res, next) => {
     }
 
     if (category) {
-      whereClause["$Category.name$"] = category; // Filter by associated category name
+      whereClause["$Category.name$"] = {
+        [Op.iLike]: `%${category}%`, // Case-insensitive partial match
+      };
     }
 
     // Fetch records with filters and include associated models
     const records = await Record.findAll({
-      attributes: ["id", "name", "amount", "currency", "note", "paymentType", "warranty", "status", "datetime", "type"],
+      attributes: [
+        "id",
+        "name",
+        "amount",
+        "currency",
+        "note",
+        "paymentType",
+        "warranty",
+        "status",
+        "datetime",
+        "type",
+      ],
       where: whereClause,
       include: [
         {
-          attributes: ["id", "name", "bankAccountNumber", "initialValue", "currentValue"],
+          attributes: [
+            "id",
+            "name",
+            "bankAccountNumber",
+            "initialValue",
+            "currentValue",
+          ],
           model: Account,
           as: "Account",
         },
@@ -406,12 +454,6 @@ exports.getAllRecords = async (req, res, next) => {
     next(error);
   }
 };
-
-
-
-
-
-
 
 exports.getRecordById = async (req, res, next) => {
   const { id } = req.params;
@@ -444,4 +486,3 @@ exports.getRecordById = async (req, res, next) => {
     next(error);
   }
 };
-
