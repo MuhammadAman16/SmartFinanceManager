@@ -36,14 +36,18 @@ exports.getAllBudgets = async (req, res, next) => {
 
     // Handle startDate and endDate for budget date range filtering
     if (startDate) {
-      whereClause.startDate = new Date(startDate);
+      whereClause.startDate = {
+        [Op.gte]: new Date(startDate),  // Greater than or equal to startDate
+      };
     }
 
     if (endDate) {
-      whereClause.endDate = new Date(endDate);
+      whereClause.endDate = {
+        [Op.lte]: new Date(endDate),  // Less than or equal to endDate
+      };
     }
 
-    // Handle filtering for createdAt based on 'from' and 'to' (date range)
+    // Handle filtering for createdAt based on 'from' and 'to'
     if (fromDate && toDate) {
       whereClause.createdAt = {
         [Op.between]: [fromDate, toDate],
@@ -67,7 +71,7 @@ exports.getAllBudgets = async (req, res, next) => {
 
     if (category) {
       whereClause["$Categories.name$"] = {
-        [Op.like]: `%${category}%`,
+        [Op.iLike]: `%${category}%`,  // Use iLike for case-insensitive matching
       };
     }
 
@@ -89,6 +93,10 @@ exports.getAllBudgets = async (req, res, next) => {
       ],
       where: whereClause,
     });
+
+    if (!budgets.length) {
+      return res.status(404).json({ message: 'No budgets found matching the criteria.' });
+    }
 
     // Calculate remaining amount for each budget
     await Promise.all(
@@ -158,6 +166,7 @@ exports.getAllBudgets = async (req, res, next) => {
     next(error);
   }
 };
+
 
 // exports.getAllBudgets = async (req, res, next) => {
 //   try {
