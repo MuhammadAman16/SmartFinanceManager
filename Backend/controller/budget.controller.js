@@ -10,6 +10,11 @@ exports.getAllBudgets = async (req, res, next) => {
 
     let whereClause = {};
 
+    // Convert 'from' and 'to' to Date objects if they exist
+    let fromDate, toDate;
+    if (from) fromDate = new Date(from);
+    if (to) toDate = new Date(to);
+
     // Apply filtering based on startDate and endDate (budget period)
     if (startDate || endDate) {
       whereClause.startDate = {
