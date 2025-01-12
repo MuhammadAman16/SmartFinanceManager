@@ -13,7 +13,7 @@ const validationSchema = Yup.object({
     fullName: Yup.string().trim().required('Full Name is required'),
     email: Yup.string().email('Invalid Email').required('Email is required'),
     phoneNumber: Yup.string().trim().length(10, 'Invalid Phone Number').required('Phone number is required'),
-    password: Yup.string().trim().min(8, 'Password must be 8 or more').required('Password is required'),
+    password: Yup.string().trim().min(3, 'Password must be 3 or more').required('Password is required'),
     confirm: Yup.string().equals([Yup.ref('password'), null], 'Password doesnt match')
 })
 

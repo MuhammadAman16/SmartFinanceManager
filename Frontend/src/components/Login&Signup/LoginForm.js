@@ -10,7 +10,7 @@ import { AuthContext } from '@/app/context/AuthContext'
 
 const validationSchema = Yup.object({
     email: Yup.string().email('Invalid Email').required('Email is Required'),
-    password: Yup.string().trim().min(8, 'Password must be 8 or more').required('Password is Required')
+    password: Yup.string().trim().min(3, 'Password must be 3 or more').required('Password is Required')
 })
 
 const LoginForm = () => {
