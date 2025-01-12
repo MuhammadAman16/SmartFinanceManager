@@ -21,6 +21,7 @@ import DisplayBudgetTable from '../components/ChatBot/DisplayBudgetTable';
 import DisplayBudgetTable_2 from '../components/ChatBot/DisplayBudgetTable_2';
 import { AccountContext } from '@/app/context/AccountContext';
 import Voice from '@react-native-voice/voice';
+import { AuthContext } from '@/app/context/AuthContext';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
@@ -61,6 +62,7 @@ const ChatScreen = () => {
   const FlatListRef = useRef(null);
   const navigation = useNavigation();
   const { activeAccount } = useContext(AccountContext);
+  const { user, setUser } = useContext(AuthContext);
 
   const dotOpacity = new Animated.Value(1);
 
@@ -172,77 +174,100 @@ const ChatScreen = () => {
           "Accept-Encoding": "gzip, deflate, br",
           Connection: "keep-alive",
           Authorization: token
+        },
+        validateStatus: function (status) {
+          // Accept all status codes to handle them in .then()
+          return status >= 200 && status < 500;
         }
-      }).then(response => {
-        const Botresponse = response.data;
-        // console.log("All Budeget :: ",Botresponse);
-        if (Botresponse.length !== undefined) {
-          if ('period' in Botresponse[0]) {
-            // console.log("Inside The Budget");
-            const data = Botresponse.map((budget) => {
-              return {
-                name: budget?.name || 'null',
-                amount: budget?.amount || 'null',
-                period: budget?.period || 'null',
-                currency: budget?.currency || 'null',
-                startDate: budget?.startDate?.split("T")[0] || 'null',
-                endDate: budget?.endDate?.split("T")[0] || 'null',
-                remainingAmount: budget?.remainingAmount || 'null'
-              };
-            })
-            setMessages((prevMessage) => [
-              ...prevMessage,
-              { id: Math.random().toString(), component: <DisplayBudgetTable data={data} />, sender: 'bot' }
-            ])
-          } else if ('type' in Botresponse[0]) {
-            // console.log("Account");
-            const data = Botresponse.map((account) => {
-              return {
-                name: account?.name || 'null',
-                bankAccountNumber: account?.bankAccountNumber || 'null',
-                type: account?.type || 'null',
-                initialValue: account?.initialValue || 'null',
-                currentValue: account?.currentValue || 'null',
-                currency: account?.currency || 'null'
-              }
-            })
-            setMessages((prevMessage) => [
-              ...prevMessage,
-              { id: Math.random().toString(), component: <DisplayBudgetTable data={data} />, sender: 'bot' }
-            ])
-          } else if ('paymentType' in Botresponse[0]) {
-            const data = Botresponse.map((income) => {
-              return {
-                name: income?.name || 'null',
-                amount: income?.amount || 'null',
-                currency: income?.currency || 'null',
-                note: income?.note || 'null',
-                account: income?.Account?.name || 'null',
-                category: income?.Category?.name || 'null',
-                paymentType: income?.paymentType || 'null',
-                warranty: income?.warranty || 'null',
-                status: income?.status || 'null',
-                datetime: income?.datetime?.split("T")[0] || 'null',
-              };
-            })
-            setMessages((prevMessage) => [
-              ...prevMessage,
-              { id: Math.random().toString(), component: <DisplayBudgetTable data={data} />, sender: 'bot' }
-            ])
+      }
+    ).then(response => {
+      const Botresponse = response.data;
 
-          }
+      if (response.status === 400) {
+        // console.log("Bad Request: ", response.data);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { id: Math.random().toString(), text: response.data.message, sender: 'bot' }
+        ]);
+        return; // Exit early for status 400
+      }
+
+      if (Botresponse.length !== undefined) {
+        if ('period' in Botresponse[0]) {
+          const data = Botresponse.map((budget) => ({
+            name: budget?.name || 'null',
+            amount: budget?.amount || 'null',
+            period: budget?.period || 'null',
+            currency: budget?.currency || 'null',
+            startDate: budget?.startDate?.split("T")[0] || 'null',
+            endDate: budget?.endDate?.split("T")[0] || 'null',
+            remainingAmount: budget?.remainingAmount || 'null'
+          }));
+          setMessages((prevMessage) => [
+            ...prevMessage,
+            { id: Math.random().toString(), component: <DisplayBudgetTable data={data} />, sender: 'bot' }
+          ]);
+        } else if ('type' in Botresponse[0]) {
+          const data = Botresponse.map((account) => ({
+            name: account?.name || 'null',
+            bankAccountNumber: account?.bankAccountNumber || 'null',
+            type: account?.type || 'null',
+            initialValue: account?.initialValue || 'null',
+            currentValue: account?.currentValue || 'null',
+            currency: account?.currency || 'null'
+          }));
+          setMessages((prevMessage) => [
+            ...prevMessage,
+            { id: Math.random().toString(), component: <DisplayBudgetTable data={data} />, sender: 'bot' }
+          ]);
+        } else if ('paymentType' in Botresponse[0]) {
+          const data = Botresponse.map((income) => ({
+            name: income?.name || 'null',
+            amount: income?.amount || 'null',
+            currency: income?.currency || 'null',
+            note: income?.note || 'null',
+            account: income?.Account?.name || 'null',
+            category: income?.Category?.name || 'null',
+            paymentType: income?.paymentType || 'null',
+            warranty: income?.warranty || 'null',
+            status: income?.status || 'null',
+            datetime: income?.datetime?.split("T")[0] || 'null'
+          }));
+          setMessages((prevMessage) => [
+            ...prevMessage,
+            { id: Math.random().toString(), component: <DisplayBudgetTable data={data} />, sender: 'bot' }
+          ]);
+        }
+      } else {
+        if ('fullName' in Botresponse) {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { id: Math.random().toString(), text: `Your username is ${Botresponse.fullName}`, sender: 'bot' }
+          ]);
+        } else if ('user' in Botresponse) {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { id: Math.random().toString(), text: `${Botresponse.message} your name is now ${Botresponse.user.fullName}`, sender: 'bot' }
+          ]);
+          setUser({ ...user, fullName: Botresponse.user.fullName });
+        } else if ('message' in Botresponse) {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { id: Math.random().toString(), text: `${Botresponse.message}. Can't show your password because of security reasons`, sender: 'bot' }
+          ]);
         } else {
-          // console.log("ALL BUDGETS");
           setMessages((prevMessages) => [
             ...prevMessages,
             { id: Math.random().toString(), text: Botresponse.response, sender: 'bot' }
-          ])
+          ]);
         }
-      }).catch(error => {
-        console.error("The error is : ", error);
-      }).finally(() => {
-        setIsTyping(false);
-      });
+      }
+    }).catch(error => {
+      console.error("The error is : ", error);
+    }).finally(() => {
+      setIsTyping(false);
+    });
+
   };
 
   const renderMessageItem = ({ item }) => (
