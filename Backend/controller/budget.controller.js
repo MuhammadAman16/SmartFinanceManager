@@ -182,13 +182,13 @@ exports.getAllBudgets = async (req, res, next) => {
       whereClause.amount = amount;
     }
 
-    // Keep LIKE for ENUM-based period filtering
-    // Apply LIKE operator for period filtering
-    if (period) {
-      whereClause.period = {
-        [Op.like]: `%${period}%`,
-      };
-    }
+// Apply LIKE operator for ENUM-based period filtering with casting to text
+if (period) {
+  whereClause.period = {
+    [Op.iLike]: `%${period}%`,  // 'iLike' allows case-insensitive pattern matching
+  };
+}
+
 
     if (category) {
       whereClause["$Categories.name$"] = {
