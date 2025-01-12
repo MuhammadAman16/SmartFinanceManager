@@ -2,7 +2,11 @@ const { initializeModel } = require("../config/chatbot.config");
 const { getClass } = require("../chatbot/index");
 const { getAllBudgets } = require("./budget.controller");
 const { getAllRecords, createRecord } = require("./record.controller");
-const { updatePassword, updateFullName } = require("./user.controller");
+const {
+  updatePassword,
+  updateFullName,
+  getFullName,
+} = require("./user.controller");
 const { getAllAccounts } = require("./account.controller");
 
 let model = null;
@@ -191,8 +195,8 @@ Query:
       data = await getAllRecords(req, res);
     } else if (trimmedResult == "get_u_name") {
       if (req.user) {
-        const { fullName } = req.user;
-        data = { response: `your name is ${fullName}` };
+        req.query = { userId: req.user.id };
+        getFullName(req, res, next);
       }
     } else if (trimmedResult == "get_u_email") {
       if (req.user) {
@@ -248,8 +252,6 @@ Query:
       }
     } else if (trimmedResult == "get_acc") {
       await getParams(getAccPrompt);
-      console.log(params);
-
       req.query = { userId: req.user.id, ...params };
       console.log(
         ":- get all acounts -------------------------------------------"
@@ -262,7 +264,6 @@ Query:
     if (
       trimmedResult == "get_u_pass" ||
       trimmedResult == "get_u_email" ||
-      trimmedResult == "get_u_name" ||
       (trimmedResult == "update_name" && !params.fullName) ||
       (trimmedResult == "update_pass" &&
         !(params.currentPassword && params.newPassword))
