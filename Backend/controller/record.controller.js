@@ -384,7 +384,7 @@ exports.getAllRecords = async (req, res, next) => {
           as: "Account",
         },
         {
-          attributes: ["name"],
+          attributes: ["name", "icon"],
           model: Category,
           as: "Category",
         },

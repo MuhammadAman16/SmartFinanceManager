@@ -110,10 +110,12 @@ const ChatScreen = () => {
     console.log('recording start', event);
   };
 
-  const startListning = () => {
+  const startListning = async () => {
+    console.log(Voice);
     setIsListening(true)
     try {
-      console.log("Listening");
+      await Voice.start('en-US');
+      // console.log("Listening");
     }
     catch (error) {
       console.log('start listning', error)
