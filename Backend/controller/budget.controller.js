@@ -43,7 +43,7 @@ exports.getAllBudgets = async (req, res, next) => {
       whereClause.endDate = new Date(endDate);
     }
 
-    // Handle filtering for createdAt based on 'from' and 'to'
+    // Handle filtering for createdAt based on 'from' and 'to' (date range)
     if (fromDate && toDate) {
       whereClause.createdAt = {
         [Op.between]: [fromDate, toDate],
@@ -104,12 +104,13 @@ exports.getAllBudgets = async (req, res, next) => {
           },
         };
 
+        // Budget period-specific calculations
+        let startDate, endDate;
         if (budget.period === "One-time") {
           whereClauseForRecord["datetime"] = {
             [Op.between]: [budget.startDate, budget.endDate],
           };
         } else {
-          let startDate, endDate;
           if (budget.period === "Week") {
             startDate = moment(budget.createdAt).startOf("week").toDate();
             endDate = moment(budget.createdAt).endOf("week").toDate();
@@ -125,11 +126,13 @@ exports.getAllBudgets = async (req, res, next) => {
           };
         }
 
+        // Fetch associated records
         const records = await Record.findAll({
           where: whereClauseForRecord,
           raw: true,
         });
 
+        // Calculate remaining amount
         budget["remainingAmount"] = +budget.amount;
         for (const record of records) {
           if (record.type === "INCOME") {
@@ -155,7 +158,6 @@ exports.getAllBudgets = async (req, res, next) => {
     next(error);
   }
 };
-
 
 // exports.getAllBudgets = async (req, res, next) => {
 //   try {
@@ -299,7 +301,6 @@ exports.getAllBudgets = async (req, res, next) => {
 //     next(error);
 //   }
 // };
-
 
 exports.getBudgetById = async (req, res, next) => {
   const { id } = req.params;
