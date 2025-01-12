@@ -2,6 +2,7 @@ const { Budget } = require("../models");
 const { BudgetCategory, BudgetLabel, Category, Label ,BudgetAccounts,Account,Record } = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
 const { Op, literal } = require('sequelize');
+const {sequelize} = require("../models")
 const moment = require('moment');
 const { sendWhatsAppMessage } = require("../services/messaging.service")
 // exports.getAllBudgets = async (req, res, next) => {
