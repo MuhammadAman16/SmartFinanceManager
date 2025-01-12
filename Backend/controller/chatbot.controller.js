@@ -2,6 +2,7 @@ const { initializeModel } = require("../config/chatbot.config");
 const { getClass } = require("../chatbot/index");
 const { getAllBudgets } = require("./budget.controller");
 const { getAllRecords, createRecord } = require("./record.controller");
+const { sendWhatsAppMessage } = require("../services/messaging.service")
 const {
   updatePassword,
   updateFullName,
@@ -194,13 +195,21 @@ Query:
       );
       data = await getAllRecords(req, res);
     } else if (trimmedResult == "get_u_name") {
+      console.log(":------------------------------ get_u_name")
       if (req.user) {
+        console.log(":--------------------------- req.user", req.user)
         req.query = { userId: req.user.id };
-        getFullName(req, res, next);
+        await getFullName(req, res, next);
       }
     } else if (trimmedResult == "get_u_email") {
       if (req.user) {
         const { email } = req.user;
+        if (req.body.sendWhatsAppMessage) {
+          await sendWhatsAppMessage(
+            req.user.phoneNumber,
+            `Your email is ${email}. please let me know if you have any other questions.`
+          );
+        }
         data = {
           response: `Your email is ${email}. please let me know if you have any other questions.`,
         };
@@ -243,8 +252,9 @@ Query:
       await getParams(updateNamePrompt);
       if (params.fullName) {
         req.body = { userId: req.user.id, ...params, ...req.body };
+        req.query.userId = req.user.id
         console.log(
-          ":--------------------------update fullname ---------------------------"
+          ":--------------------------update fullname ---------------------------", req.body
         );
         data = await updateFullName(req, res, next);
       } else {
@@ -268,6 +278,10 @@ Query:
       (trimmedResult == "update_pass" &&
         !(params.currentPassword && params.newPassword))
     ) {
+      await sendWhatsAppMessage(
+        req.user.phoneNumber,
+        JSON.stringify(data)
+      );
       return res.status(200).send(data);
     }
   } catch (error) {
