@@ -4,9 +4,128 @@ const { errorHandler } = require("../utils/errorHandler");
 const { Op } = require('sequelize');
 const moment = require('moment');
 const { sendWhatsAppMessage } = require("../services/messaging.service")
+// exports.getAllBudgets = async (req, res, next) => {
+//   try {
+//     const { startDate, endDate, createdAt, to, from, userId, category,amount,period } = req.query;
+
+//     let whereClause = {};
+
+//     // Convert 'from' and 'to' to Date objects if they exist
+//     let fromDate, toDate;
+//     if (from) fromDate = new Date(from);
+//     if (to) toDate = new Date(to);
+
+//     // Apply filtering based on startDate and endDate (budget period)
+//     if (startDate || endDate) {
+//       whereClause.startDate = {
+//         ...(startDate && { [Op.gte]: new Date(startDate) }), // Greater than or equal to startDate
+//         ...(endDate && { [Op.lte]: new Date(endDate) }), // Less than or equal to endDate
+//       };
+//     }
+
+//     // Apply filtering based on createdAt
+//     if (createdAt) {
+//       whereClause.createdAt = {
+//         [Op.between]: [fromDate, toDate], // Only budgets created between from and to
+//       };
+//     }
+
+//     if(userId){
+//       whereClause.userId = userId; // Filter by userId
+//     }
+//     if(amount){
+//       whereClause.amount = amount; // Filter by userId
+//     }
+//     if(period){
+//       whereClause.period = period; // Filter by userId
+//     }
+
+//     if (category) {
+//       whereClause['$Categories.name$'] = category; // Filter budgets associated with the categoryId
+//     }
+//     const budgets = JSON.parse(JSON.stringify(await Budget.findAll({
+//       include: [
+//         {
+//           model: Category,
+//           as: "Categories",
+//         },
+//         {
+//           model: Label,
+//           as: "Labels",
+//         },
+//         {
+//           model: Account,
+//           as: "Accounts",
+//         },
+//       ],
+//       where:whereClause
+//     })));
+
+//     await Promise.all(budgets.map(async budget => {
+
+//       const whereClauseForRecord = {
+//         userId:budget.userId,
+//         isTemplate:'No',
+//         accountId: {
+//           [Op.in]:budget.Accounts.map(account => account.id)
+//         },
+//         categoryId:{
+//           [Op.in]:budget.Categories.map(category => category.id)
+//         },
+//       }
+  
+//       if(budget.period == 'One-time'){
+//         whereClauseForRecord['datetime'] = {
+//           [Op.between]:[budget.startDate,budget.endDate]
+//         }
+//       }else{
+//         let startDate,endDate
+//         if(budget.period == 'Week'){
+//           startDate = moment(budget.createdAt).startOf('week').toDate(); 
+//           endDate = moment(budget.createdAt).endOf('week').toDate();  
+//         }else if (budget.period === 'Month') {
+//           startDate = moment(budget.createdAt).startOf('month').toDate();
+//           endDate = moment(budget.createdAt).endOf('month').toDate();
+//         }else if (budget.period === 'Year') {
+//           startDate = moment(budget.createdAt).startOf('year').toDate();
+//           endDate = moment(budget.createdAt).endOf('year').toDate();
+//         }
+//         whereClauseForRecord['datetime'] = {
+//             [Op.between]: [startDate, endDate], 
+//         }
+        
+//       }
+  
+//       const records = await Record.findAll({
+//         where:whereClauseForRecord,
+//         raw:true
+//       })
+//       budget['remainingAmount'] = +budget.amount
+//       for (const record of records) {
+//         if(record.type == 'INCOME'){
+//           budget['remainingAmount'] = (+budget['remainingAmount']) + (+record.amount)
+//         }else if(record.type == 'EXPENSE'){
+//           budget['remainingAmount'] = (+budget['remainingAmount']) - (+record.amount)
+//         }
+//       }
+      
+//     }))
+//     if (req.body.sendWhatsAppMessage) {
+//       const msgRes = await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(budgets))
+//     }
+
+//     return res.status(200).json(budgets);
+//   } catch (error) {
+//     if (req.body.sendWhatsAppMessage) {
+//       const msgRes = await sendWhatsAppMessage(req.user.phoneNumber, "Error fetching budgets")
+//     }
+//     console.log("Error fetching budgets:", error);
+//     next(error);
+//   }
+// };
 exports.getAllBudgets = async (req, res, next) => {
   try {
-    const { startDate, endDate, createdAt, to, from, userId, category,amount,period } = req.query;
+    const { startDate, endDate, createdAt, to, from, userId, category, amount, period } = req.query;
 
     let whereClause = {};
 
@@ -18,111 +137,139 @@ exports.getAllBudgets = async (req, res, next) => {
     // Apply filtering based on startDate and endDate (budget period)
     if (startDate || endDate) {
       whereClause.startDate = {
-        ...(startDate && { [Op.gte]: new Date(startDate) }), // Greater than or equal to startDate
-        ...(endDate && { [Op.lte]: new Date(endDate) }), // Less than or equal to endDate
+        ...(startDate && {
+          [Op.like]: `${startDate}%`, // Partial match on startDate
+        }),
+        ...(endDate && {
+          [Op.like]: `${endDate}%`, // Partial match on endDate
+        }),
       };
     }
 
-    // Apply filtering based on createdAt
+    // Apply filtering based on createdAt (for partial matching)
     if (createdAt) {
       whereClause.createdAt = {
-        [Op.between]: [fromDate, toDate], // Only budgets created between from and to
+        [Op.like]: `${createdAt}%`, // Partial match on createdAt
       };
     }
 
-    if(userId){
+    // Apply filtering based on fromDate and toDate for createdAt field
+    if (fromDate && toDate) {
+      whereClause.createdAt = {
+        [Op.between]: [fromDate, toDate], // From and To filtering for createdAt
+      };
+    }
+
+    if (userId) {
       whereClause.userId = userId; // Filter by userId
     }
-    if(amount){
-      whereClause.amount = amount; // Filter by userId
+    if (amount) {
+      whereClause.amount = amount; // Filter by amount
     }
-    if(period){
-      whereClause.period = period; // Filter by userId
+    if (period) {
+      whereClause.period = period; // Filter by period
     }
 
     if (category) {
-      whereClause['$Categories.name$'] = category; // Filter budgets associated with the categoryId
+      whereClause["$Categories.name$"] = {
+        [Op.like]: `%${category}%`, // Partial match on category name
+      };
     }
-    const budgets = JSON.parse(JSON.stringify(await Budget.findAll({
-      include: [
-        {
-          model: Category,
-          as: "Categories",
-        },
-        {
-          model: Label,
-          as: "Labels",
-        },
-        {
-          model: Account,
-          as: "Accounts",
-        },
-      ],
-      where:whereClause
-    })));
 
-    await Promise.all(budgets.map(async budget => {
+    // Fetch budgets based on whereClause
+    const budgets = JSON.parse(
+      JSON.stringify(
+        await Budget.findAll({
+          include: [
+            {
+              model: Category,
+              as: "Categories",
+            },
+            {
+              model: Label,
+              as: "Labels",
+            },
+            {
+              model: Account,
+              as: "Accounts",
+            },
+          ],
+          where: whereClause,
+        })
+      )
+    );
 
-      const whereClauseForRecord = {
-        userId:budget.userId,
-        isTemplate:'No',
-        accountId: {
-          [Op.in]:budget.Accounts.map(account => account.id)
-        },
-        categoryId:{
-          [Op.in]:budget.Categories.map(category => category.id)
-        },
-      }
-  
-      if(budget.period == 'One-time'){
-        whereClauseForRecord['datetime'] = {
-          [Op.between]:[budget.startDate,budget.endDate]
+    // Iterate over each budget and calculate remaining amount
+    await Promise.all(
+      budgets.map(async (budget) => {
+        const whereClauseForRecord = {
+          userId: budget.userId,
+          isTemplate: "No",
+          accountId: {
+            [Op.in]: budget.Accounts.map((account) => account.id),
+          },
+          categoryId: {
+            [Op.in]: budget.Categories.map((category) => category.id),
+          },
+        };
+
+        if (budget.period == "One-time") {
+          whereClauseForRecord["datetime"] = {
+            [Op.between]: [budget.startDate, budget.endDate],
+          };
+        } else {
+          let startDate, endDate;
+          if (budget.period == "Week") {
+            startDate = moment(budget.createdAt).startOf("week").toDate();
+            endDate = moment(budget.createdAt).endOf("week").toDate();
+          } else if (budget.period === "Month") {
+            startDate = moment(budget.createdAt).startOf("month").toDate();
+            endDate = moment(budget.createdAt).endOf("month").toDate();
+          } else if (budget.period === "Year") {
+            startDate = moment(budget.createdAt).startOf("year").toDate();
+            endDate = moment(budget.createdAt).endOf("year").toDate();
+          }
+          whereClauseForRecord["datetime"] = {
+            [Op.between]: [startDate, endDate],
+          };
         }
-      }else{
-        let startDate,endDate
-        if(budget.period == 'Week'){
-          startDate = moment(budget.createdAt).startOf('week').toDate(); 
-          endDate = moment(budget.createdAt).endOf('week').toDate();  
-        }else if (budget.period === 'Month') {
-          startDate = moment(budget.createdAt).startOf('month').toDate();
-          endDate = moment(budget.createdAt).endOf('month').toDate();
-        }else if (budget.period === 'Year') {
-          startDate = moment(budget.createdAt).startOf('year').toDate();
-          endDate = moment(budget.createdAt).endOf('year').toDate();
+
+        // Fetch records based on whereClauseForRecord
+        const records = await Record.findAll({
+          where: whereClauseForRecord,
+          raw: true,
+        });
+
+        // Calculate remainingAmount for each budget
+        budget["remainingAmount"] = +budget.amount;
+        for (const record of records) {
+          if (record.type == "INCOME") {
+            budget["remainingAmount"] = +budget["remainingAmount"] + +record.amount;
+          } else if (record.type == "EXPENSE") {
+            budget["remainingAmount"] = +budget["remainingAmount"] - +record.amount;
+          }
         }
-        whereClauseForRecord['datetime'] = {
-            [Op.between]: [startDate, endDate], 
-        }
-        
-      }
-  
-      const records = await Record.findAll({
-        where:whereClauseForRecord,
-        raw:true
       })
-      budget['remainingAmount'] = +budget.amount
-      for (const record of records) {
-        if(record.type == 'INCOME'){
-          budget['remainingAmount'] = (+budget['remainingAmount']) + (+record.amount)
-        }else if(record.type == 'EXPENSE'){
-          budget['remainingAmount'] = (+budget['remainingAmount']) - (+record.amount)
-        }
-      }
-      
-    }))
+    );
+
+    // If the user requests sending a WhatsApp message
     if (req.body.sendWhatsAppMessage) {
-      const msgRes = await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(budgets))
+      const msgRes = await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(budgets));
     }
 
+    // Return the filtered budgets
     return res.status(200).json(budgets);
   } catch (error) {
     if (req.body.sendWhatsAppMessage) {
-      const msgRes = await sendWhatsAppMessage(req.user.phoneNumber, "Error fetching budgets")
+      await sendWhatsAppMessage(req.user.phoneNumber, "Error fetching budgets");
     }
     console.log("Error fetching budgets:", error);
     next(error);
   }
 };
+
+
+
 
 exports.getBudgetById = async (req, res, next) => {
   const { id } = req.params;

@@ -243,9 +243,76 @@ exports.deleteRecord = async (req, res, next) => {
 
 
 
+// exports.getAllRecords = async (req, res, next) => {
+//   try {
+//     const { userId, amount, category, type, isTemplate, createdAt, paymentType } = req.query;
+//     let whereClause = {};
+
+//     // Check if `isTemplate` is provided in the query
+//     if (isTemplate) {
+//       whereClause.isTemplate = isTemplate;
+//     }
+
+//     // Apply filters based on other query parameters
+//     if (userId) {
+//       whereClause.userId = userId;
+//     }
+
+//     if (amount) {
+//       whereClause.amount = amount;
+//     }
+
+//     if (type) {
+//       whereClause.type = type; // Filter by record type (INCOME or EXPENSE)
+//     }
+
+//     if (paymentType) {
+//       whereClause.paymentType = paymentType; // Filter by payment type
+//     }
+
+//     // Apply filtering based on createdAt
+//     if (createdAt) {
+//       whereClause["createdAt"] = sequelize.literal(`CAST("Record"."createdAt" AS DATE) = '${createdAt}'`);
+//     }
+
+//     if (category) {
+//       whereClause["$Category.name$"] = category; // Filter by associated category name
+//     }
+
+//     // Fetch records with filters and include associated models
+//     const records = await Record.findAll({
+//       attributes: ["id", "name", "amount", "currency", "note", "paymentType", "warranty", "status", "datetime","type"],
+//       where: whereClause,
+//       include: [
+//         {
+//           attributes: ["id", "name", "bankAccountNumber", "initialValue", "currentValue"],
+//           model: Account,
+//           as: "Account",
+//         },
+//         {
+//           attributes: ["name"],
+//           model: Category,
+//           as: "Category",
+//         },
+//         {
+//           attributes: ["name"],
+//           model: Label,
+//           as: "Labels",
+//         },
+//       ],
+//     });
+//     if (req.body.sendWhatsAppMessage) {
+//       await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(records))
+//     }
+//     return res.status(200).json(records);
+//   } catch (error) {
+//     console.log("Error fetching records:", error);
+//     next(error);
+//   }
+// };
 exports.getAllRecords = async (req, res, next) => {
   try {
-    const { userId, amount, category, type, isTemplate, createdAt, paymentType } = req.query;
+    const { userId, amount, category, type, isTemplate, createdAt, paymentType, startDate, endDate, fromDate, toDate } = req.query;
     let whereClause = {};
 
     // Check if `isTemplate` is provided in the query
@@ -270,9 +337,36 @@ exports.getAllRecords = async (req, res, next) => {
       whereClause.paymentType = paymentType; // Filter by payment type
     }
 
-    // Apply filtering based on createdAt
+    // Apply filtering based on createdAt (to and from filtering)
     if (createdAt) {
       whereClause["createdAt"] = sequelize.literal(`CAST("Record"."createdAt" AS DATE) = '${createdAt}'`);
+    } else if (fromDate && toDate) {
+      whereClause["createdAt"] = {
+        [Op.between]: [fromDate, toDate], // From and To filtering for createdAt
+      };
+    } else if (fromDate) {
+      whereClause["createdAt"] = {
+        [Op.gte]: fromDate, // Greater than or equal to fromDate
+      };
+    } else if (toDate) {
+      whereClause["createdAt"] = {
+        [Op.lte]: toDate, // Less than or equal to toDate
+      };
+    }
+
+    // Apply filtering based on startDate and endDate for the `datetime` field
+    if (startDate && endDate) {
+      whereClause["datetime"] = {
+        [Op.between]: [startDate, endDate],
+      };
+    } else if (startDate) {
+      whereClause["datetime"] = {
+        [Op.gte]: startDate, // Greater than or equal to startDate
+      };
+    } else if (endDate) {
+      whereClause["datetime"] = {
+        [Op.lte]: endDate, // Less than or equal to endDate
+      };
     }
 
     if (category) {
@@ -281,7 +375,7 @@ exports.getAllRecords = async (req, res, next) => {
 
     // Fetch records with filters and include associated models
     const records = await Record.findAll({
-      attributes: ["id", "name", "amount", "currency", "note", "paymentType", "warranty", "status", "datetime"],
+      attributes: ["id", "name", "amount", "currency", "note", "paymentType", "warranty", "status", "datetime", "type"],
       where: whereClause,
       include: [
         {
@@ -301,15 +395,21 @@ exports.getAllRecords = async (req, res, next) => {
         },
       ],
     });
+
     if (req.body.sendWhatsAppMessage) {
-      await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(records))
+      await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(records));
     }
+
     return res.status(200).json(records);
   } catch (error) {
     console.log("Error fetching records:", error);
     next(error);
   }
 };
+
+
+
+
 
 
 
