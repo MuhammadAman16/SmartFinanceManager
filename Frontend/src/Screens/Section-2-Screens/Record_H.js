@@ -25,7 +25,7 @@ const Record_H = (props) => {
   const [showEndPicker, setShowEndPicker] = useState(false);
   const [transactions, setTransactions] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [timePeriod, setTimePeriod] = useState("0");
+  const [timePeriod, setTimePeriod] = useState("7D");
 
   const formatDate = (timePeriod) => {
     const today = new Date();
@@ -34,6 +34,7 @@ const Record_H = (props) => {
 
     switch (unit) {
       case 'D':
+        console.log("In the D section");
         today.setDate(today.getDate() - value);
         break;
       case 'W':
@@ -56,8 +57,8 @@ const Record_H = (props) => {
     setIsLoading(true);
     try {
       const startDate = formatDate(timePeriod);
-      // console.log("The Date is : ", startDate);
-      const result = await user_api.get(`record?userId=${user.id}&createdAt=${startDate}`);
+      console.log("The Date is : ", startDate);
+      const result = await user_api.get(`record?userId=${user.id}&fromDate=${startDate}`);
       // console.log("The records are : ", result.data);
       setTransactions(result.data);
       // console.log(result.data.Category);
@@ -149,7 +150,7 @@ const Record_H = (props) => {
                 fontWeight: '500'
               }}
             >
-              {item.Category.name}
+              { item.Category ? item.Category.name : 'null'}
             </Text>
             <Text
               style={{
@@ -157,7 +158,7 @@ const Record_H = (props) => {
                 color: 'rgb(128, 128, 128)'
               }}
             >
-              {item.Account.name}
+              {item.Account ? item.Account.name : 'null'}
             </Text>
           </View>
           <View>
@@ -203,7 +204,7 @@ const Record_H = (props) => {
                 color: 'rgb(128, 128, 128)'
               }}
             >
-              {item.createdAt.split("T")[0]}
+              {item?.datetime ? item.datetime.split("T")[0] : null}
             </Text>
           </View>
         </View>

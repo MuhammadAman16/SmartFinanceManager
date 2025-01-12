@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useBudget } from '@/app/context/BudgetContext';
 import { View, Text, StyleSheet, ScrollView, Dimensions, Alert, ActivityIndicator } from 'react-native';
 import { PieChart, BarChart, LineChart } from 'react-native-chart-kit';
@@ -12,6 +12,7 @@ import {
 } from 'react-native-responsive-linechart';
 import styles from '@/src/components/Styling/Stlyes';
 import user_api from '@/app/api/user_api';
+import { AuthContext } from '@/app/context/AuthContext';
 
 const screenWidth = Dimensions.get('window').width;
 // Sample Budget Data
@@ -217,6 +218,7 @@ const BudgetDetail = (props) => {
   };
 
   const { budgetId } = props.route.params;
+  const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [budgets, setBudget] = useState({});
   const { totalIncome, totalExpenses } = calculateAmountSpent();
@@ -225,12 +227,33 @@ const BudgetDetail = (props) => {
     value: {},
     position: { x: 0, y: 0 },
   });
+  const [budgetCategories, setBudgetCategories] = useState();
+  // const [incomeRecords, setIncomeRecords] = useState()
 
-  const fetchBudgetById = async () => {
+  // const fetchBudgetById = async () => {
+  //   try {
+  //     const res = await user_api.get(`budget/${budgetId}`)
+  //     setBudget(res.data);
+  //     setBudgetCategories(res.data.Categories.map(cat => ({
+
+  //     })))
+  //   } catch (error) {
+  //     if (error.response) {
+  //       Alert.alert(`Error: ${error.response.data.error}`);
+  //     } else if (error.request) {
+  //       console.log('No response from server');
+  //     } else {
+  //       console.log('Error: ', error.error);
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
+
+  const fetchIncome = async () => {
     try {
-      const res = await user_api.get(`budget/${budgetId}`)
-      setBudget(res.data);
-      // console.log(res.data);
+      const result = await user_api.get(`record?userId=${user.id}&type=INCOME&category`);
+
     } catch (error) {
       if (error.response) {
         Alert.alert(`Error: ${error.response.data.error}`);
@@ -239,8 +262,6 @@ const BudgetDetail = (props) => {
       } else {
         console.log('Error: ', error.error);
       }
-    } finally {
-      setLoading(false);
     }
   }
 
