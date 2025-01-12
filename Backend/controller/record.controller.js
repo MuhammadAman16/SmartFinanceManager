@@ -312,7 +312,7 @@ exports.deleteRecord = async (req, res, next) => {
 // };
 exports.getAllRecords = async (req, res, next) => {
   try {
-    const { userId, amount, category, type, isTemplate, createdAt, paymentType, startDate, endDate } = req.query;
+    const { userId, amount, category, type, isTemplate, createdAt, paymentType, startDate, endDate, fromDate, toDate } = req.query;
     let whereClause = {};
 
     // Check if `isTemplate` is provided in the query
@@ -340,17 +340,17 @@ exports.getAllRecords = async (req, res, next) => {
     // Apply filtering based on createdAt (to and from filtering)
     if (createdAt) {
       whereClause["createdAt"] = sequelize.literal(`CAST("Record"."createdAt" AS DATE) = '${createdAt}'`);
-    } else if (req.query.fromDate && req.query.toDate) {
+    } else if (fromDate && toDate) {
       whereClause["createdAt"] = {
-        [Op.between]: [req.query.fromDate, req.query.toDate], // From and To filtering for createdAt
+        [Op.between]: [fromDate, toDate], // From and To filtering for createdAt
       };
-    } else if (req.query.fromDate) {
+    } else if (fromDate) {
       whereClause["createdAt"] = {
-        [Op.gte]: req.query.fromDate, // Greater than or equal to fromDate
+        [Op.gte]: fromDate, // Greater than or equal to fromDate
       };
-    } else if (req.query.toDate) {
+    } else if (toDate) {
       whereClause["createdAt"] = {
-        [Op.lte]: req.query.toDate, // Less than or equal to toDate
+        [Op.lte]: toDate, // Less than or equal to toDate
       };
     }
 
@@ -406,6 +406,7 @@ exports.getAllRecords = async (req, res, next) => {
     next(error);
   }
 };
+
 
 
 
