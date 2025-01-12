@@ -110,9 +110,10 @@ async function addDataToPinecone() {
       "How much is allocated for charitable donations?",
     ],
     get_u_name: [
+      "what is my name",
       "What is my registered name?",
       "What's the name I used to sign up?",
-      "What name did I register with?",
+      "What is my full name?",
       "Can you find my name linked to the account?",
       "Please tell me the name I registered with.",
       "What name is associated with my profile?",
@@ -242,6 +243,7 @@ async function addDataToPinecone() {
       "update my account name to 'Amina'",
       "change my display name to 'Suleman'",
       "make my name 'Hafsa'",
+      "change my fullname to Qasim",
     ],
     update_pass: [
       "update my password to '123456'",
@@ -594,6 +596,8 @@ async function addDataToPinecone() {
       "266",
       "267",
       "268",
+      "269",
+      "270",
     ],
   });
 }
