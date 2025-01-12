@@ -1,10 +1,18 @@
 const { Budget } = require("../models");
-const { BudgetCategory, BudgetLabel, Category, Label ,BudgetAccounts,Account,Record } = require("../models");
+const {
+  BudgetCategory,
+  BudgetLabel,
+  Category,
+  Label,
+  BudgetAccounts,
+  Account,
+  Record,
+} = require("../models");
 const { errorHandler } = require("../utils/errorHandler");
-const { Op, literal } = require('sequelize');
-const {sequelize} = require("../models")
-const moment = require('moment');
-const { sendWhatsAppMessage } = require("../services/messaging.service")
+const { Op, literal } = require("sequelize");
+const { sequelize } = require("../models");
+const moment = require("moment");
+const { sendWhatsAppMessage } = require("../services/messaging.service");
 // exports.getAllBudgets = async (req, res, next) => {
 //   try {
 //     const { startDate, endDate, createdAt, to, from, userId, category,amount,period } = req.query;
@@ -74,7 +82,7 @@ const { sendWhatsAppMessage } = require("../services/messaging.service")
 //           [Op.in]:budget.Categories.map(category => category.id)
 //         },
 //       }
-  
+
 //       if(budget.period == 'One-time'){
 //         whereClauseForRecord['datetime'] = {
 //           [Op.between]:[budget.startDate,budget.endDate]
@@ -82,8 +90,8 @@ const { sendWhatsAppMessage } = require("../services/messaging.service")
 //       }else{
 //         let startDate,endDate
 //         if(budget.period == 'Week'){
-//           startDate = moment(budget.createdAt).startOf('week').toDate(); 
-//           endDate = moment(budget.createdAt).endOf('week').toDate();  
+//           startDate = moment(budget.createdAt).startOf('week').toDate();
+//           endDate = moment(budget.createdAt).endOf('week').toDate();
 //         }else if (budget.period === 'Month') {
 //           startDate = moment(budget.createdAt).startOf('month').toDate();
 //           endDate = moment(budget.createdAt).endOf('month').toDate();
@@ -92,11 +100,11 @@ const { sendWhatsAppMessage } = require("../services/messaging.service")
 //           endDate = moment(budget.createdAt).endOf('year').toDate();
 //         }
 //         whereClauseForRecord['datetime'] = {
-//             [Op.between]: [startDate, endDate], 
+//             [Op.between]: [startDate, endDate],
 //         }
-        
+
 //       }
-  
+
 //       const records = await Record.findAll({
 //         where:whereClauseForRecord,
 //         raw:true
@@ -109,7 +117,7 @@ const { sendWhatsAppMessage } = require("../services/messaging.service")
 //           budget['remainingAmount'] = (+budget['remainingAmount']) - (+record.amount)
 //         }
 //       }
-      
+
 //     }))
 //     if (req.body.sendWhatsAppMessage) {
 //       const msgRes = await sendWhatsAppMessage(req.user.phoneNumber, JSON.stringify(budgets))
@@ -124,9 +132,20 @@ const { sendWhatsAppMessage } = require("../services/messaging.service")
 //     next(error);
 //   }
 // };
+
 exports.getAllBudgets = async (req, res, next) => {
   try {
-    const { startDate, endDate, createdAt, to, from, userId, category, amount, period } = req.query;
+    const {
+      startDate,
+      endDate,
+      createdAt,
+      to,
+      from,
+      userId,
+      category,
+      amount,
+      period,
+    } = req.query;
 
     let whereClause = {};
 
@@ -135,36 +154,18 @@ exports.getAllBudgets = async (req, res, next) => {
     if (from) fromDate = new Date(from);
     if (to) toDate = new Date(to);
 
+    // Apply direct date comparisons instead of LIKE
     if (startDate) {
-      whereClause[Op.and] = [
-        ...(whereClause[Op.and] || []),
-        sequelize.where(
-          sequelize.cast(sequelize.col("Budget.startDate"), "TEXT"),
-          { [Op.like]: `${startDate}%` }
-        )
-      ];
+      whereClause.startDate = startDate;
     }
-    
+
     if (endDate) {
-      whereClause[Op.and] = [
-        ...(whereClause[Op.and] || []),
-        sequelize.where(
-          sequelize.cast(sequelize.col("Budget.endDate"), "TEXT"),
-          { [Op.like]: `${endDate}%` }
-        )
-      ];
+      whereClause.endDate = endDate;
     }
-    
+
     if (createdAt) {
-      whereClause[Op.and] = [
-        ...(whereClause[Op.and] || []),
-        sequelize.where(
-          sequelize.cast(sequelize.col("Budget.createdAt"), "TEXT"),
-          { [Op.like]: `${createdAt}%` }
-        )
-      ];
+      whereClause.createdAt = createdAt;
     }
-    
 
     // Apply filtering based on fromDate and toDate for createdAt
     if (fromDate && toDate) {
@@ -176,21 +177,18 @@ exports.getAllBudgets = async (req, res, next) => {
     if (userId) {
       whereClause.userId = userId;
     }
+
     if (amount) {
       whereClause.amount = amount;
     }
+
+    // Keep LIKE for ENUM-based period filtering
+    // Apply LIKE operator for period filtering
     if (period) {
-      whereClause[Op.and] = [
-        ...(whereClause[Op.and] || []),
-        sequelize.where(
-          sequelize.cast(sequelize.col("Budget.period"), "TEXT"),
-          {
-            [Op.like]: `%${period}%`
-          }
-        )
-      ];
+      whereClause.period = {
+        [Op.like]: `%${period}%`,
+      };
     }
-    
 
     if (category) {
       whereClause["$Categories.name$"] = {
@@ -287,77 +285,77 @@ exports.getAllBudgets = async (req, res, next) => {
   }
 };
 
-
-
 exports.getBudgetById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    
-    const budget = JSON.parse(JSON.stringify(await Budget.findByPk(id, {
-      include: [
-        {
-          model: Category,
-          as: "Categories", // Use the alias you provided in your association
-        },
-        {
-          model: Label,
-          as: "Labels",
-        },
-        {
-          model: Account,
-          as: "Accounts",
-        },
-      ],
-    })));
+    const budget = JSON.parse(
+      JSON.stringify(
+        await Budget.findByPk(id, {
+          include: [
+            {
+              model: Category,
+              as: "Categories", // Use the alias you provided in your association
+            },
+            {
+              model: Label,
+              as: "Labels",
+            },
+            {
+              model: Account,
+              as: "Accounts",
+            },
+          ],
+        })
+      )
+    );
     if (!budget) {
       return next(errorHandler(404, "Budget not found"));
     }
 
     const whereClauseForRecord = {
-      userId:budget.userId,
-      isTemplate:'No',
+      userId: budget.userId,
+      isTemplate: "No",
       accountId: {
-        [Op.in]:budget.Accounts.map(account => account.id)
+        [Op.in]: budget.Accounts.map((account) => account.id),
       },
-      categoryId:{
-        [Op.in]:budget.Categories.map(category => category.id)
+      categoryId: {
+        [Op.in]: budget.Categories.map((category) => category.id),
       },
-    }
+    };
 
-    if(budget.period == 'One-time'){
-      whereClauseForRecord['datetime'] = {
-        [Op.between]:[budget.startDate,budget.endDate]
+    if (budget.period == "One-time") {
+      whereClauseForRecord["datetime"] = {
+        [Op.between]: [budget.startDate, budget.endDate],
+      };
+    } else {
+      let startDate, endDate;
+      if (budget.period == "Week") {
+        startDate = moment(budget.createdAt).startOf("week").toDate();
+        endDate = moment(budget.createdAt).endOf("week").toDate();
+      } else if (budget.period === "Month") {
+        startDate = moment(budget.createdAt).startOf("month").toDate();
+        endDate = moment(budget.createdAt).endOf("month").toDate();
+      } else if (budget.period === "Year") {
+        startDate = moment(budget.createdAt).startOf("year").toDate();
+        endDate = moment(budget.createdAt).endOf("year").toDate();
       }
-    }else{
-      let startDate,endDate
-      if(budget.period == 'Week'){
-        startDate = moment(budget.createdAt).startOf('week').toDate(); 
-        endDate = moment(budget.createdAt).endOf('week').toDate();  
-      }else if (budget.period === 'Month') {
-        startDate = moment(budget.createdAt).startOf('month').toDate();
-        endDate = moment(budget.createdAt).endOf('month').toDate();
-      }else if (budget.period === 'Year') {
-        startDate = moment(budget.createdAt).startOf('year').toDate();
-        endDate = moment(budget.createdAt).endOf('year').toDate();
-      }
-      whereClauseForRecord['datetime'] = {
-          [Op.between]: [startDate, endDate], 
-      }
-      console.log("budget.period",budget.period)
-      
+      whereClauseForRecord["datetime"] = {
+        [Op.between]: [startDate, endDate],
+      };
+      console.log("budget.period", budget.period);
     }
 
     const records = await Record.findAll({
-      where:whereClauseForRecord,
-      raw:true
-    })
-    budget['remainingAmount'] = +budget.amount
+      where: whereClauseForRecord,
+      raw: true,
+    });
+    budget["remainingAmount"] = +budget.amount;
     for (const record of records) {
-      if(record.type == 'INCOME'){
-        budget['remainingAmount'] = (+budget['remainingAmount']) + (+record.amount)
-      }else if(record.type == 'EXPENSE'){
-        budget['remainingAmount'] = (+budget['remainingAmount']) - (+record.amount)
+      if (record.type == "INCOME") {
+        budget["remainingAmount"] = +budget["remainingAmount"] + +record.amount;
+      } else if (record.type == "EXPENSE") {
+        budget["remainingAmount"] = +budget["remainingAmount"] - +record.amount;
       }
     }
 
@@ -383,7 +381,14 @@ exports.createBudget = async (req, res, next) => {
   } = req.body;
 
   // Validation
-  if (!name || !period || !amount || !currency || !accountIds?.length || !userId) {
+  if (
+    !name ||
+    !period ||
+    !amount ||
+    !currency ||
+    !accountIds?.length ||
+    !userId
+  ) {
     return next(
       errorHandler(
         400,
@@ -419,7 +424,7 @@ exports.createBudget = async (req, res, next) => {
       await BudgetLabel.bulkCreate(BudgetLabelPayload);
     }
 
-    if(accountIds?.length){
+    if (accountIds?.length) {
       const BudgetAccountsPayload = accountIds.map((id) => {
         return { budgetId: newBudget.id, accountId: id };
       });
