@@ -26,7 +26,10 @@ exports.getResponse = async (req, res, next) => {
       model = await initializeModel();
     }
   } catch (error) {
-    console.error("-----------------------Error connecting to Gemini: --------------------------", error);
+    console.error(
+      "-----------------------Error connecting to Gemini: --------------------------",
+      error
+    );
     return res.status(500).json({ error: "Failed connecting to Gemini" });
   }
   const trimmedResult = result.replace(/"/g, "");
@@ -125,22 +128,16 @@ Query:
         Output: {
           "currentPassword": "oldpass456",
           "newPassword": "mypassword123"
-        }
+        }  
+    Here is the Query:
+    ${query}
       `;
   const updateNamePrompt = `
-      Extract the name parameter from the given user query. The name will follow phrases like "Change my name to", "Set my name as", or similar variations. If the name is found, return it in this format:
+    Extract the name parameter from the given user query. The name will follow phrases like "Change my name to", "Set my name as", or similar variations. If the name is found, return it in this format:
     {"fullName": "extractedName"}
     If the query does not contain a name, respond with an empty JSON object ({}).
-    Ensure to trim any extra spaces around the extracted name.
-    Examples:
-    Query: "Change my name to John Doe" Response: {"fullName": "John Doe"}
-    Query: "Set my name as Alice Smith" Response: {"fullName": "Alice Smith"}
-    Query: "Change name" Response: {}
-    Query: "Update name to" Response: {}
-    Rules for extraction:
-    The name starts after phrases like "to", "as", or similar keywords.
-    Handle cases where the input query may contain extra spaces, punctuation, or incomplete phrases.
-    only return a json nothing else!!!
+    Here is the Query:
+    ${query}
     `;
   const getAccPrompt = `Extract parameters, if any, from the given user query. If no parameters exist, return an empty JSON object {}. The response must be a JSON object where keys are in camelCase and the values are the corresponding extracted parameters. For example:
     {
@@ -169,25 +166,28 @@ Query:
       const cleanedResponse = paramsResponse.response
         .text()
         .replace(/```.*?\n/g, "");
-      console.log(cleanedResponse);
-      if (cleanedResponse) {
-        params = JSON.parse(cleanedResponse);
-      }
+      params = JSON.parse(cleanedResponse);
     }
 
     if (trimmedResult == "get_budget") {
       await getParams(budgetPrompt);
       req.query = { ...req.query, ...params };
-      console.log(":- get budget 1 -------------------------------------------------")
+      console.log(
+        ":- get budget 1 -------------------------------------------------"
+      );
       data = await getAllBudgets(req, res, next);
     } else if (trimmedResult == "get_exp") {
       await getParams(getRecPrompt);
       req.query = { ...req.query, ...params, type: "EXPENSE" };
-      console.log(":- get records 2 -------------------------------------------------")
+      console.log(
+        ":- get records 2 -------------------------------------------------"
+      );
       data = await getAllRecords(req, res);
     } else if (trimmedResult == "get_inc") {
       req.query = { ...req.query, ...params, type: "INCOME" };
-      console.log(":- get records 3 -------------------------------------------------")
+      console.log(
+        ":- get records 3 -------------------------------------------------"
+      );
       data = await getAllRecords(req, res);
     } else if (trimmedResult == "get_u_name") {
       if (req.user) {
@@ -208,20 +208,29 @@ Query:
       };
     } else if (trimmedResult == "get_trans") {
       if (req.user) {
-        console.log(":- get records 3 -------------------------------------------------")
+        console.log(
+          ":- get records 3 -------------------------------------------------"
+        );
         data = await getAllRecords(req, res);
         req.query = { ...req.query, ...params };
       }
     } else if (trimmedResult == "create_record") {
       await getParams(createRecPrompt);
-      req.body = { userId: req.user.id, isTemplate: "No", ...params, ...req.body };
-      console.log(":- create records -------------------------------------------------")
+      req.body = {
+        userId: req.user.id,
+        isTemplate: "No",
+        ...params,
+        ...req.body,
+      };
+      console.log(
+        ":- create records -------------------------------------------------"
+      );
       data = await createRecord(req, res, next);
     } else if (trimmedResult == "update_pass") {
       await getParams(updatePassPrompt);
       if (params.currentPassword && params.newPassword) {
         req.body = { userId: req.user.id, ...params, ...req.body };
-        console.log(":-----------------update password")
+        console.log(":-----------------update password");
         data = await updatePassword(req, res, next);
       } else {
         data = { response: "Please provide both current and new password" };
@@ -230,7 +239,9 @@ Query:
       await getParams(updateNamePrompt);
       if (params.fullName) {
         req.body = { userId: req.user.id, ...params, ...req.body };
-        console.log(":--------------------------update fullname ---------------------------")
+        console.log(
+          ":--------------------------update fullname ---------------------------"
+        );
         data = await updateFullName(req, res, next);
       } else {
         data = { response: "Please provide the new user name" };
@@ -238,8 +249,11 @@ Query:
     } else if (trimmedResult == "get_acc") {
       await getParams(getAccPrompt);
       console.log(params);
+
       req.query = { userId: req.user.id, ...params };
-      console.log(":- get all acounts -------------------------------------------")
+      console.log(
+        ":- get all acounts -------------------------------------------"
+      );
       await getAllAccounts(req, res, next);
     } else {
       const result = await model.generateContent(query);
@@ -248,7 +262,10 @@ Query:
     if (
       trimmedResult == "get_u_pass" ||
       trimmedResult == "get_u_email" ||
-      trimmedResult == "get_u_name"
+      trimmedResult == "get_u_name" ||
+      (trimmedResult == "update_name" && !params.fullName) ||
+      (trimmedResult == "update_pass" &&
+        !(params.currentPassword && params.newPassword))
     ) {
       return res.status(200).send(data);
     }
