@@ -56,6 +56,14 @@ export const BudgetProvider = ({ children }) => {
         }
     }
 
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         if (user)
+    //         {
+    //             fetchAllBudget();
+    //         }
+    //     }, [])
+    // );
     useEffect(() => {
         if (user) {
             fetchAllBudget();

@@ -6,6 +6,7 @@ import LabelScreen from './LabelScreen';
 import React from 'react'
 import { Feather } from '@expo/vector-icons';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import EditBudget from './EditBudget';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +22,7 @@ const BudgetScreen = () => {
             <Stack.Screen name='Your Budgets' component={OngoingBudget} />
             <Stack.Screen name='Budget Detail' component={BudgetDetail} />
             <Stack.Screen name='New Budget' component={BudgetCreation} />
+            <Stack.Screen name='Edit Budget' component={EditBudget} />
             <Stack.Screen
                 name="Select Categories"
                 component={CategoriesScreen}

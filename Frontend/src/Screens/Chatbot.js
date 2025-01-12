@@ -11,18 +11,18 @@ import {
   KeyboardAvoidingView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-// import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import user_api from '@/app/api/user_api';
 import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import styles from '../components/Styling/Stlyes';
 import DisplayBudgetTable from '../components/ChatBot/DisplayBudgetTable';
-// import DisplayBudgetTable_2 from '../components/ChatBot/DisplayBudgetTable_2';
+import DisplayBudgetTable_2 from '../components/ChatBot/DisplayBudgetTable_2';
 import { AccountContext } from '@/app/context/AccountContext';
 import Voice from '@react-native-voice/voice';
 
-// const audioRecorderPlayer = new AudioRecorderPlayer();
+const audioRecorderPlayer = new AudioRecorderPlayer();
 
 const TypingIndicator = () => {
   const dot1 = new Animated.Value(0);
@@ -61,8 +61,6 @@ const ChatScreen = () => {
   const FlatListRef = useRef(null);
   const navigation = useNavigation();
   const { activeAccount } = useContext(AccountContext);
-  const [result, setResult] = useState("");
-  const [error, setError] = useState("");
 
   const dotOpacity = new Animated.Value(1);
 
@@ -88,87 +86,65 @@ const ChatScreen = () => {
   }, [isListening]);
 
 
-  Voice.onSpeechStart = () => setIsListening(true);
-  Voice.onSpeechError = () => setIsListening(false);
-  Voice.onSpeechError = err => setError(err.error);
-  Voice.onSpeechResults = (result) => setResult(result.value[0]);
+  useEffect(() => {
+    Voice.onSpeechStart = onSpeechStart;
+    Voice.onSpeechEnd = stopListning;
+    Voice.onSpeechResults = onSpeechResults;
+    Voice.onSpeechError = error => console.log('onspeecherror:', error);
 
-  const startRecording = async () => {
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    }
+  }, [isListening]);
+
+  useEffect(() => {
+    if (FlatListRef.current) {
+      FlatListRef.current.scrollToEnd({ animated: true })
+    }
+    // console.log("ChatBot : ", activeAccount);
+  }, [messages])
+
+  const onSpeechStart = event => {
+    console.log('recording start', event);
+  };
+
+  const startListning = () => {
+    setIsListening(true)
     try {
-      await Voice.start('en-US');
-    } catch (error) {
-      console.log(error);
+      console.log("Listening");
+    }
+    catch (error) {
+      console.log('start listning', error)
     }
   }
-
-  const stopRecording = async () => {
-    try {
-      await Voice.stop();
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-
-  // useEffect(() => {
-  //   Voice.onSpeechStart = onSpeechStart;
-  //   Voice.onSpeechEnd = stopListning;
-  //   Voice.onSpeechResults = onSpeechResults;
-  //   Voice.onSpeechError = error => console.log('onspeecherror:', error);
-
-  //   return () => {
-  //     Voice.destroy().then(Voice.removeAllListeners);
-  //   }
-  // }, [isListening]);
-
-  // useEffect(() => {
-  //   if (FlatListRef.current) {
-  //     FlatListRef.current.scrollToEnd({ animated: true })
-  //   }
-  //   // console.log("ChatBot : ", activeAccount);
-  // }, [messages])
-
-  // const onSpeechStart = event => {
-  //   console.log('recording start', event);
-  // };
-
-  // const startListning = () => {
+  // const startListning = async () => {
   //   setIsListening(true)
   //   try {
-  //     console.log("Listening");
+  //     await Voice.start('en-US');
   //   }
   //   catch (error) {
   //     console.log('start listning', error)
   //   }
   // }
-  // // const startListning = async () => {
-  // //   setIsListening(true)
-  // //   try {
-  // //     await Voice.start('en-US');
-  // //   }
-  // //   catch (error) {
-  // //     console.log('start listning', error)
-  // //   }
-  // // }
 
-  // const stopListning = async () => {
-  //   try {
-  //     Voice.removeAllListeners;
-  //     await Voice.stop()
-  //     setIsListening(false)
+  const stopListning = async () => {
+    try {
+      Voice.removeAllListeners;
+      await Voice.stop()
+      setIsListening(false)
 
-  //   }
-  //   catch (error) {
-  //     console.log('stop listning', error)
-  //   }
-  // }
+    }
+    catch (error) {
+      console.log('stop listning', error)
+    }
+  }
 
 
-  // const onSpeechResults = event => {
-  //   console.log('on speech result', event)
-  //   const text = event.value[0]
-  //   setInputMessage(text)
-  // };
+  const onSpeechResults = event => {
+    console.log('on speech result', event)
+    const text = event.value[0]
+    setInputMessage(text)
+  };
 
   const sendMessage = async () => {
     if (inputMessage.trim().length === 0) return;
@@ -205,13 +181,13 @@ const ChatScreen = () => {
             // console.log("Inside The Budget");
             const data = Botresponse.map((budget) => {
               return {
-                name: budget.name,
-                amount: budget.amount,
-                period: budget.period,
-                currency: budget.currency,
-                startDate: budget.startDate.split("T")[0],
-                endDate: budget.endDate.split("T")[0],
-                remainingAmount: budget.remainingAmount
+                name: budget?.name || 'null',
+                amount: budget?.amount || 'null',
+                period: budget?.period || 'null',
+                currency: budget?.currency || 'null',
+                startDate: budget?.startDate?.split("T")[0] || 'null',
+                endDate: budget?.endDate?.split("T")[0] || 'null',
+                remainingAmount: budget?.remainingAmount || 'null'
               };
             })
             setMessages((prevMessage) => [
@@ -219,62 +195,42 @@ const ChatScreen = () => {
               { id: Math.random().toString(), component: <DisplayBudgetTable data={data} />, sender: 'bot' }
             ])
           } else if ('type' in Botresponse[0]) {
-            if (Botresponse[0].type === 'INCOME') {
-              const data = Botresponse.map((income) => {
-                return {
-                  name: income.name,
-                  amount: income.amount,
-                  currency: income.currency,
-                  account: income.accountId,
-                  category: income.categoryId,
-                  paymentType: income.paymentType,
-                  created: income.createdAt.split("T")[0],
-                  payee: income.payee,
-                };
-              })
-              setMessages((prevMessage) => [
-                ...prevMessage,
-                { id: Math.random().toString(), component: <DisplayBudgetTable data={data} />, sender: 'bot' }
-              ])
-            } else if (Botresponse[0].type === 'EXPENSE') {
-              const data = Botresponse.map((income) => {
-                return {
-                  name: income.name,
-                  amount: income.amount,
-                  currency: income.currency,
-                  account: income.accountId,
-                  category: income.categoryId,
-                  paymentType: income.paymentType,
-                  created: income.createdAt.split("T")[0],
-                  payee: income.payee,
-                };
-              })
-              setMessages((prevMessage) => [
-                ...prevMessage,
-                { id: Math.random().toString(), component: <DisplayBudgetTable data={data} />, sender: 'bot' }
-              ])
-            }
+            // console.log("Account");
+            const data = Botresponse.map((account) => {
+              return {
+                name: account?.name || 'null',
+                bankAccountNumber: account?.bankAccountNumber || 'null',
+                type: account?.type || 'null',
+                initialValue: account?.initialValue || 'null',
+                currentValue: account?.currentValue || 'null',
+                currency: account?.currency || 'null'
+              }
+            })
+            setMessages((prevMessage) => [
+              ...prevMessage,
+              { id: Math.random().toString(), component: <DisplayBudgetTable data={data} />, sender: 'bot' }
+            ])
+          } else if ('paymentType' in Botresponse[0]) {
+            const data = Botresponse.map((income) => {
+              return {
+                name: income?.name || 'null',
+                amount: income?.amount || 'null',
+                currency: income?.currency || 'null',
+                note: income?.note || 'null',
+                account: income?.Account?.name || 'null',
+                category: income?.Category?.name || 'null',
+                paymentType: income?.paymentType || 'null',
+                warranty: income?.warranty || 'null',
+                status: income?.status || 'null',
+                datetime: income?.datetime?.split("T")[0] || 'null',
+              };
+            })
+            setMessages((prevMessage) => [
+              ...prevMessage,
+              { id: Math.random().toString(), component: <DisplayBudgetTable data={data} />, sender: 'bot' }
+            ])
+
           }
-          // setMessages((prevMessage) => [
-          //   ...prevMessage,
-          //   { id: Math.random().toString(), component: <DisplayBudgetTable data={botResponseData} />, sender: 'bot' }
-          // ])
-          // console.log("The Bot response is : ", botResponseData);
-          // setMessages((prevMessage) => [
-          //   ...prevMessage,
-          //   { id: Math.random().toString(), text: 'Sorry', sender: 'bot' }
-          // ])
-          // if (botResponseData !== undefined) {
-          //   setMessages((prevMessage) => [
-          //     ...prevMessage,
-          //     { id: Math.random().toString(), component: <DisplayBudgetTable data={botResponseData} />, sender: 'bot' }
-          //   ])
-          // } else if (botResponseData === undefined) {
-          //   setMessages((prevMessage) => [
-          //     ...prevMessage,
-          //     { id: Math.random().toString(), text: 'Sorry', sender: 'bot' }
-          //   ])
-          // }
         } else {
           // console.log("ALL BUDGETS");
           setMessages((prevMessages) => [
@@ -354,7 +310,7 @@ const ChatScreen = () => {
             onChangeText={(text) => setInputMessage(text)}
           />
           <TouchableOpacity
-            onPress={isListening ? stopRecording : startRecording}
+            onPress={isListening ? stopListning : startListning}
             style={styles.audioButton}
           >
             {isListening ? (

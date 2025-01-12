@@ -30,7 +30,11 @@ const DisplayBudgetTable = ({ data }) => {
                     {headers.map((key, i) => (
                         <DataTable.Cell
                             key={i}
-                            style={{ paddingHorizontal: 10 }}
+                            style={{
+                                paddingHorizontal: 10,
+                                flexWrap: 'wrap', // Allow text to wrap
+                                flex: 1,          // Ensure flexible width
+                            }}
                             numeric={typeof budget[key] === 'number'}
                         >
                             {budget[key]}

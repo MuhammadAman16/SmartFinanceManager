@@ -4,9 +4,11 @@ import styles from "../Styling/Stlyes";
 import * as Progress from 'react-native-progress';
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import user_api from "@/app/api/user_api";
+import { useNavigation } from "@react-navigation/native";
 
 const Renderitem = ({ item, type }) => {
     const { width: screenWidth } = Dimensions.get('window');
+    const navigation = useNavigation();
 
     const amountspent = item.amount - item.remainingAmount;
     const percentage = ((amountspent / item.amount) * 100).toFixed(2);
@@ -47,7 +49,7 @@ const Renderitem = ({ item, type }) => {
                     {item.name}
                 </Text>
                 <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity onPress={() => console.warn(item.id)} style={{ marginHorizontal: 10 }}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Edit Budget', {itemId : item.id})} style={{ marginHorizontal: 10 }}>
                         <Entypo name="edit" size={24} color={'rgba(56,142,60,255)'} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => deleteBudget(item.id)}>

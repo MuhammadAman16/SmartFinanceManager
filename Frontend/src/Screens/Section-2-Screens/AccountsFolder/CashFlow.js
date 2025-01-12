@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -19,10 +19,15 @@ import {
 } from 'react-native-responsive-linechart';
 import Feather from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
+import user_api from '@/app/api/user_api';
+import { AccountContext } from '@/app/context/AccountContext';
+import { AuthContext } from '@/app/context/AuthContext';
 
 const screenWidth = Dimensions.get('window').width;
 
 function CashFlowChart() {
+  const { activeAccount } = useContext(AccountContext);
+  const { user } = useContext(AuthContext);
   const navigation = useNavigation();
   const [transactions, setTransactions] = useState([
     {
@@ -193,6 +198,50 @@ function CashFlowChart() {
     }
   ]
   )
+  const [acc, setAcc] = useState();
+  const [records, setRecords] = useState();
+
+  const fetchActiveAccount = async () => {
+    try {
+      const result = await user_api.get(`accounts/${activeAccount.id}`);
+      setAcc(result.data);
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`)
+      } else if (error.request) {
+        console.log(`No response from server`);
+      } else {
+        console.log("Error: ", error.error);
+      }
+    }
+  }
+
+  const fetchRecords = async () => {
+    try {
+      const result = await user_api.get(`record?userId=${user.id}`);
+      setRecords(result.data);
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`)
+      } else if (error.request) {
+        console.log(`No response from server`);
+      } else {
+        console.log("Error: ", error.error);
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (activeAccount) { fetchActiveAccount(); }
+  }, [activeAccount])
+
+  useEffect(() => {
+    if (user) { fetchRecords(); }
+  }, [user])
+
+  // useEffect(() => {
+
+  // }, [records])
 
   const today = new Date();
   const past30Days = new Date(today.setDate(today.getDate() - 30));
@@ -388,10 +437,10 @@ function CashFlowChart() {
         <View style={styles.summaryBox}>
           <Text style={styles.summaryHeading}>Cash</Text>
           <Text style={styles.summaryAmount}>
-            $
-            {cashFlowData.length
+            ${acc ? acc?.currentValue : '0.00'}
+            {/* {cashFlowData.length
               ? cashFlowData[cashFlowData.length - 1].cashFlow.toFixed(2)
-              : '0.00'}
+              : '0.00'} */}
           </Text>
         </View>
         <View style={styles.summaryBox}>
