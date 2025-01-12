@@ -182,16 +182,15 @@ exports.getAllBudgets = async (req, res, next) => {
       whereClause.amount = amount;
     }
 
-// Apply LIKE operator for ENUM-based period filtering with casting to text
-if (period) {
-  whereClause['period'] = Sequelize.where(
-    Sequelize.fn('CAST', Sequelize.col('period'), 'TEXT'),
-    {
-      [Op.iLike]: `%${period}%`
+    // Apply LIKE operator for ENUM-based period filtering with casting to text
+    if (period) {
+      whereClause["period"] = Sequelize.where(
+        Sequelize.cast(Sequelize.col("period"), "TEXT"),
+        {
+          [Op.iLike]: `%${period}%`,
+        }
+      );
     }
-  );
-}
-
 
     if (category) {
       whereClause["$Categories.name$"] = {
@@ -287,6 +286,7 @@ if (period) {
     next(error);
   }
 };
+
 
 exports.getBudgetById = async (req, res, next) => {
   const { id } = req.params;
