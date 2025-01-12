@@ -34,26 +34,42 @@ exports.getAllBudgets = async (req, res, next) => {
     if (from) fromDate = new Date(from);
     if (to) toDate = new Date(to);
 
+
+     if (startDate) {
+          whereClause["startDate"] = Sequelize.literal(`CAST("Budget"."startDate" AS DATE) = '${startDate}'`);
+        }
+
+        if (endDate) {
+          whereClause["endDate"] = Sequelize.literal(`CAST("Budget"."endDate" AS DATE) = '${endDate}'`);
+        }
     // Handle startDate and endDate for budget date range filtering
-    if (startDate) {
-      whereClause.startDate = {
-        [Op.gte]: new Date(startDate),  // Greater than or equal to startDate
-      };
-    }
+    // if (startDate) {
+    //   whereClause.startDate = {
+    //     [Op.gte]: new Date(startDate),  // Greater than or equal to startDate
+    //   };
+    // }
 
-    if (endDate) {
-      whereClause.endDate = {
-        [Op.lte]: new Date(endDate),  // Less than or equal to endDate
-      };
-    }
+    // if (endDate) {
+    //   whereClause.endDate = {
+    //     [Op.lte]: new Date(endDate),  // Less than or equal to endDate
+    //   };
+    // }
 
-    // Handle filtering for createdAt based on 'from' and 'to'
-    if (fromDate && toDate) {
-      whereClause.createdAt = {
-        [Op.between]: [fromDate, toDate],
+ // Apply filtering based on createdAt (to and from filtering)
+    if (createdAt) {
+      whereClause["createdAt"] = Sequelize.literal(`CAST("Budget"."createdAt" AS DATE) = '${createdAt}'`);
+    } else if (fromDate && toDate) {
+      whereClause["createdAt"] = {
+        [Op.between]: [fromDate, toDate], // From and To filtering for createdAt
       };
-    } else if (createdAt) {
-      whereClause.createdAt = new Date(createdAt); // Convert createdAt to Date
+    } else if (fromDate) {
+      whereClause["createdAt"] = {
+        [Op.gte]: fromDate, // Greater than or equal to fromDate
+      };
+    } else if (toDate) {
+      whereClause["createdAt"] = {
+        [Op.lte]: toDate, // Less than or equal to toDate
+      };
     }
 
     // Apply other query filters

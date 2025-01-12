@@ -330,7 +330,9 @@ exports.getAllRecords = async (req, res, next) => {
     }
 
     if (type) {
-      whereClause.type = type; // Filter by record type (INCOME or EXPENSE)
+      whereClause.type = {
+        [Op.iLike]: `%${type}%`, // Case-insensitive partial match
+      };
     }
 
     if (paymentType) {
@@ -370,7 +372,9 @@ exports.getAllRecords = async (req, res, next) => {
     }
 
     if (category) {
-      whereClause["$Category.name$"] = category; // Filter by associated category name
+      whereClause["$Category.name$"] = {
+        [Op.iLike]: `%${category}%`, // Case-insensitive partial match
+      };
     }
 
     // Fetch records with filters and include associated models
