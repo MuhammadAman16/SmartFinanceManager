@@ -135,26 +135,36 @@ exports.getAllBudgets = async (req, res, next) => {
     if (from) fromDate = new Date(from);
     if (to) toDate = new Date(to);
 
-    // Apply filtering based on startDate and endDate (with casting to TEXT)
     if (startDate) {
       whereClause[Op.and] = [
-        literal(`CAST("Budget"."startDate" AS TEXT) LIKE '${startDate}%'`)
+        ...(whereClause[Op.and] || []),
+        sequelize.where(
+          sequelize.cast(sequelize.col("Budget.startDate"), "TEXT"),
+          { [Op.like]: `${startDate}%` }
+        )
       ];
     }
+    
     if (endDate) {
       whereClause[Op.and] = [
         ...(whereClause[Op.and] || []),
-        literal(`CAST("Budget"."endDate" AS TEXT) LIKE '${endDate}%'`)
+        sequelize.where(
+          sequelize.cast(sequelize.col("Budget.endDate"), "TEXT"),
+          { [Op.like]: `${endDate}%` }
+        )
       ];
     }
-
-    // Apply filtering based on createdAt (with casting to TEXT)
+    
     if (createdAt) {
       whereClause[Op.and] = [
         ...(whereClause[Op.and] || []),
-        literal(`CAST("Budget"."createdAt" AS TEXT) LIKE '${createdAt}%'`)
+        sequelize.where(
+          sequelize.cast(sequelize.col("Budget.createdAt"), "TEXT"),
+          { [Op.like]: `${createdAt}%` }
+        )
       ];
     }
+    
 
     // Apply filtering based on fromDate and toDate for createdAt
     if (fromDate && toDate) {
@@ -170,10 +180,17 @@ exports.getAllBudgets = async (req, res, next) => {
       whereClause.amount = amount;
     }
     if (period) {
-      whereClause[sequelize.literal(`CAST("Budget"."period" AS TEXT)`)] = {
-        [Op.like]: `%${period}%`,  // Now LIKE works with ENUM
-      };
+      whereClause[Op.and] = [
+        ...(whereClause[Op.and] || []),
+        sequelize.where(
+          sequelize.cast(sequelize.col("Budget.period"), "TEXT"),
+          {
+            [Op.like]: `%${period}%`
+          }
+        )
+      ];
     }
+    
 
     if (category) {
       whereClause["$Categories.name$"] = {
