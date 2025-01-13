@@ -1,12 +1,14 @@
 import { View, Text, ActivityIndicator, Image, ScrollView, Alert } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import user_api from '@/app/api/user_api'
 import styles from '@/src/components/Styling/Stlyes'
 import { Checkbox } from 'react-native-paper'
 import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
+import { AuthContext } from '@/app/context/AuthContext'
 
 
 const CategoriesScreen = ({ navigation, route }) => {
+  const { user } = useContext(AuthContext);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [allChecked, setAllChecked] = useState(true); // State for "All" checkbox
@@ -36,7 +38,7 @@ const CategoriesScreen = ({ navigation, route }) => {
 
   const loadAccounts = async () => {
     try {
-      let res = await user_api.get('accounts');
+      let res = await user_api.get(`accounts?userId=${user.id}`);
       const updatedAccountsList = res.data.map((account) => ({
         ...account,
         checked: selectedAccounts.includes(account.id)
@@ -58,13 +60,18 @@ const CategoriesScreen = ({ navigation, route }) => {
   useEffect(() => {
     if (fieldName === 'Category') {
       loadCategories();
-    }
-    else if (fieldName === 'Account') {
-      loadAccounts();
     } else {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (fieldName === 'Account') {
+      loadAccounts();
+    } else {
+      setLoading(false);
+    }
+  }, [user])
 
   const toggleCategories = (index) => {
     if (fieldName === 'Category') {
@@ -115,7 +122,7 @@ const CategoriesScreen = ({ navigation, route }) => {
     // Update the navigation params with selected categories
     navigation.setParams({ selectedCategories: selectedCategoryIds });
   }, [categories]);
-  
+
   useEffect(() => {
     const checkedAccounts = accounts.filter(account => account.checked);
     const selectedAccountIds = checkedAccounts.map((account) => ({

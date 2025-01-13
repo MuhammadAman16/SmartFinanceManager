@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import user_api from "@/app/api/user_api";
 import { AuthContext } from "@/app/context/AuthContext";
 
-const RenderBudget = ({ item }) => {
+const RenderBudget = ({ item, setIsDeleted }) => {
     const { user } = useContext(AuthContext);
     const [incomes, setIncomes] = useState();
     const [expense, setExpense] = useState();
@@ -60,6 +60,7 @@ const RenderBudget = ({ item }) => {
         try {
             await user_api.delete(`budget/${itemId}`);
             Alert.alert("Operation Successfull");
+            setIsDeleted(true);
         } catch (error) {
             if (error.response) {
                 Alert.alert(`Error: ${error.response.data.error}`);
@@ -102,12 +103,15 @@ const RenderBudget = ({ item }) => {
                     {item?.name || 'Test'}
                 </Text>
                 <View style={{ flexDirection: 'row' }}>
-                    {/* onPress={() => navigation.navigate('Edit Budget', {itemId : item?.id})} */}
-                    <TouchableOpacity style={{ marginHorizontal: 10 }}>
+                    <TouchableOpacity
+                        style={{ marginHorizontal: 10 }}
+                        onPress={() => navigation.navigate('Edit Budget', { itemId: item?.id })}
+                    >
                         <Entypo name="edit" size={24} color={'rgba(56,142,60,255)'} />
                     </TouchableOpacity>
-                    {/* onPress={() => deleteBudget(item.id)} */}
-                    <TouchableOpacity >
+                    <TouchableOpacity
+                        onPress={() => deleteBudget(item.id)}
+                    >
                         <MaterialIcons name="delete" size={24} color={'rgba(56,142,60,255)'} />
                     </TouchableOpacity>
                 </View>

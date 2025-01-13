@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import {
-  View, Text, TouchableOpacity, ActivityIndicator,
+  View, Text, TouchableOpacity,
   StatusBar, StyleSheet, ScrollView, Alert
 } from 'react-native';
 import styles from '@/src/components/Styling/Stlyes';
@@ -8,9 +8,10 @@ import { Feather } from '@expo/vector-icons';
 import user_api from '@/app/api/user_api';
 import { AuthContext } from '@/app/context/AuthContext';
 import RenderBudget from '@/src/components/OnGoingBudget/RenderBudget';
+import { useFocusEffect } from '@react-navigation/native';
 
 
-const OngoingBudget = () => {
+const OngoingBudget = (props) => {
   const { user } = useContext(AuthContext);
   // const [budgetCategories, setBudgetCategories] = useState({
   //   ongoingbudgets: [],
@@ -18,6 +19,7 @@ const OngoingBudget = () => {
   //   unsuccessfulbudgets: []
   // });
   const [allBudgets, setAllBudgets] = useState();
+  const [isDeleted, setIsDeleted] = useState(false);
 
   const fetchAllBudget = async () => {
     try {
@@ -61,9 +63,15 @@ const OngoingBudget = () => {
     }
   }
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchAllBudget();
+    }, [user])
+  );
+
   useEffect(() => {
     fetchAllBudget();
-  }, [user])
+  }, [isDeleted])
 
   // if (loading) {
   //   return (
@@ -96,10 +104,10 @@ const OngoingBudget = () => {
             <View
               key={index}
               style={styles.BudgetButttonStyling}
-            // onPress={() => props.navigation.navigate('Budget Detail',{budgetId: item.id})}
+              // onPress={() => props.navigation.navigate('Budget Detail', { budgetId: item.id })}
             >
               {/* <Text>{item.name}</Text> */}
-              <RenderBudget item={item} />
+              <RenderBudget item={item} setIsDeleted={setIsDeleted}/>
             </View>
           ))
           :

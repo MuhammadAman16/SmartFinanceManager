@@ -21,6 +21,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { AuthContext } from '@/app/context/AuthContext';
 import DateInputField from '@/src/components/OnGoingBudget/DateInputField';
 import moment from 'moment-timezone';
+import { useNavigation } from '@react-navigation/native';
 
 const validationSchema = Yup.object({
     name: Yup.string().trim().min(3, 'Name must be 3 or more').required('Name field is required'),
@@ -61,7 +62,7 @@ const BudgetCreation = (props) => {
     const [accounts, setAccounts] = useState([]);
     const [labels, setLabels] = useState();
     const [loading, setLoading] = useState(true);
-    const { selectedCategories, selectedLabels, selectedAccounts } = props.route.params || [];
+    const { selectedCategories, selectedLabels, selectedAccounts } = props?.route?.params || [];
     const [periodValue, setPeriodValue] = useState('None');
     const [currencyValue, setCurrencyValue] = useState('PKR');
     const [isModalVisible, setModalVisible] = useState({ value: false, modalName: '' });
@@ -124,7 +125,7 @@ const BudgetCreation = (props) => {
 
     const fetchAccounts = async () => {
         try {
-            let res = await user_api.get('accounts');
+            let res = await user_api.get(`accounts?userId=${user.id}`);
             const dataArray = res.data;
             // console.log(res.data);
             const account = dataArray.map(item => ({
