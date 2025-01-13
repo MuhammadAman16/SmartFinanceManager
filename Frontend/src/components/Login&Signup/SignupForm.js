@@ -61,9 +61,9 @@ const SignupForm = () => {
                     const { fullName, email, phoneCode, phoneNumber, password, confirm } = values;
                     return (
                         <>
-                            <FormInput value={fullName} label={'Full Name'} placeHolder={'James Dawson'} onChangeFunction={handleChange('fullName')}
+                            <FormInput value={fullName} label={'Full Name'} onChangeFunction={handleChange('fullName')}
                                 error={touched.fullName && errors.fullName} onBlur={handleBlur('fullName')} />
-                            <FormInput autoCapitalize='none' label={'Email'} placeHolder={'example@example.com'} value={email}
+                            <FormInput autoCapitalize='none' label={'Email'}  value={email}
                                 onChangeFunction={handleChange('email')} onBlur={handleBlur('email')} error={touched.email && errors.email} />
                             <PhoneComponent
                                 phoneCode={phoneCode}
@@ -72,8 +72,8 @@ const SignupForm = () => {
                                 onBlurFunction={handleBlur('phoneNumber')}
                                 error={touched.phoneNumber && errors.phoneNumber}
                             />
-                            <FormInput autoCapitalize='none' label={'Password'} placeHolder={'*******'} secureTextEntry={true} value={password} onChangeFunction={handleChange('password')} onBlur={handleBlur('password')} error={touched.password && errors.password} />
-                            <FormInput autoCapitalize='none' label={'Confirm Password'} placeHolder={'*******'} secureTextEntry={true} value={confirm} onChangeFunction={handleChange('confirm')} onBlur={handleBlur('confirm')} error={touched.confirm && errors.confirm} />
+                            <FormInput autoCapitalize='none' label={'Password'} secureTextEntry={true} value={password} onChangeFunction={handleChange('password')} onBlur={handleBlur('password')} error={touched.password && errors.password} />
+                            <FormInput autoCapitalize='none' label={'Confirm Password'} secureTextEntry={true} value={confirm} onChangeFunction={handleChange('confirm')} onBlur={handleBlur('confirm')} error={touched.confirm && errors.confirm} />
                             <FormSubmitButton onPressFunction={handleSubmit} submitting={isSubmitting} title={'Signup'} />
                         </>
                     )

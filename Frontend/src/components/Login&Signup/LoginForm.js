@@ -50,10 +50,10 @@ const LoginForm = () => {
                     const {email, password} = values;
                     return (
                         <>
-                            <FormInput label={'Email'} placeHolder={'example@example.com'} value={email}
+                            <FormInput label={'Email'} value={email}
                                 onChangeFunction={handleChange('email')} autoCapitalize='none'
                                 error={touched.email && errors.email} onBlur={handleBlur('email')}/>
-                            <FormInput label={'Password'} placeHolder={'*******'} secureTextEntry={true} value={password}
+                            <FormInput label={'Password'} secureTextEntry={true} value={password}
                                 onChangeFunction={handleChange('password')} autoCapitalize='none'
                                 error={touched.password && errors.password} onBlur={handleBlur('password')}/>
                             <FormSubmitButton title={'Login'} onPressFunction={handleSubmit} submitting={isSubmitting}/>
