@@ -14,13 +14,13 @@ const BudgetGoals = () => {
             titleStyle={{ fontWeight: 'bold', marginLeft: 20 }}
             subtitleStyle={{ marginLeft: 20 }}
             title="Budgets"
-            subtitle="Budget Subtitle"
+            subtitle="Create & View Your Budget"
             left={(props) => <Avatar.Icon {...props} icon="currency-usd" style={{ backgroundColor: 'red' }} size={55} />}
           />
         </Card>
       </TouchableOpacity>
       <TouchableOpacity style={{height: '25%'}} onPress={() => console.warn("Goal Pressed")}>
-        <Card style={{flex: 1}}>
+        {/* <Card style={{flex: 1}}>
           <Card.Title
             titleStyle={{ fontWeight: 'bold', marginLeft: 20 }}
             subtitleStyle={{ marginLeft: 20 }}
@@ -28,7 +28,7 @@ const BudgetGoals = () => {
             subtitle="Goal Subtiles"
             left={(props) => <Avatar.Icon {...props} icon="flag-checkered" style={{ backgroundColor: '#23ded5' }} color='white' size={55} />}
           />
-        </Card>
+        </Card> */}
       </TouchableOpacity>
     </View>
   )

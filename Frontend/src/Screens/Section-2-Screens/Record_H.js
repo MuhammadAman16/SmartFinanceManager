@@ -44,7 +44,7 @@ const Record_H = (props) => {
     try {
       const startDate = formatDate(timePeriod);
       // console.log("The Date is : ", startDate);
-      const result = await user_api.get(`record?userId=${user.id}&fromDate=${startDate}`);
+      const result = await user_api.get(`record?userId=${user.id}&startDate=${startDate}`);
       // console.log("The records are : ", result.data);
       setTransactions(result.data);
       // console.log(result.data.Category);

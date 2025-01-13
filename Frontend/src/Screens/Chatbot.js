@@ -253,10 +253,17 @@ const ChatScreen = () => {
           ]);
           setUser({ ...user, fullName: Botresponse.user.fullName });
         } else if ('message' in Botresponse) {
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            { id: Math.random().toString(), text: `${Botresponse.message}. Can't show your password because of security reasons`, sender: 'bot' }
-          ]);
+          if (Botresponse.message === "Record created successfully") {
+            setMessages((prevMessage) => [
+              ...prevMessage,
+              { id: Math.random().toString(), text: Botresponse.message, sender: 'bot' }
+            ])
+          } else {
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              { id: Math.random().toString(), text: `${Botresponse.message}. Can't show your password because of security reasons`, sender: 'bot' }
+            ]);
+          }
         } else {
           setMessages((prevMessages) => [
             ...prevMessages,
@@ -336,18 +343,6 @@ const ChatScreen = () => {
             value={inputMessage}
             onChangeText={(text) => setInputMessage(text)}
           />
-          <TouchableOpacity
-            onPress={isListening ? stopListning : startListning}
-            style={styles.audioButton}
-          >
-            {isListening ? (
-              <Animated.Text style={[styles.voiceButtonText, { opacity: dotOpacity }]}>
-                •••
-              </Animated.Text>
-            ) : (
-              <Icon name="mic" size={24} color="rgba(56,142,60,255)" />
-            )}
-          </TouchableOpacity>
           <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
             <Icon name="send" size={20} color="#fff" />
           </TouchableOpacity>

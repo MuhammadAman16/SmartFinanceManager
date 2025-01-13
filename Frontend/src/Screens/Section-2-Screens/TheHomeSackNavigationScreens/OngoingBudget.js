@@ -103,7 +103,7 @@ const OngoingBudget = () => {
             </View>
           ))
           :
-          null
+          (<Text>No Budget Found</Text>)
         }
       </View>
 

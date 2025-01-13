@@ -93,7 +93,7 @@ const CurrencyRates = () => {
           fontStyle: 'italic'
         }}
       >
-        Currency Excahnge Rates
+        Currency Exchange Rates
       </Text>
       <Text
         style={{

@@ -23,7 +23,7 @@ const HomeSecondScreen = () => {
             }}
         >
             <Tab.Screen name='Accounts' component={Accounts} />
-            <Tab.Screen name='Budget&Goals' component={BudgetGoals} />
+            <Tab.Screen name='Budget & Goals' component={BudgetGoals} />
         </Tab.Navigator>
     )
 }
