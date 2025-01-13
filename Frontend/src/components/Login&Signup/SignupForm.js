@@ -12,7 +12,7 @@ import PhoneComponent from './PhoneComponent'
 const validationSchema = Yup.object({
     fullName: Yup.string().trim().required('Full Name is required'),
     email: Yup.string().email('Invalid Email').required('Email is required'),
-    phoneNumber: Yup.string().trim().length(10, 'Invalid Phone Number').required('Phone number is required'),
+    phoneNum: Yup.string().trim().length(10, 'Invalid Phone Number').required('Phone number is required'),
     password: Yup.string().trim().min(3, 'Password must be 3 or more').required('Password is required'),
     confirm: Yup.string().equals([Yup.ref('password'), null], 'Password doesnt match')
 })
@@ -23,18 +23,19 @@ const SignupForm = () => {
         fullName: '',
         email: '',
         phoneCode: '+92',
-        phoneNumber: '',
+        phoneNum: '',
         password: '',
         confirm: ''
     }
 
     const signUpSubmit = async (values, formikActions) => {
         try {
+            console.log(values);
             const res = await user_api.post('auth/signup', {
                 fullName: values.fullName,
                 email: values.email,
                 password: values.password,
-                phone: values.phoneCode + values.phoneNumber
+                phoneNumber: values.phoneCode + values.phoneNum
             });
             formikActions.resetForm();
             Alert.alert(res.data.message);
@@ -58,7 +59,7 @@ const SignupForm = () => {
                 onSubmit={signUpSubmit}
             >
                 {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => {
-                    const { fullName, email, phoneCode, phoneNumber, password, confirm } = values;
+                    const { fullName, email, phoneCode, phoneNum, password, confirm } = values;
                     return (
                         <>
                             <FormInput value={fullName} label={'Full Name'} onChangeFunction={handleChange('fullName')}
@@ -67,10 +68,10 @@ const SignupForm = () => {
                                 onChangeFunction={handleChange('email')} onBlur={handleBlur('email')} error={touched.email && errors.email} />
                             <PhoneComponent
                                 phoneCode={phoneCode}
-                                phoneNumber={phoneNumber}
-                                onChangeFunction={handleChange('phoneNumber')}
-                                onBlurFunction={handleBlur('phoneNumber')}
-                                error={touched.phoneNumber && errors.phoneNumber}
+                                phoneNumber={phoneNum}
+                                onChangeFunction={handleChange('phoneNum')}
+                                onBlurFunction={handleBlur('phoneNum')}
+                                error={touched.phoneNum && errors.phoneNum}
                             />
                             <FormInput autoCapitalize='none' label={'Password'} secureTextEntry={true} value={password} onChangeFunction={handleChange('password')} onBlur={handleBlur('password')} error={touched.password && errors.password} />
                             <FormInput autoCapitalize='none' label={'Confirm Password'} secureTextEntry={true} value={confirm} onChangeFunction={handleChange('confirm')} onBlur={handleBlur('confirm')} error={touched.confirm && errors.confirm} />
