@@ -2,6 +2,7 @@ const { initializeModel } = require("../config/chatbot.config");
 const { getClass } = require("../chatbot/index");
 const { getAllBudgets } = require("./budget.controller");
 const { getAllRecords, createRecord } = require("./record.controller");
+const { sendWhatsAppMessage } = require("../services/messaging.service")
 const {
   updatePassword,
   updateFullName,
@@ -97,15 +98,15 @@ Instructions:
   - "category" (e.g., Food & Drinks", clothes, transport)
   - "amount" (e.g., Rs500, Rs3000)
   - "account" (e.g., Cash, Bank, Credit Card)
-  - "date" (e.g., 21-10-2024, yesterday, last week)
+  - "datetime" (e.g., 2024-10-20 09:45, yesterday, last week)
   - "note" (e.g., item or reason for the expense like "apple" or "bus fare").
-- For relative dates like "yesterday" or "last week," calculate the exact date in the format "dd-mm-yyyy."
+- For relative dates like "today", "yesterday" or "last week," calculate the exact date in the format "yyyy-mm-dd 12:00"
 - Ensure all extracted parameters are included, even if some need to be inferred.
 - Example Queries and Responses:
-  - Query: "I spent Rs500 on apples from Cash" → {"type": "EXPENSE","category": "Food & Drinks"", "account":"Cash" ,"amount": "500", "currency":"Rs", "date": "21-12-2024", "note": "apples"}.
-  - Query: "Add an expense of Rs3000 for jeans yesterday from credit card account" → {"type": "EXPENSE","category": "clothes", "account":"credit card" ,"amount": "3000","currency":"Rs", "date": "20-12-2024", "note": "jeans"}.
-  - Query: "I paid Rs1000 for transport last week" → {"type": "EXPENSE","category": "transport", "amount": "1000","currency":"Rs", "date": "14-12-2024", "note": "transport"}.
-  - Query: "I eanned Rs5000 from wages" → {"type": "INCOME","category": "Food & Drinks"", "amount": "500","currency":"Rs", "date": "21-12-2024", "note": "apples"}.
+  - Query: "I spent Rs500 on apples from Cash" → {"type": "EXPENSE","category": "Food & Drinks"", "account":"Cash" ,"amount": "500", "currency":"Rs", "datetime": "2025-01-13 12:00", "note": "apples"}.
+  - Query: "Add an expense of Rs3000 for jeans yesterday from credit card account" → {"type": "EXPENSE","category": "clothes", "account":"credit card" ,"amount": "3000","currency":"Rs", "datetime": "2025-01-12 12:00", "note": "jeans"}.
+  - Query: "I paid Rs1000 for transport last week" → {"type": "EXPENSE","category": "transport", "amount": "1000","currency":"Rs", "datetime": "2025-01-13 12:00", "note": "transport"}.
+  - Query: "I eanned Rs5000 from wages" → {"type": "INCOME","category": "Food & Drinks"", "amount": "500","currency":"Rs", "datetime": "2025-01-12 12:00", "note": "apples"}.
 - Ensure no irrelevant details or extra text are included. Only return the JSON object.
 
 Query:
@@ -194,13 +195,21 @@ Query:
       );
       data = await getAllRecords(req, res);
     } else if (trimmedResult == "get_u_name") {
+      console.log(":------------------------------ get_u_name")
       if (req.user) {
+        console.log(":--------------------------- req.user", req.user)
         req.query = { userId: req.user.id };
-        getFullName(req, res, next);
+        await getFullName(req, res, next);
       }
     } else if (trimmedResult == "get_u_email") {
       if (req.user) {
         const { email } = req.user;
+        if (req.body.sendWhatsAppMessage) {
+          await sendWhatsAppMessage(
+            req.user.phoneNumber,
+            `Your email is ${email}. please let me know if you have any other questions.`
+          );
+        }
         data = {
           response: `Your email is ${email}. please let me know if you have any other questions.`,
         };
@@ -220,9 +229,11 @@ Query:
       }
     } else if (trimmedResult == "create_record") {
       await getParams(createRecPrompt);
+      console.log("params:", params);
       req.body = {
         userId: req.user.id,
         isTemplate: "No",
+
         ...params,
         ...req.body,
       };
@@ -243,8 +254,9 @@ Query:
       await getParams(updateNamePrompt);
       if (params.fullName) {
         req.body = { userId: req.user.id, ...params, ...req.body };
+        req.query.userId = req.user.id
         console.log(
-          ":--------------------------update fullname ---------------------------"
+          ":--------------------------update fullname ---------------------------", req.body
         );
         data = await updateFullName(req, res, next);
       } else {
@@ -268,6 +280,10 @@ Query:
       (trimmedResult == "update_pass" &&
         !(params.currentPassword && params.newPassword))
     ) {
+      await sendWhatsAppMessage(
+        req.user.phoneNumber,
+        JSON.stringify(data)
+      );
       return res.status(200).send(data);
     }
   } catch (error) {

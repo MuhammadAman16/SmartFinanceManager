@@ -23,13 +23,16 @@ exports.getFullName = async (req, res, next) => {
       }
       return next(errorHandler(404, "User not found."));
     }
+    if (req.body.sendWhatsAppMessage) {
+      await sendWhatsAppMessage(req.user.phoneNumber, `your full name is:${user.fullName}`);
+    }
 
     return res.status(200).json({
       fullName: user.fullName,
     });
   } catch (error) {
     if (req.body.sendWhatsAppMessage) {
-      await sendWhatsAppMessage(req.user.phoneNumber, "Erro getting full name");
+      await sendWhatsAppMessage(req.user.phoneNumber, "Error getting full name");
     }
     console.log("Error getting full name:", error);
     return next(error);
@@ -40,7 +43,6 @@ exports.getFullName = async (req, res, next) => {
 exports.updateFullName = async (req, res, next) => {
   const { userId } = req.query; // User ID from query
   const { fullName } = req.body; // New full name from body
-
   if (!userId) {
     if (req.body.sendWhatsAppMessage) {
       await sendWhatsAppMessage(req.user.phoneNumber, "User ID is required.");

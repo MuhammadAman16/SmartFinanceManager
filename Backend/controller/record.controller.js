@@ -96,17 +96,17 @@ exports.createRecord = async (req, res, next) => {
         },
       });
 
-      if (!categoryInDb) {
-        if (req.body.sendWhatsAppMessage) {
-          await sendWhatsAppMessage(
-            req.user.phoneNumber,
-            "category not found in db"
-          );
-        }
-        return next(errorHandler(404, "category not found!"));
-      }
+      // if (!categoryInDb) {
+      //   if (req.body.sendWhatsAppMessage) {
+      //     await sendWhatsAppMessage(
+      //       req.user.phoneNumber,
+      //       "category not found in db"
+      //     );
+      //   }
+      //   return next(errorHandler(404, "category not found!"));
+      // }
 
-      categoryId = categoryInDb.id;
+      categoryId = categoryInDb?.id || 9;
     }
     const newRecord = await Record.create({
       userId,
