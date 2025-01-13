@@ -175,7 +175,7 @@ const EditRecord = ({ route }) => {
                 labelIds: labelIds,
                 payee: values.payer
             })
-            
+
             formikActions.resetForm();
             Alert.alert("Record Updated Successfully");
             navigation.goBack();
@@ -286,7 +286,7 @@ const EditRecord = ({ route }) => {
                                         keyboardype={'numeric'}
                                     />
                                     <TouchableOpacity
-                                        onPress={() => navigation.navigate('Select Account', { income: 'income' })}
+                                        onPress={() => navigation.navigate('Select Account', { income: 'edit' })}
                                     >
                                         <BudgetInputFields
                                             label={'Account'}
@@ -299,7 +299,7 @@ const EditRecord = ({ route }) => {
                                         />
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        onPress={() => navigation.navigate('Select Category', { income: 'income' })}
+                                        onPress={() => navigation.navigate('Select Category', { income: 'edit' })}
                                     >
                                         <BudgetInputFields
                                             label={'Category'}

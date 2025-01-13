@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import user_api from '@/app/api/user_api';
 import { useNavigation } from '@react-navigation/native';
 
-const SelectCategoryScreen = ( income ) => {
+const SelectCategoryScreen = (income) => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState(null);
@@ -66,13 +66,17 @@ const SelectCategoryScreen = ( income ) => {
             }}
             onPress={() => {
               const { id, name } = category;
-              {income.route.params.income === 'income' ? 
-                navigation.navigate('Income Form', { selectedCategory: { id, name } })
-                :
-                income.route.params.income === 'expense' ?
-                navigation.navigate('Expense Form', { selectedCategory: { id, name } })
-                :
-                navigation.navigate('Create Template', { selectedCategory: { id, name } })
+              {
+                income.route.params.income === 'income' ?
+                  navigation.navigate('Income Form', { selectedCategory: { id, name } })
+                  :
+                  income.route.params.income === 'expense' ?
+                    navigation.navigate('Expense Form', { selectedCategory: { id, name } })
+                    :
+                    income.route.params.income === 'edit' ?
+                      navigation.navigate('Edit Record', { selectedCategory: { id, name } })
+                      :
+                      navigation.navigate('Create Template', { selectedCategory: { id, name } })
               }
             }}
           >

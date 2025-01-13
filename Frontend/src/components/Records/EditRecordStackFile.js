@@ -5,6 +5,8 @@ import SelectCategoryScreen from './SelectCategoryScreen';
 import LabelScreen from '@/src/Screens/Section-2-Screens/TheHomeSackNavigationScreens/LabelScreen';
 import { Feather } from '@expo/vector-icons';
 import EditRecord from './EditRecord';
+import IncomeForm from './IncomeForm';
+import ExpenseForm from './ExpenseForm';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +28,14 @@ const EditRecordStackFile = (props) => {
                     headerShown: true, // Hide the header for the Income Form screen
                 }}
                 initialParams={{ itemId: props?.route?.params?.itemId }}
+            />
+            <Stack.Screen
+                name='Income Form'
+                component={IncomeForm}
+            />
+            <Stack.Screen
+                name='Expense Form'
+                component={ExpenseForm}
             />
             <Stack.Screen
                 name='Select Account'

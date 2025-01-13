@@ -77,7 +77,9 @@ const SelectAccountScreen = (income) => {
                                     :
                                     income.route.params.income === 'expense' ? navigation.navigate('Expense Form', { selectedAccount: { id, name, currency } })
                                         :
-                                        navigation.navigate('Create Template', { selectedAccount: { id, name, currency } })
+                                        income.route.params.income === 'edit' ? navigation.navigate('Edit Record', { selectedAccount: { id, name, currency } })
+                                            :
+                                            navigation.navigate('Create Template', { selectedAccount: { id, name, currency } })
                             }
                         }}
                     >
