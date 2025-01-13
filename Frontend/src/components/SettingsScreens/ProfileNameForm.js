@@ -34,7 +34,7 @@ const ProfileNameForm = () => {
     <View style={styles.ProfileScreenInfoContainer}>
       <Text style={styles.ProfileScreenlabel}>Name</Text>
       <TextInput
-        style={styles.ProfileScreenInput}
+        style={[styles.ProfileScreenInput, {borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 10, width: '100%'}]}
         value={userFullName}
         onChangeText={(text) => setUserFullName(text)}
       />

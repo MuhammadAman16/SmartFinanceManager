@@ -524,14 +524,14 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         textAlign: 'center',
     },
-    // ProfileScreenInput: {
-    //     borderWidth: 0,
-    //     paddingHorizontal: 16,
-    //     fontSize: 16,
-    //     marginBottom: 12,
-    //     backgroundColor: '#fff',
-    //     width: '90%',
-    // },
+    ProfileScreenInput: {
+        borderWidth: 0,
+        paddingHorizontal: 16,
+        fontSize: 16,
+        marginBottom: 12,
+        backgroundColor: '#fff',
+        width: '90%',
+    },
     ProfileScreenButton: {
         backgroundColor: 'rgba(34,68,35,255)',
         borderRadius: 8,
@@ -848,7 +848,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     BudgetViewStyling: {
-        marginBottom: 20
+        marginVertical: 20
     },
     BudgetTextStyling: {
         fontWeight: 'bold',

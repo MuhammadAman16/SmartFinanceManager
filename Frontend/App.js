@@ -56,13 +56,13 @@ const App = () => {
 export default () => (
     <GestureHandlerRootView>
         <AuthProvider>
-            <BudgetProvider>
-                <ColorProvider>
-                    <AccountProvider>
-                        <App />
-                    </AccountProvider>
-                </ColorProvider>
-            </BudgetProvider>
+            {/* <BudgetProvider> */}
+            <ColorProvider>
+                <AccountProvider>
+                    <App />
+                </AccountProvider>
+            </ColorProvider>
+            {/* </BudgetProvider> */}
         </AuthProvider>
     </GestureHandlerRootView>
 );

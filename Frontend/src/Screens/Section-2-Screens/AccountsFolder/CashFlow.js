@@ -177,7 +177,6 @@ function CashFlowChart() {
       accountNumber: "0987654321",
     },
   ]);
-  const [selectedAccountNumber, setSelectedAccountNumber] = useState(null);
   const [accounts, setAccounts] = useState([
     {
       id: 1,
@@ -403,25 +402,25 @@ function CashFlowChart() {
 
   const xAxisLabelsforStatic = ['Jan', 'Feb', 'Mar', 'Apr', 'May'];
 
-  const renderAccount = ({ item }) => (
-    <View style={styles.accountCard}>
-      <View style={styles.accountInfo}>
-        <Text style={styles.accountName}>{item.name}</Text>
-        <Text style={styles.accountBalance}>
-          {item.currency} {item.currentValue}
-        </Text>
-      </View>
-      <TouchableOpacity
-        style={styles.editButton}
-        onPress={() => {
-          setSelectedAccountNumber(item.accountNumber);
-          navigation.navigate('AccountStackScreen', { viewMore: false })
-        }}
-      >
-        <Feather name="eye" size={24} color="#007bff" />
-      </TouchableOpacity>
-    </View>
-  );
+  // const renderAccount = ({ item }) => (
+  //   <View style={styles.accountCard}>
+  //     <View style={styles.accountInfo}>
+  //       <Text style={styles.accountName}>{item.name}</Text>
+  //       <Text style={styles.accountBalance}>
+  //         {item.currency} {item.currentValue}
+  //       </Text>
+  //     </View>
+  //     <TouchableOpacity
+  //       style={styles.editButton}
+  //       onPress={() => {
+  //         setSelectedAccountNumber(item.bankAccountNumber);
+  //         navigation.navigate('AccountStackScreen', { viewMore: false })
+  //       }}
+  //     >
+  //       <Feather name="eye" size={24} color="#007bff" />
+  //     </TouchableOpacity>
+  //   </View>
+  // );
 
 
   return (
@@ -472,14 +471,13 @@ function CashFlowChart() {
                 <TouchableOpacity
                   style={styles.editButton}
                   onPress={() => {
-                    setSelectedAccountNumber(item.accountNumber);
-                    navigation.navigate('AccountStackScreen', { viewMore: false })
+                    navigation.navigate('AccountStackScreen', { viewMore: false, accountId: account.id })
                   }}
                 >
                   <Feather name="eye" size={24} color="#007bff" />
                 </TouchableOpacity>
               </View>
-            ))} 
+            ))}
           </View>
         </View>
       )}
@@ -490,9 +488,6 @@ function CashFlowChart() {
       <View style={styles.sectionContainer}>
         <View style={styles.header}>
           <Text style={styles.sectionHeading}>Cash Flow Overview</Text>
-          <TouchableOpacity style={styles.viewMoreButton} onPress={() => navigation.navigate('AccountStackScreen', { viewMore: true })}>
-            <Text style={styles.viewMoreText}>View More</Text>
-          </TouchableOpacity>
         </View>
         <View style={styles.chartContainer}>
           <Chart
@@ -613,9 +608,6 @@ function CashFlowChart() {
       <View style={styles.sectionContainer}>
         <View style={styles.header}>
           <Text style={styles.sectionHeading}>Top 3 incomes</Text>
-          <TouchableOpacity style={styles.viewMoreButton} onPress={() => navigation.navigate('AccountStackScreen', { viewMore: true })}>
-            <Text style={styles.viewMoreText}>View More</Text>
-          </TouchableOpacity>
         </View>
 
         <View style={styles.chartContainer}>
@@ -646,8 +638,14 @@ function CashFlowChart() {
                 strokeWidth: "2",
                 stroke: "#ffa726",
               },
+              propsForVerticalLabels: {
+                dx: '0', // Moves labels slightly left for alignment (optional)
+                dy: '10', // Moves labels upward
+                rotation: '-20', // Rotates labels diagonally
+              },
             }}
             showValuesOnTopOfBars={true}
+
           />
           {/* <BarChart
             data={{
@@ -685,9 +683,6 @@ function CashFlowChart() {
       <View style={styles.sectionContainer}>
         <View style={styles.header}>
           <Text style={styles.sectionHeading}>Top 3 expenses</Text>
-          <TouchableOpacity style={styles.viewMoreButton} onPress={() => navigation.navigate('AccountStackScreen', { viewMore: true })}>
-            <Text style={styles.viewMoreText}>View More</Text>
-          </TouchableOpacity>
         </View>
 
         <View style={styles.chartContainer}>
@@ -717,6 +712,11 @@ function CashFlowChart() {
                 r: "6",
                 strokeWidth: "2",
                 stroke: "#ffa726",
+              },
+              propsForVerticalLabels: {
+                dx: '0', // Moves labels slightly left for alignment (optional)
+                dy: '10', // Moves labels upward
+                rotation: '-20', // Rotates labels diagonally
               },
             }}
             showValuesOnTopOfBars={true}

@@ -5,6 +5,7 @@ import ProfileNameForm from "@/src/components/SettingsScreens/ProfileNameForm";
 import ProfilePasswordForm from "@/src/components/SettingsScreens/ProfilePasswordForm";
 import styles from "@/src/components/Styling/Stlyes";
 import CustomHeader from "@/src/components/SettingsScreens/CustomHeader";
+import ProfilePhoneForm from "@/src/components/SettingsScreens/ProfilePhoneForm";
 
 const Profile = () => {
   CustomHeader('Settings');
@@ -16,6 +17,7 @@ const Profile = () => {
         <ProfileNameForm />
         <ProfileInfo />
         <ProfilePasswordForm />
+        <ProfilePhoneForm />
       </View>
     </ScrollView>
   );

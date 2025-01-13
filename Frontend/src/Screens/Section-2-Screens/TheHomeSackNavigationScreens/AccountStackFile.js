@@ -3,11 +3,10 @@ import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import CashFlowChart from '../AccountsFolder/CashFlow';
 import AccountView from '../AccountsFolder/AccountView';
-import ViewMoreScreen from '../AccountsFolder/ViewMore';
 
 const Stack = createNativeStackNavigator();
 
-const AccountStackFile = ({route}) => {
+const AccountStackFile = ({ route }) => {
     return (
         <Stack.Navigator
             screenOptions={{
@@ -16,7 +15,7 @@ const AccountStackFile = ({route}) => {
                 },
                 headerTintColor: 'white'
             }}
-            initialRouteName={route.params.viewMore === true ? 'View' : 'Account View'}
+            initialRouteName={'Account View'}
         >
             <Stack.Screen
                 name='Cash Flow'
@@ -32,13 +31,7 @@ const AccountStackFile = ({route}) => {
                 options={{
                     headerShown: true
                 }}
-            />
-            <Stack.Screen
-                name='View'
-                component={ViewMoreScreen}
-                options={{
-                    headerShown: true
-                }}
+                initialParams={{ accountId: route?.params?.accountId }}
             />
         </Stack.Navigator>
     )

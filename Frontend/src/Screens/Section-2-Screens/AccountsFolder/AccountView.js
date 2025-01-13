@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
   ScrollView,
-  TouchableOpacity,
+  ActivityIndicator,
   Dimensions,
   SafeAreaView,
 } from 'react-native';
@@ -17,9 +17,26 @@ import {
   VerticalAxis,
   HorizontalAxis,
 } from 'react-native-responsive-linechart';
-const AccountView = () => {
-  const accountNumber = "1234567890"; // Get the account number from the route parameters
+import { AuthContext } from '@/app/context/AuthContext';
+import user_api from '@/app/api/user_api';
 
+
+const AccountView = (props) => {
+  const { accountId } = props?.route?.params || 0;
+  const { user } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(true);
+  const [account, setAccount] = useState();
+  const [incomes, setIncome] = useState();
+  const [expense, setExpense] = useState();
+
+  const accountNumber = "0987654321";
+  const [cashFlowChartData, setCashFlowChartData] = useState([
+    // { x: 0, y: 30 },
+    // { x: 1, y: 40 },
+    { x: 2, y: 35 },
+    { x: 3, y: 50 },
+    { x: 4, y: 45 },
+  ]);
   // Assuming transactions are available in this screen, you can define them here or pass them from the previous screen
   const [transactions, setTransactions] = useState([
     {
@@ -171,6 +188,110 @@ const AccountView = () => {
     },
   ]);
 
+  const fetchAccount = async () => {
+    try {
+      const result = await user_api.get(`accounts/${accountId}`);
+      setAccount(result.data);
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`);
+      } else if (error.request) {
+        console.log(`No response from server`);
+      } else {
+        console.log("Error: ", error.error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const fetchIncome = async () => {
+    try {
+      const incomeResult = await user_api.get(`record?userId=${user.id}&type=INCOME`);
+      setIncome(incomeResult.data.filter((income) => income?.Account?.id === accountId));
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`)
+      } else if (error.request) {
+        console.log(`No response from server`);
+      } else {
+        console.log("Error: ", error.error);
+      }
+    }
+  }
+
+  const fetchExpense = async () => {
+    try {
+      const expenseResult = await user_api.get(`record?userId=${user.id}&type=EXPENSE`);
+      setExpense(expenseResult.data.filter((expense) => expense?.Account?.id === accountId));
+      // console.log("Good");
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`);
+      } else if (error.request) {
+        console.log(`No response from server`);
+      } else {
+        console.log("Error: ", error.error);
+      }
+    }
+  }
+
+  const fetchAllRecords1 = async () => {
+    try {
+      const result = await user_api.get(`record?userId=${user.id}&startFrom=2024-12-01&endDate=2024-12-31`);
+      const AllRecordAccount = result.data;
+      const record = parseInt(AllRecordAccount.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) || 0, 10);
+      // ${parseInt(expense?.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) || 0, 10)}
+      setCashFlowChartData((prevData) => [
+        { x: 0, y: record },
+        ...prevData
+      ]);
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`);
+      } else if (error.request) {
+        console.log(`No response from server`);
+      } else {
+        console.log("Error: ", error.error);
+      }
+    }
+  }
+
+  const fetchAllRecords2 = async () => {
+    try {
+      const result = await user_api.get(`record?userId=${user.id}&startFrom=2025-01-01&endDate=2025-01-31`);
+      const AllRecordAccount = result.data;
+      const record = parseInt(AllRecordAccount.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) || 0, 10);
+      // ${parseInt(expense?.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) || 0, 10)}
+      setCashFlowChartData((prevData) => [
+        { x: 1, y: record },
+        ...prevData,
+      ]);
+    } catch (error) {
+      if (error.response) {
+        Alert.alert(`Error: ${error.response.data.error}`);
+      } else if (error.request) {
+        console.log(`No response from server`);
+      } else {
+        console.log("Error: ", error.error);
+      }
+    }
+  }
+
+  useEffect(() => {
+    fetchAccount();
+  }, [accountId])
+
+  useEffect(() => {
+    fetchIncome();
+    fetchExpense();
+  }, [user, accountId])
+
+  useEffect(() => {
+    fetchAllRecords1();
+    fetchAllRecords2();
+  }, [user])
+
   // Filter transactions for the selected account
   const filteredAccountTransactions = transactions.filter(
     transaction => transaction.accountNumber === accountNumber
@@ -247,11 +368,19 @@ const AccountView = () => {
     (transaction) => transaction.type === 'expense'
   );
 
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <ActivityIndicator size={'large'} color={'blue'} />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
         <View style={styles.mainHeadingContainer}>
-          <Text style={styles.mainHeading}>Account Number: 123-456-78</Text>
+          <Text style={styles.mainHeading}>Account Number: {account?.bankAccountNumber ? account.bankAccountNumber : 'not given'}</Text>
 
         </View>
         <View style={styles.sectionContainer}>
@@ -262,12 +391,12 @@ const AccountView = () => {
           <View style={styles.chartContainer}>
             <Chart
               style={{ height: 200, width: '100%' }}
-              data={chartData}
+              data={cashFlowChartData}
               padding={{ left: 40, bottom: 40, right: 20, top: 20 }}
-              xDomain={{ min: 0, max: chartData.length - 1 }}
+              xDomain={{ min: 0, max: cashFlowChartData.length - 1 }}
               yDomain={{
-                min: Math.min(...chartData.map((d) => d.y)),
-                max: Math.max(...chartData.map((d) => d.y)),
+                min: Math.min(...cashFlowChartData.map((d) => d.y)),
+                max: Math.max(...cashFlowChartData.map((d) => d.y)),
               }}>
 
               <VerticalAxis
@@ -313,7 +442,7 @@ const AccountView = () => {
                   zIndex: 1,
                 }}
                 renderTooltip={({ x, y, index }) => {
-                  const value = chartDataforStatic[index];
+                  const value = cashFlowChartData[index];
                   return <CustomTooltip value={value} position={{ x, y }} />;
                 }}
               />
@@ -370,46 +499,46 @@ const AccountView = () => {
         {/* Income List */}
         <View style={styles.listContainer}>
           <Text style={styles.listHeading}>Income</Text>
-          <FlatList
-            data={incomeTransactions}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <View style={[styles.listItem, styles.incomeItem]}>
+          {incomes?.length !== undefined ? (
+            incomes?.map((income, index) => (
+              <View style={[styles.listItem, styles.incomeItem]} key={index}>
                 <View style={styles.verticalLine}></View>
                 <View style={styles.listItemContent}>
                   <Text style={styles.listItemText}>
-                    {item.category} - {item.date.toLocaleDateString()}
+                    {income?.Category?.name} - {income?.datetime?.split("T")[0]}
                   </Text>
                   <Text style={[styles.listItemAmount, styles.incomeAmount]}>
-                    ${item.amount}
+                    ${income?.amount}
                   </Text>
                 </View>
               </View>
-            )}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-          />
+            ))
+          )
+            :
+            (<Text>No Income Found</Text>)
+          }
         </View>
 
         <View style={styles.listContainer}>
           <Text style={styles.listHeading}>Expenses</Text>
-          <FlatList
-            data={expenseTransactions}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <View style={[styles.listItem, styles.expenseItem]}>
+          {expense?.length !== undefined ? (
+            expense?.map((expense, index) => (
+              <View style={[styles.listItem, styles.expenseItem]} key={index}>
                 <View style={styles.verticalLine}></View>
                 <View style={styles.listItemContent}>
                   <Text style={styles.listItemText}>
-                    {item.category} - {item.date.toLocaleDateString()}
+                    {expense?.Category?.name} - {expense?.datetime ? expense.datetime?.split("T")[0] : null}
                   </Text>
                   <Text style={[styles.listItemAmount, styles.expenseAmount]}>
-                    ${item.amount}
+                    ${expense.amount}
                   </Text>
                 </View>
               </View>
-            )}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-          />
+            ))
+          )
+            :
+            (<Text>No Expense Found</Text>)
+          }
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -458,7 +587,7 @@ const styles = StyleSheet.create({
     marginBottom: 20, // Space below the main heading
   },
   mainHeading: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   accountNumber: {

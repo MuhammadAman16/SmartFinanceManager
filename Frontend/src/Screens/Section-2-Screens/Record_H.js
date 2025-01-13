@@ -1,31 +1,18 @@
-// {
-//   type: 'expense',
-//   amount: 500,
-//   date: new Date('2024-09-28T18:45:00'),
-//   category: 'grocery',
-//   paymentType: 'cash',
-// }
-
-import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { View, Text, FlatList, SafeAreaView, TouchableOpacity, Button, ActivityIndicator, Image } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useState, useContext, useCallback } from 'react';
+import { View, Text, FlatList, SafeAreaView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import user_api from '@/app/api/user_api';
 import { Feather } from '@expo/vector-icons';
 import SelectTimePeriod from '@/src/components/Records/SelectTimePeriod';
 import { AuthContext } from '@/app/context/AuthContext';
 import { useFocusEffect } from '@react-navigation/native';
+import DeleteRecordModal from '@/src/components/Records/DeleteRecordModal';
 
 const Record_H = (props) => {
   const { user } = useContext(AuthContext);
-  const [startDate, setStartDate] = useState(new Date('1970-01-01')); // Initially set to a far past date
-  const [endDate, setEndDate] = useState(new Date()); // Initially set to today
-  const [selectedAccount, setSelectedAccount] = useState('');
-  const [showStartPicker, setShowStartPicker] = useState(false);
-  const [showEndPicker, setShowEndPicker] = useState(false);
   const [transactions, setTransactions] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [timePeriod, setTimePeriod] = useState("7D");
+  const [showModal, setShowModal] = useState({ visible: false, itemId: 0, isDeleted: false });
 
   const formatDate = (timePeriod) => {
     const today = new Date();
@@ -57,7 +44,7 @@ const Record_H = (props) => {
     try {
       const startDate = formatDate(timePeriod);
       // console.log("The Date is : ", startDate);
-      const result = await user_api.get(`record?userId=${user.id}&startDate=${startDate}`);
+      const result = await user_api.get(`record?userId=${user.id}&fromDate=${startDate}`);
       // console.log("The records are : ", result.data);
       setTransactions(result.data);
       // console.log(result.data.Category);
@@ -77,22 +64,14 @@ const Record_H = (props) => {
   useFocusEffect(
     useCallback(() => {
       fetchAllRecords();
-    }, [timePeriod])
+    }, [timePeriod, showModal.isDeleted])
   );
 
-  // useEffect(() => {
-  //   formatDate(timePeriod);
-  // }, [])
-  // useEffect(() => {
-  //   formatDate(timePeriod);
-  //   fetchAllRecords();
-  //   // console.log(transactions[0]["Category"])
-  // }, [timePeriod])
-
   const renderItem = ({ item }) => {
-    // console.log(`The item Category ${item.Category?.name}`);
     return (
-      <View
+      <TouchableOpacity
+        onPress={() => props.navigation.navigate('RecordCreationScreen', { isEdit: true, itemId: item.id })}
+        onLongPress={() => setShowModal({ visible: true, itemId: item.id, isDeleted: false })}
         style={{
           display: 'flex',
           flexDirection: 'row',
@@ -149,7 +128,7 @@ const Record_H = (props) => {
                 fontWeight: '500'
               }}
             >
-              { item?.Category ? item?.Category?.name : null}
+              {item?.Category ? item?.Category?.name : null}
             </Text>
             <Text
               style={{
@@ -207,34 +186,9 @@ const Record_H = (props) => {
             </Text>
           </View>
         </View>
-        {/* <Text>{item.type}</Text> */}
-      </View>
+      </TouchableOpacity>
     );
   }
-
-
-  // const filterTransactions = (transactions) => {
-  //   return transactions.filter((transaction) => {
-  //     const isWithinDateRange =
-  //       (startDate <= transaction.date && endDate >= transaction.date) ||
-  //       (startDate > transaction.date && endDate === new Date()) ||
-  //       (endDate < transaction.date && startDate === new Date('1970-01-01'));
-
-  //     const isAccountMatch =
-  //       selectedAccount === 'cash'
-  //         ? transaction.paymentType === 'cash'
-  //         : selectedAccount === ''
-  //           ? true
-  //           : transaction.accountNumber === selectedAccount;
-
-  //     return isWithinDateRange && isAccountMatch;
-  //   });
-  // };
-
-  // const filteredTransactions = filterTransactions(transactions);
-
-  // Combine income and expense transactions, sorted by date
-  // const combinedTransactions = [...filteredTransactions].sort((a, b) => b.date - a.date);
 
   if (isLoading) {
     return (
@@ -245,7 +199,6 @@ const Record_H = (props) => {
   }
 
   return (
-    // <ScrollView style={styles.container}>
     <SafeAreaView style={styles.safeArea}>
 
       <View style={{ display: 'flex', alignItems: 'flex-end' }}>
@@ -299,10 +252,17 @@ const Record_H = (props) => {
       >
         <Text>
           Last {timePeriod.slice(0, -1)} {timePeriod.slice(-1) === 'D' ? 'Days'
-              : timePeriod.slice(-1) === 'W' ? 'Weeks'
+            : timePeriod.slice(-1) === 'W' ? 'Weeks'
               : timePeriod.slice(-1) === 'M' ? 'Months' : 'Year'}
-          </Text>
+        </Text>
       </View>
+
+      {showModal.visible && (
+        <DeleteRecordModal
+          showModal={showModal}
+          setShowModal={setShowModal}
+        />
+      )}
 
       <FlatList
         data={transactions}
@@ -310,74 +270,7 @@ const Record_H = (props) => {
         keyExtractor={(item) => item.id}
         ListEmptyComponent={<Text style={{ textAlign: 'center' }}>No records found</Text>}
       />
-
-      {/* Date Pickers */}
-      {/* <View style={styles.datePickerContainer}>
-        <Button title="Select Start Date" onPress={() => setShowStartPicker(true)} />
-        {showStartPicker && (
-          <DateTimePicker
-            value={startDate}
-            mode="date"
-            display="default"
-            onChange={(event, selectedDate) => {
-              setShowStartPicker(false);
-              if (selectedDate) setStartDate(selectedDate);
-            }}
-          />
-        )}
-        <Button title="Select End Date" onPress={() => setShowEndPicker(true)} />
-        {showEndPicker && (
-          <DateTimePicker
-            value={endDate}
-            mode="date"
-            display="default"
-            onChange={(event, selectedDate) => {
-              setShowEndPicker(false);
-              if (selectedDate) setEndDate(selectedDate);
-            }}
-          />
-        )}
-      </View> */}
-
-      {/* Account Picker */}
-      {/* <View style={styles.pickerContainer}>
-        <Text>Select Account:</Text>
-        <Picker
-          selectedValue={selectedAccount}
-          onValueChange={(itemValue) => setSelectedAccount(itemValue)}
-        >
-          <Picker.Item label="All Accounts" value="" />
-          <Picker.Item label="Cash" value="cash" />
-          <Picker.Item label="Account 1234567890" value="1234567890" />
-          <Picker.Item label="Account 0987654321" value="0987654321" />
-        </Picker>
-      </View> */}
-
-      {/* Combined Transactions List */}
-      {/* <View style={styles.listContainer}>
-        <Text style={styles.listHeading}>Transactions</Text>
-        <FlatList
-          data={transactions}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View style={[styles.listItem, item.type === 'income' ? styles.incomeItem : styles.expenseItem]}>
-              <View style={styles.verticalLine}></View>
-              <View style={styles.listItemContent}>
-                <Text style={styles.listItemText}>
-                  {item.category} - {item.category}
-                </Text>
-                <Text style={[styles.listItemAmount, item.type === 'income' ? styles.incomeAmount : styles.expenseAmount]}>
-                  ${item.amount}
-                </Text>
-              </View>
-            </View>
-          )}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-        />
-      </View> */}
-
     </SafeAreaView>
-    // </ScrollView>
   );
 };
 
